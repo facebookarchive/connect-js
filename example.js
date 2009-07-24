@@ -8,75 +8,91 @@ function publishExample() {
   Mu.publish(
     'This is some text',
     undefined,
-    [{text:'custom action link', href:'http://www.yahoo.com/'}],
+    [{text:'custom action link', href:'http://code.daaku.org/mu/'}],
     undefined,
     'Tell the world about Popups?'
   );
 }
 
-// enable/disable connect mode buttons
-function setConnected(isConnected) {
-  var input = $('integration').getElementsByTagName('input');
-  for (var i=0, l=input.length; i<l; i++) {
-    input[i].disabled = !isConnected;
-  }
-
+function showUserInfo() {
   var userInfo = $('user-info');
-  if (isConnected) {
+  if (!Mu.Session) {
+    userInfo.style.visibility = 'hidden';
+  } else {
     var params = {
       method: 'Fql.query',
-      query: 'SELECT name, pic_square, profile_url FROM user where uid=' + Mu.Session.uid
+      query: (
+        'SELECT ' +
+          'name,' +
+          'pic_square,' +
+          'profile_url ' +
+        'FROM ' +
+          'user ' +
+        'WHERE ' +
+          'uid=' + Mu.Session.uid
+      )
     };
 
     Mu.api(params, function(info) {
       info = info[0];
 
-      userInfo.href = info.profile_url;
       $('user-name').innerHTML = info.name;
       $('user-pic').src = info.pic_square;
+      userInfo.href = info.profile_url;
       userInfo.style.visibility = 'visible';
     });
-  } else {
-    userInfo.style.visibility = 'hidden';
   }
 }
 
-// handles a session (or lack thereof)
-function gotStatus(session, perms) {
-  var status = session ? 'connected' : 'disconnected';
-  $('status').innerHTML = status;
-  $('status').className = status;
-
-  if (session) {
-    $('bt-disconnect').disabled = $('bt-logout').disabled = false;
-    $('bt-login').disabled = true;
-    setConnected(true);
-  } else {
-    $('bt-login').disabled = false;
-    $('bt-disconnect').disabled = $('bt-logout').disabled = true;
-    setConnected(false);
-  }
+function showSessionInfo() {
+  var
+    session     = Mu.Session,
+    sessionInfo = $('info');
 
   if (!session) {
-    $('info').innerHTML = '';
+    sessionInfo.style.visibility = 'hidden';
   } else {
     var rows = [];
     for (var key in session) {
       rows.push('<th>' + key + '</th>' + '<td>' + session[key] + '</td>');
     }
-    $('info').innerHTML = (
+    sessionInfo.style.visibility = 'visible';
+    sessionInfo.innerHTML = (
       '<table>' +
       '<tr>' + rows.join('</tr><tr>') + '</tr>' +
       '</table>'
     );
+  }
+}
 
-    if (perms) {
-      statusUpdate(
-        'perms-info',
-        'were ' + (perms ? '' : 'not ') + 'granted.',
-        perms
-      );
-    }
+// handles a session (or lack thereof)
+function gotStatus(session, perms) {
+  showSessionInfo();
+  showUserInfo();
+
+  var status = session ? 'connected' : 'disconnected';
+  $('status').innerHTML = status;
+  $('status').className = status;
+
+  var input = $('integration').getElementsByTagName('input');
+  for (var i=0, l=input.length; i<l; i++) {
+    input[i].disabled = !session;
+  }
+
+  if (session) {
+    $('bt-disconnect').disabled = $('bt-logout').disabled = false;
+    $('bt-login').disabled = true;
+  } else {
+    $('bt-login').disabled = false;
+    $('bt-disconnect').disabled = $('bt-logout').disabled = true;
+  }
+
+  if (perms) {
+    statusUpdate(
+      'perms-info',
+      'were ' + (perms ? '' : 'not ') + 'granted.',
+      perms
+    );
   }
 }
 
