@@ -42,21 +42,18 @@ function setConnected(isConnected) {
 }
 
 // handles a session (or lack thereof)
-function gotStatus(status, session, perms) {
+function gotStatus(session, perms) {
+  var status = session ? 'connected' : 'disconnected';
   $('status').innerHTML = status;
   $('status').className = status;
 
-  if (status == 'connected') {
+  if (session) {
     $('bt-disconnect').disabled = $('bt-logout').disabled = false;
-    $('bt-login').disabled = $('bt-connect').disabled = true;
+    $('bt-login').disabled = true;
     setConnected(true);
-  } else if (status == 'disconnected') {
-    $('bt-connect').disabled = false;
-    $('bt-disconnect').disabled = $('bt-login').disabled = $('bt-logout').disabled = true;
-    setConnected(false);
   } else {
     $('bt-login').disabled = false;
-    $('bt-disconnect').disabled = $('bt-connect').disabled = $('bt-logout').disabled = true;
+    $('bt-disconnect').disabled = $('bt-logout').disabled = true;
     setConnected(false);
   }
 

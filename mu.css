@@ -62,10 +62,6 @@ a:hover {
   font-size: 15px;
   padding: 3px 6px;
 }
-#status.unknown {
-  background-color: #eee;
-  color: #333;
-}
 #status.disconnected {
   background-color: #cc3f85;
   color: #fff;

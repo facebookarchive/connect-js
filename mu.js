@@ -1,9 +1,8 @@
 Mu = {
   // use the init method to set these values correctly
-  ApiKey        : null,
-  ConnectStatus : 'unknown', // or 'disconnected' or 'connected'
-  Session       : null,
-  XdUrl         : null,
+  ApiKey  : null,
+  Session : null,
+  XdUrl   : null,
 
   // the various domains needed for using Connect
   ApiDomain     : 'http://api.facebook.com/',
@@ -22,7 +21,7 @@ Mu = {
    * @access public
    * @param apiKey  {String} your application API key
    * @param xdUrl   {String} URL to the xd.html file
-   * @param session {Object} an existing session (optional)
+   * @param session {Object} (optional) an existing session
    */
   init: function(apiKey, xdUrl, session) {
     // handle relative, absolute or fully qualified url
@@ -44,10 +43,9 @@ Mu = {
       xdUrl += '#';
     }
 
-    Mu.ApiKey        = apiKey;
-    Mu.ConnectStatus = session ? 'connected' : 'unknown';
-    Mu.Session       = session;
-    Mu.XdUrl         = xdUrl;
+    Mu.ApiKey  = apiKey;
+    Mu.Session = session;
+    Mu.XdUrl   = xdUrl;
   },
 
 
@@ -281,32 +279,25 @@ Mu = {
    *  - tos.php
    * It also (optionally) handles the xxRESULTTOKENxx response from:
    *  - prompt_permissions.php
-   * And calls the given callback with the (status, session, perms)
+   * And calls the given callback with the (session, perms)
    *
    * @access private
-   * @param status {String}   the predefined status this callback will trigger
    * @param cb     {Function} the callback function
    * @param frame  {String}   the frame id for the callback will be used with
    * @param target {String}   parent or opener to indicate the window relation
    * @returns      {String}   the xd url bound to the callback
    */
-  xdSession: function(status, cb, frame, target) {
+  xdSession: function(cb, frame, target) {
     return Mu.xdHandler(function(params) {
-      // first we reset
-      Mu.ConnectStatus = status;
-      Mu.Session       = null;
-
       // try to extract a session
       try {
         Mu.Session = JSON.parse(params.session);
-      } catch(e) {}
+      } catch(e) {
+        Mu.Session       = null;
+      }
 
       // user defined callback
-      cb(
-        status,
-        Mu.Session,
-        params.result != 'xxRESULTTOKENxx' && params.result
-      );
+      cb(Mu.Session, params.result != 'xxRESULTTOKENxx' && params.result);
     }, frame, target) + '&result=xxRESULTTOKENxx';
   },
 
@@ -319,7 +310,7 @@ Mu = {
 
   /**
    * Find out the current status from the server, and get a session if the user
-   * is connected. The callback is invoked with (status, session).
+   * is connected. The callback is invoked with (session).
    *
    * @access public
    * @param cb {Function} the callback function
@@ -329,9 +320,9 @@ Mu = {
       g   = Mu.guid(),
       url = Mu.ConnectDomain + 'extern/login_status.php?' + Mu.encodeQS({
         api_key    : Mu.ApiKey,
-        no_session : Mu.xdSession('disconnected', cb, g, 'parent'),
-        no_user    : Mu.xdSession('unknown',      cb, g, 'parent'),
-        ok_session : Mu.xdSession('connected',    cb, g, 'parent')
+        no_session : Mu.xdSession(cb, g, 'parent'),
+        no_user    : Mu.xdSession(cb, g, 'parent'),
+        ok_session : Mu.xdSession(cb, g, 'parent')
       });
 
     Mu.hiddenIframe(url, g);
@@ -340,7 +331,7 @@ Mu = {
   /**
    * Login/Authorize/Permissions.
    *
-   * The callback is invoked with (status, session, permissions).
+   * The callback is invoked with (session, permissions).
    *
    * @access public
    * @param cb    {Function} the callback function
@@ -351,10 +342,10 @@ Mu = {
       g   = Mu.guid(),
       url = Mu.Domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu.ApiKey,
-        cancel_url     : Mu.xdSession('unknown', cb, g),
+        cancel_url     : Mu.xdSession(cb, g),
         display        : 'popup',
         fbconnect      : 1,
-        next           : Mu.xdSession('connected', cb, g),
+        next           : Mu.xdSession(cb, g),
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
@@ -369,7 +360,7 @@ Mu = {
       g   = Mu.guid(),
       url = Mu.Domain + 'logout.php?' + Mu.encodeQS({
         api_key     : Mu.ApiKey,
-        next        : Mu.xdSession('unknown', cb, g, 'parent'),
+        next        : Mu.xdSession(cb, g, 'parent'),
         session_key : Mu.Session.session_key
       });
 
@@ -379,7 +370,7 @@ Mu = {
   // make an _API_ call (this is not a iframe or a popup)
   disconnect: function(cb) {
     Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
-      cb(Mu.ConnectStatus = 'disconnected', Mu.Session = null);
+      cb(Mu.Session = null);
     });
   },
 
