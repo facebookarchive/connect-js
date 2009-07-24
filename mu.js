@@ -1,42 +1,53 @@
 Mu = {
+  // use the init method to set these values correctly
   ApiKey        : null,
-  ChannelUrl    : null,
   ConnectStatus : 'unknown', // or 'disconnected' or 'connected'
   Session       : null,
+  XdUrl         : null,
 
-  Domain        : 'http://www.facebook.com/',
-  ConnectDomain : 'http://www.connect.facebook.com/',
+  // the various domains needed for using Connect
   ApiDomain     : 'http://api.facebook.com/',
+  ConnectDomain : 'http://www.connect.facebook.com/',
+  Domain        : 'http://www.facebook.com/',
 
+  // these are used the cross-domain communication and jsonp logic
   Callbacks     : {},
   XdFrames      : {},
 
 
 
-  // initialize the library
-  init: function(apiKey, channelUrl, session) {
-    if (channelUrl.indexOf('http') !== 0) {
+  /**
+   * Initialize the library.
+   *
+   * @access public
+   * @param apiKey  {String} your application API key
+   * @param xdUrl   {String} URL to the xd.html file
+   * @param session {Object} an existing session (optional)
+   */
+  init: function(apiKey, xdUrl, session) {
+    // handle relative, absolute or fully qualified url
+    if (xdUrl.indexOf('http') !== 0) {
       var base = window.location.protocol + '//' + window.location.host;
-      if (channelUrl.charAt(0) == '/') {
-        channelUrl = base + channelUrl;
+      if (xdUrl.charAt(0) == '/') {
+        xdUrl = base + xdUrl;
       } else {
         var path = window.location.pathname;
-        channelUrl = (
+        xdUrl = (
           base +
           path.substr(0, path.lastIndexOf('/') + 1) +
-          channelUrl
+          xdUrl
         );
       }
     }
     // we should never be busting the cache
-    if (channelUrl.indexOf('#') < 0) {
-      channelUrl += '#';
+    if (xdUrl.indexOf('#') < 0) {
+      xdUrl += '#';
     }
 
     Mu.ApiKey        = apiKey;
-    Mu.ChannelUrl    = channelUrl;
-    Mu.Session       = session;
     Mu.ConnectStatus = session ? 'connected' : 'unknown';
+    Mu.Session       = session;
+    Mu.XdUrl         = xdUrl;
   },
 
 
@@ -45,12 +56,25 @@ Mu = {
   // helper functions
   //
 
-  // weak random id's for various things
+  /**
+   * Generates a weak random ID.
+   *
+   * @access private
+   * @returns {String}  a random ID
+   */
   guid: function() {
     return 'f' + (Math.random() * (1<<30)).toString(16).replace('.', '');
   },
 
-  // encode to query string
+  /**
+   * Encode parameters to a query string.
+   *
+   * @access protected
+   * @param   params {Object}  the parameters to encode
+   * @param   sep    {String}  the separator string (defaults to '&')
+   * @param   encode {Boolean} indicate if the key/values should be URI encoded
+   * @returns        {String}  the query string
+   */
   encodeQS: function(params, sep, encode) {
     sep    = sep === undefined ? '&' : sep;
     encode = encode === false ? function(s) { return s; } : encodeURIComponent;
@@ -68,7 +92,13 @@ Mu = {
     return pairs.join(sep);
   },
 
-  // decode from query string
+  /**
+   * Decode a query string into a parameters object.
+   *
+   * @access protected
+   * @param   str {String} the query string
+   * @returns     {Object} the parameters to encode
+   */
   decodeQS: function(str) {
     var
       decode = decodeURIComponent,
@@ -85,8 +115,14 @@ Mu = {
     return params;
   },
 
-  // builds and inserts a hidden iframe
-  hiddenIframe: function(url, frame) {
+  /**
+   * Builds and inserts a hidden iframe.
+   *
+   * @access private
+   * @param {String}  url the URL for the iframe
+   * @param {String}  id  the id to store the node against in XdFrames
+   */
+  hiddenIframe: function(url, id) {
     var
       node  = document.createElement('iframe'),
       style = node.style;
@@ -97,10 +133,19 @@ Mu = {
 
     node.setAttribute('src', url);
 
-    Mu.XdFrames[frame] = document.body.appendChild(node);
+    Mu.XdFrames[id] = document.body.appendChild(node);
   },
 
-  // for popup windows. can only be used in a user initiated event
+  /**
+   * Open a popup window with the given url and dimensions and place it at the
+   * center of the current window.
+   *
+   * @access private
+   * @param url    {String}  the url for the popup
+   * @param width  {Integer} the initial width for the popup
+   * @param height {Integer} the initial height for the popup
+   * @param id     {String}  the id to store the window against in XdFrames
+   */
   popup: function(url, width, height, id) {
     // we try to place it at the center of the current window
     var
@@ -123,7 +168,7 @@ Mu = {
         ',height=' + height +
         ',left=' + left +
         ',top=' + top
-       );
+      );
 
     Mu.XdFrames[id] = window.open(url, '_blank', features);
   },
@@ -134,48 +179,61 @@ Mu = {
   // the cross domain communication layer
   //
 
-  // builds a url attached to a callback for xd messages
+  /**
+   * Builds a url attached to a callback for xd messages.
+   *
+   * This is one half of the XD layer. Given a callback function, we generate a
+   * xd URL which will invoke the function. This allows us to generate redirect
+   * urls (used for next/cancel and so on) which will invoke our callback
+   * functions.
+   *
+   * @access private
+   * @param cb     {Function} the callback function
+   * @param frame  {String}   the frame id for the callback will be used with
+   * @param target {String}   parent or opener to indicate the window relation
+   * @returns      {String}   the xd url bound to the callback
+   */
   xdHandler: function(cb, frame, target) {
     var g = Mu.guid();
     Mu.Callbacks[g] = cb;
-    return Mu.ChannelUrl + Mu.encodeQS({
+    return Mu.XdUrl + Mu.encodeQS({
       frame  : frame,
       cb     : g,
       target : target || 'opener'
     });
   },
 
-  // result token based handler
-  xdResult: function(g, cb, target) {
-    return Mu.xdHandler(function(params) {
-      cb(params && params.result);
-    }, g, target) + '&result=xxRESULTTOKENxx';
+  /**
+   * This function is invoked internally by the xd.html file. It parses the
+   * url, and uses the target value to pass on the parameters to xdRecv in the
+   * original window.
+   *
+   * @access private
+   * @param href {String}  the full url including the fragment
+   */
+  xdChild: function(href) {
+    // the ? => & conversion is because of a bug in login.php
+    var params = Mu.decodeQS(
+      href.substr(href.indexOf('#') + 1).replace('?', '&'));
+
+    // silently do nothing when target is missing
+    if ('target' in params) {
+      window[params.target].Mu.xdRecv(params);
+    }
   },
 
-  // session handler
-  xdSession: function(g, callback, status, target) {
-    return Mu.xdHandler(function(params) {
-      // first we reset
-      Mu.ConnectStatus = status;
-      Mu.Session       = null;
-
-      // try to extract a session
-      if (params && params.session) {
-        try {
-          Mu.Session = params.session = JSON.parse(params.session);
-        } catch(e) {}
-      }
-
-      // user defined callback
-      callback(status, Mu.Session);
-    }, g, target);
-  },
-
-  // handles an incoming xd message
+  /**
+   * After the xdChild function has done the minimal processing to find the
+   * target window, it passes the parameters onto this function to let it
+   * invoke the bound callback with the params and remove to window/frame.
+   *
+   * @access private
+   * @param params {Object} the parameters passed on by xdChild
+   */
   xdRecv: function(params) {
     var
-      frame    = Mu.XdFrames[params.frame],
-      callback = Mu.Callbacks[params.cb];
+      frame = Mu.XdFrames[params.frame],
+      cb    = Mu.Callbacks[params.cb];
 
     // remove an iframe or close a popup window
     if (frame.tagName) {
@@ -191,17 +249,56 @@ Mu = {
     // cleanup and fire
     delete Mu.XdFrames[params.frame];
     delete Mu.Callbacks[params.cb];
-    callback(params);
+    cb(params);
   },
 
-  // invoked by xd.html
-  xdChild: function(href) {
-    // the ? => & conversion is because of a bug in login.php
-    var params = Mu.decodeQS(
-      href.substr(href.indexOf('#') + 1).replace('?', '&'));
-    if ('target' in params) {
-      window[params.target].Mu.xdRecv(params);
-    }
+  /**
+   * Some Facebook redirect URLs use a special 'xxRESULTTOKENxx' to return
+   * custom values. This is a convenience function to wrap a callback that
+   * expects this value back.
+   *
+   * @access private
+   * @param cb     {Function} the callback function
+   * @param frame  {String}   the frame id for the callback will be used with
+   * @param target {String}   parent or opener to indicate the window relation
+   * @returns      {String}   the xd url bound to the callback
+   */
+  xdResult: function(cb, frame, target) {
+    return Mu.xdHandler(function(params) {
+      cb(params && params.result);
+    }, frame, target) + '&result=xxRESULTTOKENxx';
+  },
+
+  /**
+   * This handles receiving a session from:
+   *  - login_status.php
+   *  - login.php
+   *  - tos.php
+   * And calls the given callback with the (status, session)
+   *
+   * @access private
+   * @param status {String}   the predefined status this callback will trigger
+   * @param cb     {Function} the callback function
+   * @param frame  {String}   the frame id for the callback will be used with
+   * @param target {String}   parent or opener to indicate the window relation
+   * @returns      {String}   the xd url bound to the callback
+   */
+  xdSession: function(status, cb, frame, target) {
+    return Mu.xdHandler(function(params) {
+      // first we reset
+      Mu.ConnectStatus = status;
+      Mu.Session       = null;
+
+      // try to extract a session
+      if (params && params.session) {
+        try {
+          Mu.Session = JSON.parse(params.session);
+        } catch(e) {}
+      }
+
+      // user defined callback
+      cb(status, Mu.Session);
+    }, frame, target);
   },
 
 
@@ -211,30 +308,41 @@ Mu = {
   // interaction. others are popup windows.
   //
 
-  // find out the current status from the server
+  /**
+   * Find out the current status from the server, and get a session if the user
+   * is connected. The callback is invoked with (status, session).
+   *
+   * @access public
+   * @param cb {Function} the callback function
+   */
   status: function(cb) {
     var
       g   = Mu.guid(),
       url = Mu.ConnectDomain + 'extern/login_status.php?' + Mu.encodeQS({
         api_key    : Mu.ApiKey,
-        no_session : Mu.xdSession(g, cb, 'disconnected', 'parent'),
-        no_user    : Mu.xdSession(g, cb, 'unknown',      'parent'),
-        ok_session : Mu.xdSession(g, cb, 'connected',    'parent')
+        no_session : Mu.xdSession('disconnected', cb, g, 'parent'),
+        no_user    : Mu.xdSession('unknown',      cb, g, 'parent'),
+        ok_session : Mu.xdSession('connected',    cb, g, 'parent')
       });
 
     Mu.hiddenIframe(url, g);
   },
 
-  // open a new window asking the user to log in
+  /**
+   * Open a new window asking the user to log in.
+   *
+   * @access public
+   * @param cb {Function} the callback function
+   */
   login: function(cb) {
     var
       g   = Mu.guid(),
       url = Mu.Domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu.ApiKey,
-        cancel_url     : Mu.xdSession(g, cb, 'unknown'),
+        cancel_url     : Mu.xdSession('unknown', cb, g),
         display        : 'popup',
         fbconnect      : 1,
-        next           : Mu.xdSession(g, cb, 'connected'),
+        next           : Mu.xdSession('connected', cb, g),
         return_session : 1,
         v              : '1.0'
       });
@@ -248,10 +356,10 @@ Mu = {
       g   = Mu.guid(),
       url = Mu.Domain + 'tos.php?' + Mu.encodeQS({
         api_key        : Mu.ApiKey,
-        cancel_url     : Mu.xdSession(g, cb, 'disconnected'),
+        cancel_url     : Mu.xdSession('disconnected', cb, g),
         display        : 'popup',
         fbconnect      : 1,
-        next           : Mu.xdSession(g, cb, 'connected'),
+        next           : Mu.xdSession('connected', cb, g),
         return_session : 1,
         v              : '1.0'
       });
@@ -265,7 +373,7 @@ Mu = {
       g   = Mu.guid(),
       url = Mu.Domain + 'logout.php?' + Mu.encodeQS({
         api_key     : Mu.ApiKey,
-        next        : Mu.xdSession(g, cb, 'unknown', 'parent'),
+        next        : Mu.xdSession('unknown', cb, g, 'parent'),
         session_key : Mu.Session.session_key
       });
 
@@ -287,7 +395,7 @@ Mu = {
         api_key  : Mu.ApiKey,
         display  : 'popup',
         ext_perm : perms,
-        next     : Mu.xdResult(g, cb),
+        next     : Mu.xdResult(cb, g),
         v        : '1.0'
       });
 
@@ -315,7 +423,7 @@ Mu = {
         attachment          : attach ? JSON.stringify(attach) : undefined,
         message             : message,
         preview             : true,
-        session_key         : Mu.Session ? Mu.Session.session_key : '',
+        session_key         : Mu.Session ? Mu.Session.session_key : undefined,
         target_id           : target_id,
         user_message_prompt : prompt_message
       });
@@ -331,7 +439,7 @@ Mu = {
         api_key     : Mu.ApiKey,
         display     : 'dialog',
         id          : id,
-        next        : Mu.xdResult(g, cb),
+        next        : Mu.xdResult(cb, g),
         session_key : Mu.Session.session_key
       });
 
