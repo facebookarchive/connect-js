@@ -16,7 +16,7 @@ function publishExample() {
 
 // enable/disable connect mode buttons
 function setConnected(isConnected) {
-  var input = $('connected').getElementsByTagName('input');
+  var input = $('integration').getElementsByTagName('input');
   for (var i=0, l=input.length; i<l; i++) {
     input[i].disabled = !isConnected;
   }
@@ -42,7 +42,7 @@ function setConnected(isConnected) {
 }
 
 // handles a session (or lack thereof)
-function gotStatus(status, session) {
+function gotStatus(status, session, perms) {
   $('status').innerHTML = status;
   $('status').className = status;
 
@@ -72,6 +72,14 @@ function gotStatus(status, session) {
       '<tr>' + rows.join('</tr><tr>') + '</tr>' +
       '</table>'
     );
+
+    if (perms) {
+      statusUpdate(
+        'perms-info',
+        'were ' + (perms ? '' : 'not ') + 'granted.',
+        perms
+      );
+    }
   }
 }
 
@@ -81,14 +89,6 @@ function statusUpdate(infoID, msg, yes) {
   info.className = 'info ' + (yes ? 'yes' : 'no');
   info.style.visibility = 'visible';
   window.setTimeout(function() { info.style.visibility = 'hidden'; }, 3000);
-}
-
-function gotPerms(granted) {
-  statusUpdate(
-    'perms-info',
-    'were ' + (granted ? '' : 'not ') + 'granted.',
-    granted
-  );
 }
 
 function friendAdded(added) {

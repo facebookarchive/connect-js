@@ -77,7 +77,7 @@
 
         <input type="button" value="Status"     onclick="Mu.status(gotStatus)">
         <input type="button" value="Login"      onclick="Mu.login(gotStatus)"      id="bt-login"      disabled="disabled">
-        <input type="button" value="Connect"    onclick="Mu.connect(gotStatus)"    id="bt-connect"    disabled="disabled">
+        <input type="button" value="Connect"    onclick="Mu.login(gotStatus)"    id="bt-connect"    disabled="disabled">
         <input type="button" value="Disconnect" onclick="Mu.disconnect(gotStatus)" id="bt-disconnect" disabled="disabled">
         <input type="button" value="Logout"     onclick="Mu.logout(gotStatus)"     id="bt-logout"     disabled="disabled">
       </div>
@@ -86,15 +86,15 @@
         <div id="permissions">
           <h2>Permissions <span class="info" id="perms-info"></span></h2>
 
-          <input type="button" disabled="disabled" value="Read Stream"    onclick="Mu.permissions('read_stream', gotPerms, 388)">
-          <input type="button" disabled="disabled" value="Publish Stream" onclick="Mu.permissions('publish_stream', gotPerms)">
-          <input type="button" disabled="disabled" value="Full Stream"    onclick="Mu.permissions('read_stream,publish_stream', gotPerms, 388)">
-          <input type="button" disabled="disabled" value="Offline Access" onclick="Mu.permissions('offline_access', gotPerms, 185)">
-          <input type="button" disabled="disabled" value="Events"         onclick="Mu.permissions('create_event,rsvp_event', gotPerms, 199)">
-          <input type="button" disabled="disabled" value="SMS"            onclick="Mu.permissions('sms', gotPerms, 418)">
-          <input type="button" disabled="disabled" value="Bulk"           onclick="Mu.permissions('read_stream,offline_access,sms,create_event,rsvp_event', gotPerms, 418)">
+          <input type="button" value="Read Stream"    onclick="Mu.login(gotStatus, 'read_stream')">
+          <input type="button" value="Publish Stream" onclick="Mu.login(gotStatus, 'publish_stream')">
+          <input type="button" value="Full Stream"    onclick="Mu.login(gotStatus, 'read_stream,publish_stream')">
+          <input type="button" value="Offline Access" onclick="Mu.login(gotStatus, 'offline_access')">
+          <input type="button" value="Events"         onclick="Mu.login(gotStatus, 'create_event,rsvp_event')">
+          <input type="button" value="SMS"            onclick="Mu.login(gotStatus, 'sms')">
+          <input type="button" value="Bulk"           onclick="Mu.login(gotStatus, 'read_stream,offline_access,sms,create_event,rsvp_event')">
 
-          <input type="button" disabled="disabled" value="All"           onclick="Mu.permissions('read_stream,status_update,photo_upload,video_upload,sms,create_listing,create_event,rsvp_event,offline_access,email,create_note,share_item,export_stream,auto_publish_short_feed,publish_stream,auto_publish_recent_activity', gotPerms)">
+          <input type="button" value="All"           onclick="Mu.login(gotStatus, 'read_stream,status_update,photo_upload,video_upload,sms,create_listing,create_event,rsvp_event,offline_access,email,create_note,share_item,export_stream,auto_publish_short_feed,publish_strea)">
         </div>
 
         <div id="integration">

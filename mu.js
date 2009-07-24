@@ -84,7 +84,9 @@ Mu = {
       k;
 
     for (k in params) {
-      if (params.hasOwnProperty(k) && typeof params[k] != 'undefined') {
+      if (params.hasOwnProperty(k) &&
+          params[k] !== null &&
+          typeof params[k] != 'undefined') {
         pairs.push(encode(k) + '=' + encode(params[k]));
       }
     }
@@ -212,9 +214,12 @@ Mu = {
    * @param href {String}  the full url including the fragment
    */
   xdChild: function(href) {
-    // the ? => & conversion is because of a bug in login.php
-    var params = Mu.decodeQS(
-      href.substr(href.indexOf('#') + 1).replace('?', '&'));
+    // FIXME on fb side
+    // merge the query and fragment params because the session can be returned
+    // in either.
+    var
+      merged = href.replace('?', '&').replace('#', '&'),
+      params = Mu.decodeQS(merged.substr(merged.indexOf('&') + 1));
 
     // silently do nothing when target is missing
     if ('target' in params) {
@@ -265,7 +270,7 @@ Mu = {
    */
   xdResult: function(cb, frame, target) {
     return Mu.xdHandler(function(params) {
-      cb(params && params.result);
+      cb(params.result != 'xxRESULTTOKENxx' && params.result);
     }, frame, target) + '&result=xxRESULTTOKENxx';
   },
 
@@ -274,7 +279,9 @@ Mu = {
    *  - login_status.php
    *  - login.php
    *  - tos.php
-   * And calls the given callback with the (status, session)
+   * It also (optionally) handles the xxRESULTTOKENxx response from:
+   *  - prompt_permissions.php
+   * And calls the given callback with the (status, session, perms)
    *
    * @access private
    * @param status {String}   the predefined status this callback will trigger
@@ -290,15 +297,17 @@ Mu = {
       Mu.Session       = null;
 
       // try to extract a session
-      if (params && params.session) {
-        try {
-          Mu.Session = JSON.parse(params.session);
-        } catch(e) {}
-      }
+      try {
+        Mu.Session = JSON.parse(params.session);
+      } catch(e) {}
 
       // user defined callback
-      cb(status, Mu.Session);
-    }, frame, target);
+      cb(
+        status,
+        Mu.Session,
+        params.result != 'xxRESULTTOKENxx' && params.result
+      );
+    }, frame, target) + '&result=xxRESULTTOKENxx';
   },
 
 
@@ -329,12 +338,13 @@ Mu = {
   },
 
   /**
-   * Open a new window asking the user to log in.
+   * Login/Authorize/Permissions.
    *
    * @access public
-   * @param cb {Function} the callback function
+   * @param cb    {Function} the callback function
+   * @param perms {String}   (optional) comma separated list of permissions
    */
-  login: function(cb) {
+  login: function(cb, perms) {
     var
       g   = Mu.guid(),
       url = Mu.Domain + 'login.php?' + Mu.encodeQS({
@@ -343,28 +353,12 @@ Mu = {
         display        : 'popup',
         fbconnect      : 1,
         next           : Mu.xdSession('connected', cb, g),
+        req_perms      : perms,
         return_session : 1,
         v              : '1.0'
       });
 
     Mu.popup(url, 450, 415, g);
-  },
-
-  // show a iframe dialog asking the user to connect
-  connect: function(cb) {
-    var
-      g   = Mu.guid(),
-      url = Mu.Domain + 'tos.php?' + Mu.encodeQS({
-        api_key        : Mu.ApiKey,
-        cancel_url     : Mu.xdSession('disconnected', cb, g),
-        display        : 'popup',
-        fbconnect      : 1,
-        next           : Mu.xdSession('connected', cb, g),
-        return_session : 1,
-        v              : '1.0'
-      });
-
-    Mu.popup(url, 450, 327, g);
   },
 
   // log the user out in the background
@@ -387,22 +381,6 @@ Mu = {
     });
   },
 
-  // request the user to grant permissions
-  permissions: function(perms, cb, height) {
-    var
-      g   = Mu.guid(),
-      url = Mu.Domain + 'connect/prompt_permissions.php?' + Mu.encodeQS({
-        api_key  : Mu.ApiKey,
-        display  : 'popup',
-        ext_perm : perms,
-        next     : Mu.xdResult(cb, g),
-        v        : '1.0'
-      });
-
-    // the height can vary widely, so we pick a safe tall value
-    Mu.popup(url, 477, height || 500, g);
-  },
-
   // let the user share the specified (or default current) url
   share: function(u, title) {
     var
@@ -418,12 +396,12 @@ Mu = {
   publish: function(message, attach, actions, target_id, prompt_message) {
     var
       url = Mu.Domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
-        action_links        : actions ? JSON.stringify(actions) : undefined,
+        action_links        : actions ? JSON.stringify(actions) : null,
         api_key             : Mu.ApiKey,
-        attachment          : attach ? JSON.stringify(attach) : undefined,
+        attachment          : attach ? JSON.stringify(attach) : null,
         message             : message,
         preview             : true,
-        session_key         : Mu.Session ? Mu.Session.session_key : undefined,
+        session_key         : Mu.Session ? Mu.Session.session_key : null,
         target_id           : target_id,
         user_message_prompt : prompt_message
       });
