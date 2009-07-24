@@ -340,6 +340,8 @@ Mu = {
   /**
    * Login/Authorize/Permissions.
    *
+   * The callback is invoked with (status, session, permissions).
+   *
    * @access public
    * @param cb    {Function} the callback function
    * @param perms {String}   (optional) comma separated list of permissions
