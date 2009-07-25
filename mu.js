@@ -399,7 +399,7 @@ Mu = {
   share: function(u, title) {
     var
       url = Mu.Domain + 'sharer.php?' + Mu.encodeQS({
-        title : title || '',
+        title : title,
         u     : u || window.location.toString()
       });
 
