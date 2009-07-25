@@ -430,26 +430,31 @@ Mu = {
    *
    * This is the preferred way of providing content from your application into
    * the Facebook News Feed or The Stream. This function can be used without
-   * requiring a user to login.
+   * requiring a user to login or even having an API key.
    *
    * If you have a registered application, you may fist call Mu.init with your
    * API key if you want the Application Icon and attribution to show up.
    *
    * All parameters are optional.
    *
+   * FIXME: the callback function does not get invoked correctly.
+   *
    * @access public
-   * @param message        {String} this allows prepopulating the message
-   * @param attach         {Array}  an array of attachments
-   * @param actions        {Array}  an array of action links
-   * @param target_id      {String} a target profile id
-   * @param prompt_message {String} custom prompt message
+   * @param message        {String}   this allows prepopulating the message
+   * @param attach         {Array}    an array of attachments
+   * @param actions        {Array}    an array of action links
+   * @param target_id      {String}   a target profile id
+   * @param prompt_message {String}   custom prompt message
+   * @param cb             {Function} called with the result of the action
    */
-  publish: function(message, attach, actions, target_id, prompt_message) {
+  publish: function(message, attach, actions, target_id, prompt_message, cb) {
     var
+      g   = Mu.ApiKey ? Mu.guid() : null,
       url = Mu.Domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
         action_links        : actions ? JSON.stringify(actions) : null,
         api_key             : Mu.ApiKey,
         attachment          : attach ? JSON.stringify(attach) : null,
+        callback            : g ? Mu.xdResult(cb, g) : g,
         message             : message,
         preview             : true,
         session_key         : Mu.Session ? Mu.Session.session_key : null,
@@ -457,7 +462,7 @@ Mu = {
         user_message_prompt : prompt_message
       });
 
-    Mu.popup(url, 550, 242);
+    Mu.popup(url, 550, 242, g);
   },
 
   /**
@@ -482,11 +487,11 @@ Mu = {
   },
 
   /**
-   * Sign the given params, either using an explicit secret or using the current
-   * session. It updates the given params object _in place_ with the necessary
-   * parameters.
+   * Sign the given params and prepare them for an API call, either using an
+   * explicit secret or using the current session. It updates the given params
+   * object _in place_ with the necessary parameters.
    *
-   * @access public
+   * @access protected
    * @param params {Object} the parameters to sign
    * @param secret {String} secret to sign the call (defaults to the current
    *                        session secret)

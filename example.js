@@ -10,7 +10,10 @@ function publishExample() {
     undefined,
     [{text:'custom action link', href:'http://code.daaku.org/mu/'}],
     undefined,
-    'Tell the world about Popups?'
+    'Tell the world about Popups?',
+    function(result) {
+      alert('Publish Result: "' + result + '"');
+    }
   );
 }
 
