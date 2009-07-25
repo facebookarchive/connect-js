@@ -439,8 +439,8 @@ Mu = {
    *
    * @access public
    * @param message        {String} this allows prepopulating the message
-   * @param attach         {String} an array of attachments
-   * @param actions        {String} an array of action links
+   * @param attach         {Array}  an array of attachments
+   * @param actions        {Array}  an array of action links
    * @param target_id      {String} a target profile id
    * @param prompt_message {String} custom prompt message
    */
@@ -483,7 +483,7 @@ Mu = {
 
   /**
    * Sign the given params, either using an explicit secret or using the current
-   * session. It updates the given params object _in place_ with the new
+   * session. It updates the given params object _in place_ with the necessary
    * parameters.
    *
    * @access public
