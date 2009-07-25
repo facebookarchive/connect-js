@@ -432,7 +432,10 @@ Mu = {
    * requiring a user to login or even having an API key.
    *
    * If you have a registered application, you may fist call Mu.init with your
-   * API key if you want the Application Icon and attribution to show up.
+   * API key if you want the Application Icon and attribution to show up. You
+   * must also do this if you wish to use the callback to get notified of the
+   * post_id of the published post, or find out if the user did not publish
+   * (clicked on the skipped button).
    *
    * All parameters are optional.
    *
