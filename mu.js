@@ -5,9 +5,9 @@ Mu = {
   XdUrl   : null,
 
   // the various domains needed for using Connect
-  ApiDomain     : 'http://api.facebook.com/',
-  ConnectDomain : 'http://www.connect.facebook.com/',
-  Domain        : 'http://www.facebook.com/',
+  ApiDomain     : window.location.protocol + '//api.facebook.com/',
+  ConnectDomain : window.location.protocol + '//www.connect.facebook.com/',
+  Domain        : window.location.protocol + '//www.facebook.com/',
 
   // these are used the cross-domain communication and jsonp logic
   Callbacks     : {},
