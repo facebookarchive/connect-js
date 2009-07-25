@@ -119,8 +119,8 @@ Mu = {
    * Builds and inserts a hidden iframe.
    *
    * @access private
-   * @param {String}  url the URL for the iframe
-   * @param {String}  id  the id to store the node against in XdFrames
+   * @param url {String} the URL for the iframe
+   * @param id  {String} the id to store the node against in XdFrames
    */
   hiddenIframe: function(url, id) {
     var
@@ -317,12 +317,13 @@ Mu = {
    */
   status: function(cb) {
     var
-      g   = Mu.guid(),
-      url = Mu.ConnectDomain + 'extern/login_status.php?' + Mu.encodeQS({
+      g     = Mu.guid(),
+      xdUrl = Mu.xdSession(cb, g, 'parent'),
+      url   = Mu.ConnectDomain + 'extern/login_status.php?' + Mu.encodeQS({
         api_key    : Mu.ApiKey,
-        no_session : Mu.xdSession(cb, g, 'parent'),
-        no_user    : Mu.xdSession(cb, g, 'parent'),
-        ok_session : Mu.xdSession(cb, g, 'parent')
+        no_session : xdUrl,
+        no_user    : xdUrl,
+        ok_session : xdUrl
       });
 
     Mu.hiddenIframe(url, g);
@@ -339,13 +340,14 @@ Mu = {
    */
   login: function(cb, perms) {
     var
-      g   = Mu.guid(),
-      url = Mu.Domain + 'login.php?' + Mu.encodeQS({
+      g     = Mu.guid(),
+      xdUrl = Mu.xdSession(cb, g),
+      url   = Mu.Domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu.ApiKey,
-        cancel_url     : Mu.xdSession(cb, g),
+        cancel_url     : xdUrl,
         display        : 'popup',
         fbconnect      : 1,
-        next           : Mu.xdSession(cb, g),
+        next           : xdUrl,
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
