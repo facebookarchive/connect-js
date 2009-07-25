@@ -469,35 +469,43 @@ Mu = {
    * and other params).
    *
    * @access public
-   * @param params {Object}   the parameters for the query
-   * @param cb     {Function} the callback function to handle the response
+   * @param query {Object}   the parameters for the query
+   * @param cb    {Function} the callback function to handle the response
    */
-  api: function(params, cb) {
+  api: function(query, cb) {
     var
       g      = Mu.guid(),
       script = document.createElement('script'),
       k,
 
-      // general signed api call parameters
-      signed = {
-        api_key     : Mu.ApiKey,
-        call_id     : (new Date()).getTime(),
-        callback    : 'Mu.Callbacks.' + g,
-        format      : 'json',
-        session_key : Mu.Session.session_key,
-        ss          : 1,
-        v           : '1.0'
+      // general api call parameters
+      params = {
+        api_key  : Mu.ApiKey,
+        callback : 'Mu.Callbacks.' + g,
+        format   : 'json',
+        v        : '1.0'
       };
 
-    for (k in params) {
-      if (params.hasOwnProperty(k)) {
-        signed[k] = params[k];
+    // optionally include signature parameters
+    if (Mu.Session) {
+      params.call_id     = (new Date()).getTime();
+      params.session_key = Mu.Session.session_key;
+      params.ss          = 1;
+    }
+
+    // copy the given query into params
+    for (k in query) {
+      if (query.hasOwnProperty(k)) {
+        params[k] = query[k];
       }
     }
 
-    // the signature is described at:
-    // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
-    signed.sig = md5sum(Mu.encodeQS(signed, '', false) + Mu.Session.secret);
+    // optionally generate the signature
+    if (Mu.Session) {
+      // the signature is described at:
+      // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
+      params.sig = md5sum(Mu.encodeQS(params, '', false) + Mu.Session.secret);
+    }
 
     // this is the JSONP callback invoked by the response from restserver.php
     Mu.Callbacks[g] = function(response) {
@@ -506,7 +514,7 @@ Mu = {
       script.parentNode.removeChild(script);
     };
 
-    script.src = Mu.ApiDomain + 'restserver.php?' + Mu.encodeQS(signed);
+    script.src = Mu.ApiDomain + 'restserver.php?' + Mu.encodeQS(params);
     document.getElementsByTagName('head')[0].appendChild(script);
   }
 };
