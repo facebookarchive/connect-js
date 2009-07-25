@@ -354,7 +354,12 @@ Mu = {
     Mu.popup(url, 450, 415, g);
   },
 
-  // log the user out in the background
+  /**
+   * Logout the user in the background using a hidden iframe.
+   *
+   * @access public
+   * @param cb    {Function} the callback function
+   */
   logout: function(cb) {
     var
       g   = Mu.guid(),
@@ -367,14 +372,28 @@ Mu = {
     Mu.hiddenIframe(url, g);
   },
 
-  // make an _API_ call (this is not a iframe or a popup)
+  /**
+   * Make an API call and revoke the user's authorization with your
+   * application.
+   *
+   * @access public
+   * @param cb    {Function} the callback function
+   */
   disconnect: function(cb) {
     Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
       cb(Mu.Session = null);
     });
   },
 
-  // let the user share the specified (or default current) url
+  /**
+   * Share a given URL with the specified title.
+   *
+   * This call can be used without requiring the user to sign in.
+   *
+   * @access public
+   * @param u     {String} the url (defaults to current URL)
+   * @param title {String} a custom title
+   */
   share: function(u, title) {
     var
       url = Mu.Domain + 'sharer.php?' + Mu.encodeQS({
@@ -385,7 +404,25 @@ Mu = {
     Mu.popup(url, 575, 380);
   },
 
-  // publish to the stream
+  /**
+   * Publish a post to the stream.
+   *
+   * This is the preferred way of providing content from your application into
+   * the Facebook News Feed or The Stream. This function can be used without
+   * requiring a user to login.
+   *
+   * If you have a registered application, you may fist call Mu.init with your
+   * API key if you want the Application Icon and attribution to show up.
+   *
+   * All parameters are optional.
+   *
+   * @access public
+   * @param message        {String} this allows prepopulating the message
+   * @param attach         {String} an array of attachments
+   * @param actions        {String} an array of action links
+   * @param target_id      {String} a target profile id
+   * @param prompt_message {String} custom prompt message
+   */
   publish: function(message, attach, actions, target_id, prompt_message) {
     var
       url = Mu.Domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
@@ -402,7 +439,12 @@ Mu = {
     Mu.popup(url, 550, 242);
   },
 
-  // add friend
+  /**
+   * Prompt the user to add the given id as a friend.
+   *
+   * @param id {String}   the id of the target user
+   * @param cb {Function} called with the result of the action
+   */
   addFriend: function(id, cb) {
     var
       g   = Mu.guid(),
@@ -417,14 +459,16 @@ Mu = {
     Mu.popup(url, 565, 240, g);
   },
 
-
-
-  //
-  // this allows making siged API calls using JSONP. make sure you understand
-  // JSONP limitations.
-  //
-
-  // make an api call
+  /**
+   * Make a API call to restserver.php. This call will be automatically signed
+   * if a session is available. The call is made using JSONP, which is
+   * restricted to a GET with a maximum payload of 2k (including the signature
+   * and other params).
+   *
+   * @access public
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   */
   api: function(params, cb) {
     var
       g      = Mu.guid(),
