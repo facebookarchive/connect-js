@@ -293,7 +293,7 @@ Mu = {
       try {
         Mu.Session = JSON.parse(params.session);
       } catch(e) {
-        Mu.Session       = null;
+        Mu.Session = null;
       }
 
       // user defined callback
