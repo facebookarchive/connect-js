@@ -65,8 +65,7 @@ Mu = {
    */
   copy: function(target, source, overwrite) {
     for (var k in source) {
-      if (source.hasOwnProperty(k) &&
-          (overwrite || !(k in target))) {
+      if (source.hasOwnProperty(k) && (overwrite || !(k in target))) {
         target[k] = source[k];
       }
     }
