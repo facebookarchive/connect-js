@@ -25,7 +25,7 @@ Mu = {
    */
   init: function(apiKey, xdUrl, session) {
     // handle relative, absolute or fully qualified url
-    if (xdUrl.indexOf('http') !== 0) {
+    if (xdUrl.indexOf(window.location.protocol) !== 0) {
       var base = window.location.protocol + '//' + window.location.host;
       if (xdUrl.charAt(0) == '/') {
         xdUrl = base + xdUrl;
