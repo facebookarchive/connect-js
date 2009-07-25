@@ -543,7 +543,7 @@ Mu = {
       script = document.createElement('script');
 
     // shallow clone of params, add callback and sign
-    params = Mu.sign(Mu.copy({ callback: 'Mu.Callbacks.' + g }, params));
+    params = Mu.sign(Mu.copy({callback: 'Mu.Callbacks.' + g}, params), secret);
 
     // this is the JSONP callback invoked by the response from restserver.php
     Mu.Callbacks[g] = function(response) {
