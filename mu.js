@@ -10,8 +10,8 @@ Mu = {
   Domain        : window.location.protocol + '//www.facebook.com/',
 
   // these are used the cross-domain communication and jsonp logic
-  Callbacks     : {},
-  XdFrames      : {},
+  Callbacks : {},
+  XdFrames  : {},
 
 
 
@@ -53,6 +53,25 @@ Mu = {
   //
   // helper functions
   //
+
+  /**
+   * Copy stuff from one object to another.
+   *
+   * @access protected
+   * @param target    {Object}  the target object to copy into
+   * @param source    {Object}  the source object to copy from
+   * @param overwrite {Boolean} indicate if we should overwrite
+   * @returns the _same_ target object back
+   */
+  copy: function(target, source, overwrite) {
+    for (var k in source) {
+      if (source.hasOwnProperty(k) &&
+          (overwrite || !(k in target))) {
+        target[k] = source[k];
+      }
+    }
+    return target;
+  },
 
   /**
    * Generates a weak random ID.
@@ -463,49 +482,68 @@ Mu = {
   },
 
   /**
+   * Sign the given params, either using an explicit secret or using the current
+   * session. It updates the given params object _in place_ with the new
+   * parameters.
+   *
+   * @access public
+   * @param params {Object} the parameters to sign
+   * @param secret {String} secret to sign the call (defaults to the current
+   *                        session secret)
+   * @returns the _same_ params object back
+   */
+  sign: function(params, secret) {
+    // general api call parameters
+    Mu.copy(params, {
+      api_key : Mu.ApiKey,
+      call_id : (new Date()).getTime(),
+      format  : 'json',
+      v       : '1.0'
+    });
+
+    // if an explicit secret was not given, and we have a session, we will
+    // automatically sign using the session. if a explicit secret is given, we
+    // do not nclude these session specific parameters.
+    if (!secret && Mu.Session) {
+      Mu.copy(params, {
+        session_key : Mu.Session.session_key,
+        ss          : 1
+      });
+    }
+
+    // optionally generate the signature. we do this for both the automatic and
+    // explicit case.
+    if (secret || Mu.Session) {
+      // the signature is described at:
+      // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
+      params.sig = md5sum(
+        Mu.encodeQS(params, '', false) +
+        (secret || Mu.Session.secret)
+      );
+    }
+
+    return params;
+  },
+
+  /**
    * Make a API call to restserver.php. This call will be automatically signed
    * if a session is available. The call is made using JSONP, which is
    * restricted to a GET with a maximum payload of 2k (including the signature
    * and other params).
    *
    * @access public
-   * @param query {Object}   the parameters for the query
-   * @param cb    {Function} the callback function to handle the response
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   * @param secret {String}   secret to sign the call (defaults to the current
+   *                          session secret)
    */
-  api: function(query, cb) {
+  api: function(params, cb, secret) {
     var
       g      = Mu.guid(),
-      script = document.createElement('script'),
-      k,
+      script = document.createElement('script');
 
-      // general api call parameters
-      params = {
-        api_key  : Mu.ApiKey,
-        callback : 'Mu.Callbacks.' + g,
-        format   : 'json',
-        v        : '1.0'
-      };
-
-    // optionally include signature parameters
-    if (Mu.Session) {
-      params.call_id     = (new Date()).getTime();
-      params.session_key = Mu.Session.session_key;
-      params.ss          = 1;
-    }
-
-    // copy the given query into params
-    for (k in query) {
-      if (query.hasOwnProperty(k)) {
-        params[k] = query[k];
-      }
-    }
-
-    // optionally generate the signature
-    if (Mu.Session) {
-      // the signature is described at:
-      // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
-      params.sig = md5sum(Mu.encodeQS(params, '', false) + Mu.Session.secret);
-    }
+    // shallow clone of params, add callback and sign
+    params = Mu.sign(Mu.copy({ callback: 'Mu.Callbacks.' + g }, params));
 
     // this is the JSONP callback invoked by the response from restserver.php
     Mu.Callbacks[g] = function(response) {
