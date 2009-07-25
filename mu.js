@@ -444,6 +444,7 @@ Mu = {
   /**
    * Prompt the user to add the given id as a friend.
    *
+   * @access public
    * @param id {String}   the id of the target user
    * @param cb {Function} called with the result of the action
    */
