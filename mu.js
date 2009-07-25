@@ -437,7 +437,7 @@ Mu = {
    *
    * All parameters are optional.
    *
-   * FIXME: the callback function does not get invoked correctly.
+   * FIXME: the callback function does not get invoked.
    *
    * @access public
    * @param message        {String}   this allows prepopulating the message
@@ -449,15 +449,15 @@ Mu = {
    */
   publish: function(message, attach, actions, target_id, prompt_message, cb) {
     var
-      g   = Mu.ApiKey ? Mu.guid() : null,
+      g   = Mu.ApiKey && Mu.guid(),
       url = Mu.Domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
-        action_links        : actions ? JSON.stringify(actions) : null,
+        action_links        : JSON.stringify(actions || {}),
         api_key             : Mu.ApiKey,
-        attachment          : attach ? JSON.stringify(attach) : null,
-        callback            : g ? Mu.xdResult(cb, g) : g,
+        attachment          : JSON.stringify(attach || {}),
+        callback            : g && Mu.xdResult(cb, g),
         message             : message,
         preview             : true,
-        session_key         : Mu.Session ? Mu.Session.session_key : null,
+        session_key         : Mu.Session && Mu.Session.session_key,
         target_id           : target_id,
         user_message_prompt : prompt_message
       });
