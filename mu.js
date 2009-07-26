@@ -207,7 +207,7 @@ Mu = {
    */
   winMonitor: function() {
     // shutdown if we have nothing to monitor
-    if (Mu._winCount == 0) {
+    if (Mu._winCount < 1) {
       window.clearInterval(Mu._winMonitor);
       Mu._winMonitor = null;
       return;
@@ -220,6 +220,7 @@ Mu = {
 
     // check all open windows
     for (var id in Mu._xdFrames) {
+      // ignore prototype properties, and ones without a default callback
       if (Mu._xdFrames.hasOwnProperty(id) && id in Mu._callbacks) {
         var win = Mu._xdFrames[id];
         // ignore iframes
@@ -326,6 +327,7 @@ Mu = {
    * @param cb     {Function} the callback function
    * @param frame  {String}   the frame id for the callback will be used with
    * @param target {String}   parent or opener to indicate the window relation
+   * @param id     {String}   custom id for this callback. defaults to frame id
    * @returns      {String}   the xd url bound to the callback
    */
   xdResult: function(cb, frame, target, id) {
@@ -347,6 +349,7 @@ Mu = {
    * @param cb     {Function} the callback function
    * @param frame  {String}   the frame id for the callback will be used with
    * @param target {String}   parent or opener to indicate the window relation
+   * @param id     {String}   custom id for this callback. defaults to frame id
    * @returns      {String}   the xd url bound to the callback
    */
   xdSession: function(cb, frame, target, id) {
@@ -358,9 +361,11 @@ Mu = {
         Mu._session = null;
       }
 
+      // incase we were granted some new permissions
+      var perms = params.result != 'xxRESULTTOKENxx' && params.result;
+
       // if we were just granted the offline_access permission, we refresh the
       // session information before calling the user defined callback
-      var perms = params.result != 'xxRESULTTOKENxx' && params.result;
       if (perms && perms.indexOf('offline_access') > -1) {
         Mu.status(function(session, p) { cb(session, perms); });
       } else {
