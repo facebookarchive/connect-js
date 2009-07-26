@@ -402,14 +402,12 @@ Mu = {
    */
   login: function(cb, perms) {
     var
-      g     = Mu.guid(),
-      next  = Mu.xdSession(cb, g, 'opener', Mu.guid()),
+      g      = Mu.guid(),
       // if we already have a session, keep it on cancel to fix the possible
       // lack of session being returned from closing the window directly.
-      cancel = Mu._session
-        ? Mu.xdResult(function(p) { cb(Mu.session(), p); }, g)
-        : next,
-      url   = Mu._domain + 'login.php?' + Mu.encodeQS({
+      cancel = Mu.xdResult(function(p) { cb(Mu.session(), p); }, g),
+      next   = Mu.xdSession(cb, g, 'opener', Mu.guid()),
+      url    = Mu._domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
         cancel_url     : cancel,
         display        : 'popup',
