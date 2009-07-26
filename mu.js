@@ -220,7 +220,7 @@ Mu = {
 
     // check all open windows
     for (var id in Mu._xdFrames) {
-      if (Mu._xdFrames.hasOwnProperty(id)) {
+      if (Mu._xdFrames.hasOwnProperty(id) && id in Mu._callbacks) {
         var win = Mu._xdFrames[id];
         // ignore iframes
         if (!win.tagName) {
