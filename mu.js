@@ -618,10 +618,9 @@ Mu = {
    * Accessor for the current Session.
    *
    * @access public
-   * @returns {Object}  a _copy_ of the current Session if available, null
-   *                    otherwise
+   * @returns {Object}  the current Session if available, null otherwise
    */
   session: function() {
-    return Mu._session && Mu.copy({}, Mu._session);
+    return Mu._session;
   }
 };
