@@ -409,17 +409,14 @@ Mu = {
    */
   login: function(cb, perms) {
     var
-      g      = Mu.guid(),
-      // if we already have a session, keep it on cancel to fix the possible
-      // lack of session being returned from closing the window directly.
-      cancel = Mu.xdResult(function(p) { cb(Mu.session(), p); }, g),
-      next   = Mu.xdSession(cb, g, 'opener', Mu.guid()),
-      url    = Mu._domain + 'login.php?' + Mu.encodeQS({
+      g   = Mu.guid(),
+      url = Mu._domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
-        cancel_url     : cancel,
+        // if we already have a session, dont lose it if the user cancels
+        cancel_url     : Mu.xdResult(function(p) { cb(Mu.session(), p); }, g),
         display        : 'popup',
         fbconnect      : 1,
-        next           : next,
+        next           : Mu.xdSession(cb, g, 'opener', Mu.guid()),
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
