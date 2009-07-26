@@ -2,67 +2,17 @@
 Introduction
 ============
 
-Facebook Connect is way to make your application more social. With the Facebook
-Connect APIs you gain access to:
+Facebook Connect_ is way to make your application more social. With the
+it you gain access to:
 
-    #. **Identity**: the user's name, photo and more.
-    #. **Social Graph**: the user's friends and connections.
-    #. **Distribution**: the Stream, and the ability to communicate.
+    #. **Identity**: the user's name, photo and more [User_].
+    #. **Social Graph**: the user's friends and connections [Connection_].
+    #. **Distribution**: the Stream, and the ability to communicate [Publishing_]
     #. **Integration**: publishers, canvas pages, profile boxes & tabs.
 
 This guide is for using the Mu JavaScript library to access the above on your
 site. Mu is a very small library which you can use along with your favourite
-JavaScript library such as Dojo, jQuery, MooTools or YUI.
-
-
-====
-HTTP
-====
-
-Facebook Connect works on top of HTTP. There are two primary techniques you
-should be aware of.
-
-
-Redirects
----------
-
-The browser driven flows used by Connect for Authentication, Permissions,
-Publishing and so on are built using redirects. When you popup a window for the
-user to perform an action on facebook.com, you may want to know the result of
-the action that the user took. In order to get this result, we pass URLs to
-facebook.com that the user's browser will get redirected to based on the action
-they performed. This is most often seen with the 'next' and 'cancel_url'
-parameters.
-
-For example, suppose we want facebook.com to prompt the user to perform an
-action. As part of this, facebook.com shows a dialog, which has two buttons:
-"Okay" and "Cancel". We want find out if the user clicked on "Okay" or
-"Cancel". We would popup a URL with two parameters, such as:
-
-    - next: http://code.daaku.org/prompt/yes
-    - cancel_url: http://code.daaku.org/prompt/cancel
-
-Now when we popup the facebook.com window with the two parameters as above
-given in the URL, facebook.com will redirect the user to one of the given URLs
-based on the user's action. If the user visits http://code.daaku.org/prompt/yes
-then you know they clicked on "Okay", and if they visit
-http://code.daaku.org/prompt/cancel you know they clicked on the cancel button.
-You should be aware of CSRF issues and use tokens as appropriate if you are
-directly using these URLs (Mu takes care of it for you). Note, this is made
-available only on some dialogs, and typically only when a session key is
-provided to ensure the user's privacy and safety.
-
-
-REST
-----
-
-In order to access user's data or make API calls to facebook, you will use REST
-style HTTP calls. These can be made via JavaScript, Flash or on your server
-with Python, PHP, Perl or virtually any other language.
-
-These are standard GET/POST calls identical to what a browser usually does. If
-you are accessing Authenticated data, then you may need to sign them.
-Signatures are discussed in the next section.
+JavaScript library such as Dojo_, jQuery_, MooTools_ or YUI_.
 
 
 
@@ -76,16 +26,23 @@ Getting Started
     #. Enter your website URL in *Connect URL*.
     #. Save Changes
     #. Copy the API Key
-#. Copy the ``xd.html`` file to your webserver
+#. Copy the xd.html_ file to your webserver. The Mu library requires you to
+   copy this static file to your webserver in order to allow facebook.com
+   communicate with your site.
+#. *Optional:* Copy example.html_ to get you started with a minimal page.
 
-The Mu library requires you to copy a static file to your webserver in order to
-allow facebook.com communicate with your site.
+If you are not starting with the example.html_ file, here's the minimal you
+need::
 
-If you are building an application, make sure to call ``Mu.init(apiKey,
-pathToXdFile);`` before using the APIs described below.
+    <script src="http://mu.daaku.org/m.js"></script>
+    <script>
+        Mu.init('YOUR API KEY', 'path/to/xd.html');
+    </script>
 
 Note: ``Mu.publish()`` and ``Mu.share()`` can be used without registering an
 application or copying the ``xd.html`` file to your webserver.
+
+
 
 ==============================
 Authentication & Authorization
@@ -197,13 +154,15 @@ current user's name::
         }
     );
 
+API Calls are listed here: http://wiki.developers.facebook.com/index.php/API
+
 
 FQL
 ---
 
-Facebook Query Language is a SQL like query language that allows access to
-various facebook data in a generic manner. This is a more efficient way of
-getting data from Facebook. The same example as above using FQL::
+Facebook Query Language [FQL_] is a SQL like query language that allows access
+to various facebook data in a generic manner. This is a more efficient way of
+getting data from Facebook. The same example as above using FQL_::
 
     Mu.api(
         {
@@ -220,6 +179,12 @@ queries are done via simpler URL parameters). FQL.multiQuery is also very
 crucial for good performance, as it allows efficiently collecting different
 types of data.
 
+FQL is described here: http://wiki.developers.facebook.com/index.php/FQL
+
+FQL Tables are listed here:
+http://wiki.developers.facebook.com/index.php/FQL_Tables
+
+
 
 ===========
 Integration
@@ -229,7 +194,7 @@ Publishing
 ----------
 
 This is the main, fully featured distribution mechanism for you to publish into
-the user's stream. It can be used, with our without an API key. With an API key
+the user's stream. It can be used, with or without an API key. With an API key
 you can control the Application Icon and get attribution.
 
 Publishing is a powerful feature that allows you to submit rich media and
@@ -253,10 +218,10 @@ Here's an example call utilizing some of the features::
             'power of Facebook, bringing the user\'s identity, social graph ' +
             'and distribution power to your site.'
           ),
-          href: 'http://code.daaku.org/mu/',
+          href: 'http://mu.daaku.org/',
         },
         [
-            { text: 'Mu Console', href: 'http://code.daaku.org/mu/' },
+            { text: 'Mu Console', href: 'http://mu.daaku.org/' },
             { text: 'GitHub Repo', href: 'http://github.com/nshah/mu' }
         ],
         null,
@@ -273,6 +238,16 @@ Here's an example call utilizing some of the features::
         }
     );
 
+Publishing is described in greater detail here:
+http://wiki.developers.facebook.com/index.php/Stream.publish. The API call and
+the ``Mu.publish()`` method have the same parameters.
+
+Attachments are described here:
+http://wiki.developers.facebook.com/index.php/Attachment_%28Streams%29.
+
+Action links are described here:
+http://wiki.developers.facebook.com/index.php/Action_Links.
+
 
 Sharing
 -------
@@ -281,7 +256,76 @@ Sharing is the light weight way of distribution your content. As opposed to the
 structured data explicitly given in the publish call, with share you simply
 provide the URL and optionally a title::
 
-    Mu.share('http://code.daaku.org/mu/', 'Mu Connect');
+    Mu.share('http://mu.daaku.org/', 'Mu Connect');
 
 Both arguments are optional, and just calling ``Mu.share()`` will share the
 current page.
+
+
+
+=================
+How does it work?
+=================
+
+Facebook Connect works on top of HTTP. There are two primary techniques you
+should be aware of.
+
+
+Redirects
+---------
+
+The browser driven flows used by Connect for `Authentication & Authorization`_,
+Permissions_, Publishing_ and so on are built using redirects. When you popup a
+window for the user to perform an action on facebook.com, you may want to know
+the result of the action that the user took. In order to get this result, we
+pass URLs to facebook.com that the user's browser will get redirected to based
+on the action they performed. This is most often seen with the 'next' and
+'cancel_url' parameters.
+
+For example, suppose we want facebook.com to prompt the user to perform an
+action. As part of this, facebook.com shows a dialog, which has two buttons:
+"Okay" and "Cancel". We want find out if the user clicked on "Okay" or
+"Cancel". We would popup a URL with two parameters, such as:
+
+    - next: http://mu.daaku.org/prompt/yes
+    - cancel_url: http://mu.daaku.org/prompt/cancel
+
+Now when we popup the facebook.com window with the two parameters as above
+given in the URL, facebook.com will redirect the user to one of the given URLs
+based on the user's action. If the user visits http://mu.daaku.org/prompt/yes
+then you know they clicked on "Okay", and if they visit
+http://mu.daaku.org/prompt/cancel you know they clicked on the cancel button.
+You should be aware of CSRF issues and use tokens as appropriate if you are
+directly using these URLs (Mu takes care of it for you). Note, this is made
+available only on some dialogs, and typically only when a session key is
+provided to ensure the user's privacy and safety.
+
+
+REST
+----
+
+In order to access user's data or make API calls to facebook, you will use REST
+style HTTP calls. These can be made via JavaScript, Flash or on your server
+with Python, PHP, Perl or virtually any other language.
+
+These are standard GET/POST calls identical to what a browser usually does. If
+you are accessing Authenticated data, then you may need to sign them.
+Signatures are discussed in the next section.
+
+
+
+
+
+
+
+
+.. _Connect: http://www.facebook.com/advertising/?connect
+.. _User: http://wiki.developers.facebook.com/index.php/User_(FQL)
+.. _Connection: http://wiki.developers.facebook.com/index.php/Connection_(FQL)
+.. _Dojo: http://www.dojotoolkit.org/
+.. _jQuery: http://jquery.com/
+.. _MooTools: http://mootools.net/
+.. _YUI: http://developer.yahoo.com/yui/
+.. _FQL: http://wiki.developers.facebook.com/index.php/FQL
+.. _xd.html: http://mu.daaku.org/xd.html
+.. _example.html: http://mu.daaku.org/example.html
