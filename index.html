@@ -85,15 +85,15 @@
         <div id="permissions">
           <h2>Permissions <span class="info" id="perms-info"></span></h2>
 
-          <input type="button" value="Read Stream"    onclick="Mu.login(gotStatus, 'read_stream')">
-          <input type="button" value="Publish Stream" onclick="Mu.login(gotStatus, 'publish_stream')">
-          <input type="button" value="Full Stream"    onclick="Mu.login(gotStatus, 'read_stream,publish_stream')">
-          <input type="button" value="Offline Access" onclick="Mu.login(gotStatus, 'offline_access')">
-          <input type="button" value="Events"         onclick="Mu.login(gotStatus, 'create_event,rsvp_event')">
-          <input type="button" value="SMS"            onclick="Mu.login(gotStatus, 'sms')">
-          <input type="button" value="Bulk"           onclick="Mu.login(gotStatus, 'read_stream,offline_access,sms,create_event,rsvp_event')">
+          <input type="button" value="Read Stream"    onclick="Mu.login(gotPerms, 'read_stream')">
+          <input type="button" value="Publish Stream" onclick="Mu.login(gotPerms, 'publish_stream')">
+          <input type="button" value="Full Stream"    onclick="Mu.login(gotPerms, 'read_stream,publish_stream')">
+          <input type="button" value="Offline Access" onclick="Mu.login(gotPerms, 'offline_access')">
+          <input type="button" value="Events"         onclick="Mu.login(gotPerms, 'create_event,rsvp_event')">
+          <input type="button" value="SMS"            onclick="Mu.login(gotPerms, 'sms')">
+          <input type="button" value="Bulk"           onclick="Mu.login(gotPerms, 'read_stream,offline_access,sms,create_event,rsvp_event')">
 
-          <input type="button" value="All"           onclick="Mu.login(gotStatus, 'read_stream,status_update,photo_upload,video_upload,sms,create_listing,create_event,rsvp_event,offline_access,email,create_note,share_item,export_stream,auto_publish_short_feed,publish_strea)">
+          <input type="button" value="All"           onclick="Mu.login(gotPerms, 'read_stream,status_update,photo_upload,video_upload,sms,create_listing,create_event,rsvp_event,offline_access,email,create_note,share_item,export_stream,auto_publish_short_feed,publish_strea)">
         </div>
 
         <div id="integration">

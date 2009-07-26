@@ -69,7 +69,7 @@ function showSessionInfo() {
 }
 
 // handles a session (or lack thereof)
-function gotStatus(session, perms) {
+function gotStatus(session) {
   showSessionInfo();
   showUserInfo();
 
@@ -89,14 +89,15 @@ function gotStatus(session, perms) {
     $('bt-login').disabled = false;
     $('bt-disconnect').disabled = $('bt-logout').disabled = true;
   }
+}
 
-  if (perms) {
-    statusUpdate(
-      'perms-info',
-      'were ' + (perms ? '' : 'not ') + 'granted.',
-      perms
-    );
-  }
+function gotPerms(session, perms) {
+  gotStatus(session);
+  statusUpdate(
+    'perms-info',
+    'were ' + (perms ? '' : 'not ') + 'granted.',
+    perms
+  );
 }
 
 function statusUpdate(infoID, msg, yes) {

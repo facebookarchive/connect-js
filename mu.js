@@ -10,8 +10,10 @@ Mu = {
   _domain        : window.location.protocol + '//www.facebook.com/',
 
   // these are used the cross-domain communication and jsonp logic
-  _callbacks : {},
-  _xdFrames  : {},
+  _callbacks  : {},
+  _xdFrames   : {},
+  _winCount   : 0,
+  _winMonitor : null,
 
 
 
@@ -189,6 +191,47 @@ Mu = {
       );
 
     Mu._xdFrames[id] = window.open(url, '_blank', features);
+
+    // if there's a default close action, setup the monitor for it
+    if (id in Mu._callbacks) {
+      Mu._winCount++;
+      Mu.winMonitor();
+    }
+  },
+
+  /**
+   * Start and manage the window monitor interval. This allows us to invoke the
+   * default callback for a window when the user closes the window directly.
+   *
+   * @access private
+   */
+  winMonitor: function() {
+    // shutdown if we have nothing to monitor
+    if (Mu._winCount == 0) {
+      window.clearInterval(Mu._winMonitor);
+      Mu._winMonitor = null;
+      return;
+    }
+
+    // start the monitor if its not already running
+    if (!Mu._winMonitor) {
+      Mu._winMonitor = window.setInterval(Mu.winMonitor, 100);
+    }
+
+    // check all open windows
+    for (var id in Mu._xdFrames) {
+      if (Mu._xdFrames.hasOwnProperty(id)) {
+        var win = Mu._xdFrames[id];
+        // ignore iframes
+        if (!win.tagName) {
+          // found a closed window
+          if (win.closed) {
+            Mu._winCount--;
+            Mu.xdRecv({ cb: id, frame: id });
+          }
+        }
+      }
+    }
   },
 
 
@@ -285,10 +328,10 @@ Mu = {
    * @param target {String}   parent or opener to indicate the window relation
    * @returns      {String}   the xd url bound to the callback
    */
-  xdResult: function(cb, frame, target) {
+  xdResult: function(cb, frame, target, id) {
     return Mu.xdHandler(function(params) {
       cb(params.result != 'xxRESULTTOKENxx' && params.result);
-    }, frame, target) + '&result=xxRESULTTOKENxx';
+    }, frame, target, id) + '&result=xxRESULTTOKENxx';
   },
 
   /**
@@ -306,7 +349,7 @@ Mu = {
    * @param target {String}   parent or opener to indicate the window relation
    * @returns      {String}   the xd url bound to the callback
    */
-  xdSession: function(cb, frame, target) {
+  xdSession: function(cb, frame, target, id) {
     return Mu.xdHandler(function(params) {
       // try to extract a session
       try {
@@ -317,7 +360,7 @@ Mu = {
 
       // user defined callback
       cb(Mu._session, params.result != 'xxRESULTTOKENxx' && params.result);
-    }, frame, target) + '&result=xxRESULTTOKENxx';
+    }, frame, target, id) + '&result=xxRESULTTOKENxx';
   },
 
 
@@ -360,13 +403,18 @@ Mu = {
   login: function(cb, perms) {
     var
       g     = Mu.guid(),
-      xdUrl = Mu.xdSession(cb, g),
+      next  = Mu.xdSession(cb, g, 'opener', Mu.guid()),
+      // if we already have a session, keep it on cancel to fix the possible
+      // lack of session being returned from closing the window directly.
+      cancel = Mu._session
+        ? Mu.xdResult(function(p) { cb(Mu.session(), p); }, g)
+        : next,
       url   = Mu._domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
-        cancel_url     : xdUrl,
+        cancel_url     : cancel,
         display        : 'popup',
         fbconnect      : 1,
-        next           : xdUrl,
+        next           : next,
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
