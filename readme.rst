@@ -191,7 +191,7 @@ signed API calls to Facebook using their session. Suppose we want to alert the
 current user's name::
 
     Mu.api(
-        { method: 'users.getInfo', fields: 'name', uids: Mu.Session.uid },
+        { method: 'users.getInfo', fields: 'name', uids: Mu.session().uid },
         function(response) {
             alert(response[0].name);
         }
@@ -208,7 +208,7 @@ getting data from Facebook. The same example as above using FQL::
     Mu.api(
         {
             method: 'fql.query',
-            query: 'SELECT name FROM profile WHERE id=' + Mu.Session.uid
+            query: 'SELECT name FROM profile WHERE id=' + Mu.session().uid
         },
         function(response) {
             alert(response[0].name);

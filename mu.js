@@ -1,17 +1,17 @@
 Mu = {
   // use the init method to set these values correctly
-  ApiKey  : null,
-  Session : null,
-  XdUrl   : null,
+  _apiKey  : null,
+  _session : null,
+  _xdUrl   : null,
 
   // the various domains needed for using Connect
-  ApiDomain     : window.location.protocol + '//api.facebook.com/',
-  ConnectDomain : window.location.protocol + '//www.connect.facebook.com/',
-  Domain        : window.location.protocol + '//www.facebook.com/',
+  _apiDomain     : window.location.protocol + '//api.facebook.com/',
+  _connectDomain : window.location.protocol + '//www.connect.facebook.com/',
+  _domain        : window.location.protocol + '//www.facebook.com/',
 
   // these are used the cross-domain communication and jsonp logic
-  Callbacks : {},
-  XdFrames  : {},
+  _callbacks : {},
+  _xdFrames  : {},
 
 
 
@@ -43,9 +43,9 @@ Mu = {
       xdUrl += '#';
     }
 
-    Mu.ApiKey  = apiKey;
-    Mu.Session = session;
-    Mu.XdUrl   = xdUrl;
+    Mu._apiKey  = apiKey;
+    Mu._session = session;
+    Mu._xdUrl   = xdUrl;
   },
 
 
@@ -138,7 +138,7 @@ Mu = {
    *
    * @access private
    * @param url {String} the URL for the iframe
-   * @param id  {String} the id to store the node against in XdFrames
+   * @param id  {String} the id to store the node against in _xdFrames
    */
   hiddenIframe: function(url, id) {
     var
@@ -151,7 +151,7 @@ Mu = {
 
     node.setAttribute('src', url);
 
-    Mu.XdFrames[id] = document.body.appendChild(node);
+    Mu._xdFrames[id] = document.body.appendChild(node);
   },
 
   /**
@@ -162,7 +162,7 @@ Mu = {
    * @param url    {String}  the url for the popup
    * @param width  {Integer} the initial width for the popup
    * @param height {Integer} the initial height for the popup
-   * @param id     {String}  the id to store the window against in XdFrames
+   * @param id     {String}  the id to store the window against in _xdFrames
    */
   popup: function(url, width, height, id) {
     // we try to place it at the center of the current window
@@ -188,7 +188,7 @@ Mu = {
         ',top=' + top
       );
 
-    Mu.XdFrames[id] = window.open(url, '_blank', features);
+    Mu._xdFrames[id] = window.open(url, '_blank', features);
   },
 
 
@@ -209,14 +209,15 @@ Mu = {
    * @param cb     {Function} the callback function
    * @param frame  {String}   the frame id for the callback will be used with
    * @param target {String}   parent or opener to indicate the window relation
+   * @param id     {String}   custom id for this callback. defaults to frame id
    * @returns      {String}   the xd url bound to the callback
    */
-  xdHandler: function(cb, frame, target) {
-    var g = Mu.guid();
-    Mu.Callbacks[g] = cb;
-    return Mu.XdUrl + Mu.encodeQS({
+  xdHandler: function(cb, frame, target, id) {
+    id = id || frame;
+    Mu._callbacks[id] = cb;
+    return Mu._xdUrl + Mu.encodeQS({
       frame  : frame,
-      cb     : g,
+      cb     : id,
       target : target || 'opener'
     });
   },
@@ -253,8 +254,8 @@ Mu = {
    */
   xdRecv: function(params) {
     var
-      frame = Mu.XdFrames[params.frame],
-      cb    = Mu.Callbacks[params.cb];
+      frame = Mu._xdFrames[params.frame],
+      cb    = Mu._callbacks[params.cb];
 
     // remove an iframe or close a popup window
     if (frame.tagName) {
@@ -268,8 +269,8 @@ Mu = {
     }
 
     // cleanup and fire
-    delete Mu.XdFrames[params.frame];
-    delete Mu.Callbacks[params.cb];
+    delete Mu._xdFrames[params.frame];
+    delete Mu._callbacks[params.cb];
     cb(params);
   },
 
@@ -309,13 +310,13 @@ Mu = {
     return Mu.xdHandler(function(params) {
       // try to extract a session
       try {
-        Mu.Session = JSON.parse(params.session);
+        Mu._session = JSON.parse(params.session);
       } catch(e) {
-        Mu.Session = null;
+        Mu._session = null;
       }
 
       // user defined callback
-      cb(Mu.Session, params.result != 'xxRESULTTOKENxx' && params.result);
+      cb(Mu._session, params.result != 'xxRESULTTOKENxx' && params.result);
     }, frame, target) + '&result=xxRESULTTOKENxx';
   },
 
@@ -337,8 +338,8 @@ Mu = {
     var
       g     = Mu.guid(),
       xdUrl = Mu.xdSession(cb, g, 'parent'),
-      url   = Mu.ConnectDomain + 'extern/login_status.php?' + Mu.encodeQS({
-        api_key    : Mu.ApiKey,
+      url   = Mu._connectDomain + 'extern/login_status.php?' + Mu.encodeQS({
+        api_key    : Mu._apiKey,
         no_session : xdUrl,
         no_user    : xdUrl,
         ok_session : xdUrl
@@ -360,8 +361,8 @@ Mu = {
     var
       g     = Mu.guid(),
       xdUrl = Mu.xdSession(cb, g),
-      url   = Mu.Domain + 'login.php?' + Mu.encodeQS({
-        api_key        : Mu.ApiKey,
+      url   = Mu._domain + 'login.php?' + Mu.encodeQS({
+        api_key        : Mu._apiKey,
         cancel_url     : xdUrl,
         display        : 'popup',
         fbconnect      : 1,
@@ -383,10 +384,10 @@ Mu = {
   logout: function(cb) {
     var
       g   = Mu.guid(),
-      url = Mu.Domain + 'logout.php?' + Mu.encodeQS({
-        api_key     : Mu.ApiKey,
+      url = Mu._domain + 'logout.php?' + Mu.encodeQS({
+        api_key     : Mu._apiKey,
         next        : Mu.xdSession(cb, g, 'parent'),
-        session_key : Mu.Session.session_key
+        session_key : Mu._session.session_key
       });
 
     Mu.hiddenIframe(url, g);
@@ -401,7 +402,7 @@ Mu = {
    */
   disconnect: function(cb) {
     Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
-      cb(Mu.Session = null);
+      cb(Mu._session = null);
     });
   },
 
@@ -416,7 +417,7 @@ Mu = {
    */
   share: function(u, title) {
     var
-      url = Mu.Domain + 'sharer.php?' + Mu.encodeQS({
+      url = Mu._domain + 'sharer.php?' + Mu.encodeQS({
         title : title,
         u     : u || window.location.toString()
       });
@@ -451,15 +452,15 @@ Mu = {
    */
   publish: function(message, attach, actions, target_id, prompt_message, cb) {
     var
-      g   = Mu.ApiKey && Mu.guid(),
-      url = Mu.Domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
+      g   = Mu._apiKey && Mu.guid(),
+      url = Mu._domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
         action_links        : JSON.stringify(actions || {}),
-        api_key             : Mu.ApiKey,
+        api_key             : Mu._apiKey,
         attachment          : JSON.stringify(attach || {}),
         callback            : g && Mu.xdResult(cb, g),
         message             : message,
         preview             : true,
-        session_key         : Mu.Session && Mu.Session.session_key,
+        session_key         : Mu._session && Mu._session.session_key,
         target_id           : target_id,
         user_message_prompt : prompt_message
       });
@@ -477,12 +478,12 @@ Mu = {
   addFriend: function(id, cb) {
     var
       g   = Mu.guid(),
-      url = Mu.Domain + 'addfriend.php?' + Mu.encodeQS({
-        api_key     : Mu.ApiKey,
+      url = Mu._domain + 'addfriend.php?' + Mu.encodeQS({
+        api_key     : Mu._apiKey,
         display     : 'dialog',
         id          : id,
         next        : Mu.xdResult(cb, g),
-        session_key : Mu.Session.session_key
+        session_key : Mu._session.session_key
       });
 
     Mu.popup(url, 565, 240, g);
@@ -502,7 +503,7 @@ Mu = {
   sign: function(params, secret) {
     // general api call parameters
     Mu.copy(params, {
-      api_key : Mu.ApiKey,
+      api_key : Mu._apiKey,
       call_id : (new Date()).getTime(),
       format  : 'json',
       v       : '1.0'
@@ -511,21 +512,21 @@ Mu = {
     // if an explicit secret was not given, and we have a session, we will
     // automatically sign using the session. if a explicit secret is given, we
     // do not nclude these session specific parameters.
-    if (!secret && Mu.Session) {
+    if (!secret && Mu._session) {
       Mu.copy(params, {
-        session_key : Mu.Session.session_key,
+        session_key : Mu._session.session_key,
         ss          : 1
       });
     }
 
     // optionally generate the signature. we do this for both the automatic and
     // explicit case.
-    if (secret || Mu.Session) {
+    if (secret || Mu._session) {
       // the signature is described at:
       // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
       params.sig = md5sum(
         Mu.encodeQS(params, '', false) +
-        (secret || Mu.Session.secret)
+        (secret || Mu._session.secret)
       );
     }
 
@@ -550,16 +551,27 @@ Mu = {
       script = document.createElement('script');
 
     // shallow clone of params, add callback and sign
-    params = Mu.sign(Mu.copy({callback: 'Mu.Callbacks.' + g}, params), secret);
+    params = Mu.sign(Mu.copy({callback: 'Mu._callbacks.' + g}, params), secret);
 
     // this is the JSONP callback invoked by the response from restserver.php
-    Mu.Callbacks[g] = function(response) {
+    Mu._callbacks[g] = function(response) {
       cb(response);
-      delete Mu.Callbacks[g];
+      delete Mu._callbacks[g];
       script.parentNode.removeChild(script);
     };
 
-    script.src = Mu.ApiDomain + 'restserver.php?' + Mu.encodeQS(params);
+    script.src = Mu._apiDomain + 'restserver.php?' + Mu.encodeQS(params);
     document.getElementsByTagName('head')[0].appendChild(script);
+  },
+
+  /**
+   * Accessor for the current Session.
+   *
+   * @access public
+   * @returns {Object}  a _copy_ of the current Session if available, null
+   *                    otherwise
+   */
+  session: function() {
+    return Mu._session && Mu.copy({}, Mu._session);
   }
 };

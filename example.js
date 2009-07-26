@@ -19,7 +19,7 @@ function publishExample() {
 
 function showUserInfo() {
   var userInfo = $('user-info');
-  if (!Mu.Session) {
+  if (!Mu.session()) {
     userInfo.style.visibility = 'hidden';
   } else {
     var params = {
@@ -32,7 +32,7 @@ function showUserInfo() {
         'FROM ' +
           'user ' +
         'WHERE ' +
-          'uid=' + Mu.Session.uid
+          'uid=' + Mu.session().uid
       )
     };
 
@@ -49,7 +49,7 @@ function showUserInfo() {
 
 function showSessionInfo() {
   var
-    session     = Mu.Session,
+    session     = Mu.session(),
     sessionInfo = $('info');
 
   if (!session) {
