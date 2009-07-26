@@ -358,8 +358,15 @@ Mu = {
         Mu._session = null;
       }
 
-      // user defined callback
-      cb(Mu._session, params.result != 'xxRESULTTOKENxx' && params.result);
+      // if we were just granted the offline_access permission, we refresh the
+      // session information before calling the user defined callback
+      var perms = params.result != 'xxRESULTTOKENxx' && params.result;
+      if (perms && perms.indexOf('offline_access') > -1) {
+        Mu.status(function(session, p) { cb(session, perms); });
+      } else {
+        // user defined callback
+        cb(Mu._session, perms);
+      }
     }, frame, target, id) + '&result=xxRESULTTOKENxx';
   },
 
