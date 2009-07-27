@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+    <meta name="keywords" content="mu, javascript, facebook, connect, library, share, publish, stream, api, json, fql">
+    <meta name="description" content="Mu is a lightweight JavaScript library to use Facebook Connect on your site.">
+    <title>Mμ Connect &mdash; Console</title>
+    <link type="text/css" rel="stylesheet" href="console.css">
+  </head>
+  <body>
+    <div id="sidebar">
+      <ul>
+        <li>
+          Mu is a lightweight JavaScript library to use Facebook Connect on
+          your site.
+        </li>
+        <li>
+          Pre-specified heights are used based on the <em>current</em> design
+          used by Facebook for the common case. The official library
+          automatically resizes to fit the content and provides a much better
+          user experience.
+        </li>
+        <li>
+          A cross domain communication technique is used to provide a purely
+          client side experience. The web server only provides static files for
+          this example.  But the same approach of using redirects can be used
+          to provide a purely server side experience without using any
+          JavaScript at all - or a hybrid of the two.
+        </li>
+        <li>
+          <a href="http://bob.pythonmac.org/archives/2005/12/05/remote-json-jsonp/">JSONP</a>
+          enabled
+          <a href="http://wiki.developers.facebook.com/index.php/API">API</a>
+          call functionality is included to demonstrate the process of signing
+          and making API calls.
+        <li>
+          What you see is all there is. No
+          <a href="http://wiki.developers.facebook.com/index.php/XFBML">XFBML Tags</a> or
+          <a href="http://wiki.developers.facebook.com/index.php/Comments_Box">Widgets</a>
+          here.
+          Those are provided by the <strong>official</strong>
+          <a href="http://developers.facebook.com/connect.php">Facebook Connect</a>
+          library.
+        </li>
+        <li>
+          The source code is hosted on
+          <a href="http://github.com/nshah/mu">GitHub</a>. It comprises of:
+          <ul id="contents">
+            <li><a href="/mu.js">the core example code</a></li>
+            <li><a href="/xd.html">the cross domain receiver file</a></li>
+            <li><a href="">this html page for the example console</a></li>
+            <li><a href="console.css">the example console styles</a></li>
+            <li><a href="console.js">the example console javascript</a></li>
+            <li><a href="http://www.JSON.org/json2.js">JSON2</a></li>
+            <li><a href="/md5sum.js">a md5 library</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <h1>Mμ Connect &mdash; Console</h1>
+
+    <div id="controls">
+      <div id="connect">
+        <h2>Connect</h2>
+
+        <input type="button" value="Status"     onclick="Mu.status(gotStatus)">
+        <input type="button" value="Login"      onclick="Mu.login(gotStatus)"      id="bt-login"      disabled="disabled">
+        <input type="button" value="Disconnect" onclick="Mu.disconnect(gotStatus)" id="bt-disconnect" disabled="disabled">
+        <input type="button" value="Logout"     onclick="Mu.logout(gotStatus)"     id="bt-logout"     disabled="disabled">
+      </div>
+
+      <div id="connected">
+        <div id="permissions">
+          <h2>Permissions <span class="info" id="perms-info"></span></h2>
+
+          <input type="button" value="Read Stream"    onclick="Mu.login(gotPerms, 'read_stream')">
+          <input type="button" value="Publish Stream" onclick="Mu.login(gotPerms, 'publish_stream')">
+          <input type="button" value="Full Stream"    onclick="Mu.login(gotPerms, 'read_stream,publish_stream')">
+          <input type="button" value="Offline Access" onclick="Mu.login(gotPerms, 'offline_access')">
+          <input type="button" value="Events"         onclick="Mu.login(gotPerms, 'create_event,rsvp_event')">
+          <input type="button" value="SMS"            onclick="Mu.login(gotPerms, 'sms')">
+          <input type="button" value="Bulk"           onclick="Mu.login(gotPerms, 'read_stream,offline_access,sms,create_event,rsvp_event')">
+
+          <input type="button" value="All"           onclick="Mu.login(gotPerms, 'read_stream,status_update,photo_upload,video_upload,sms,create_listing,create_event,rsvp_event,offline_access,email,create_note,share_item,export_stream,auto_publish_short_feed,publish_strea)">
+        </div>
+
+        <div id="integration">
+          <h2>Integration <span class="info" id="integration-info"></span></h2>
+
+          <input type="button" disabled="disabled" value="Add Friend"            onclick="Mu.addFriend('499029861', friendAdded)">
+        </div>
+      </div>
+
+      <div id="sans-session">
+        <h2>Sans Session</h2>
+
+        <input type="button" value="Publish" onclick="publishExample()">
+        <input type="button" value="Share"   onclick="Mu.share()">
+      </div>
+    </div>
+
+    <div>
+      Status
+      <span id="status"></span>
+
+      <a id="user-info" style="visibility: hidden;">
+        as
+        <span id="user-name"></span>
+        <img id="user-pic" src="javascript:false" alt="User Picture">
+      </a>
+    </div>
+    <div id="info"></div>
+
+
+    <script src="http://www.json.org/json2.js"></script>
+    <script src="/md5sum.js"></script>
+    <script src="/mu.js"></script>
+    <script src="console.js"></script>
+    <script>
+      // why the setTimeout? because FF will otherwise use a cached the xd.html
+      // iframe including the fragment. the timeout fixes that
+      window.setTimeout(function() { Mu.status(gotStatus); }, 0);
+    </script>
+  </body>
+</html>

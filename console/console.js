@@ -1,4 +1,4 @@
-Mu.init('48f06bc570aaf9ed454699ec4fe416df', 'xd.html');
+Mu.init('48f06bc570aaf9ed454699ec4fe416df', '/xd.html');
 
 $ = function(i) { return document.getElementById(i); };
 
@@ -8,7 +8,7 @@ function publishExample() {
   Mu.publish(
     'This is some text',
     undefined,
-    [{text:'custom action link', href:'http://code.daaku.org/mu/'}],
+    [{text:'custom action link', href:'http://mu.daaku.org/'}],
     undefined,
     'Tell the world about Popups?',
     function(result) {
