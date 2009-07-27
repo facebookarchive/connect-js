@@ -29,10 +29,10 @@ Getting Started
 #. Copy the xd.html_ file to your webserver. The Mu library requires you to
    copy this static file to your webserver in order to allow facebook.com
    communicate with your site.
-#. *Optional:* Copy example.html_ to get you started with a minimal page.
+#. *Optional:* Use one of the exampels to get started:
+   http://mu.daaku.org/#examples.
 
-If you are not starting with the example.html_ file, here's the minimal you
-need::
+Here's the minimal you need before calling most of the API::
 
     <script src="http://mu.daaku.org/m.js"></script>
     <script>
@@ -40,7 +40,7 @@ need::
     </script>
 
 Note: ``Mu.publish()`` and ``Mu.share()`` can be used without registering an
-application or copying the ``xd.html`` file to your webserver.
+application or copying the ``xd.html_`` file to your webserver.
 
 
 

@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Mu Dojo Login Example</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.3.2/dojo/dojo.xd.js"></script>
+    <script src="http://mu.daaku.org/m.js"></script>
+  </head>
+  <body>
+    <h1>Mu Dojo Login Example</h1>
+    <div>
+      <button id="login">Login</button>
+      <button id="logout">Logout</button>
+      <button id="disconnect">Disconnect</button>
+    </div>
+    <div id="user-info"></div>
+    <script>
+      dojo.addOnLoad(function() {
+        // initialize the library with the API key and path to xd.html
+        Mu.init('48f06bc570aaf9ed454699ec4fe416df', '/xd.html');
+
+        // fetch the status on load
+        Mu.status(handleSessionResponse);
+      });
+
+      dojo.connect(dojo.byId('login'), 'click', function() {
+        Mu.login(handleSessionResponse);
+      });
+
+      dojo.connect(dojo.byId('logout'), 'click', function() {
+        Mu.logout(handleSessionResponse);
+      });
+
+      dojo.connect(dojo.byId('disconnect'), 'click', function() {
+        Mu.disconnect(handleSessionResponse);
+      });
+
+      // handle a session response from any of the auth related calls
+      function handleSessionResponse(session) {
+        // if we dont have a session, just hide the user info
+        if (!session) {
+          document.getElementById('user-info').innerHTML = '';
+          return;
+        }
+
+        // if we have a session, query for the user's profile picture and name
+        Mu.api(
+          {
+            method: 'fql.query',
+            query: 'SELECT name, pic FROM profile WHERE id=' + session.uid
+          },
+          function(response) {
+            var user = response[0];
+            var userInfo = document.getElementById('user-info');
+            userInfo.innerHTML = '<img src="' + user.pic + '">' + user.name;
+          }
+        );
+      }
+    </script>
+  </body>
+</html>
