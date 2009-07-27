@@ -367,7 +367,7 @@ Mu = {
       // if we were just granted the offline_access permission, we refresh the
       // session information before calling the user defined callback
       if (perms && perms.indexOf('offline_access') > -1) {
-        Mu.status(function(session, p) { cb(session, perms); });
+        Mu.status(function(session) { cb(session, perms); });
       } else {
         // user defined callback
         cb(Mu._session, perms);
