@@ -1,4 +1,4 @@
-Mu = {
+var Mu = {
   // use the init method to set these values correctly
   _apiKey  : null,
   _session : null,
