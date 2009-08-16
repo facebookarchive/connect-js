@@ -36,7 +36,7 @@ class Delegator < Test::Unit::TestCase
   def test_qunit
     browser = Watir::Browser.new
 
-    puts "go to facebook and make sure we're logged out"
+    # go to facebook and make sure we're logged out
     browser.goto('http://www.facebook.com/home.php')
     begin
       browser.link(:text, 'Logout').click
@@ -44,57 +44,56 @@ class Delegator < Test::Unit::TestCase
       # ignore if no Logout link found
     end
 
-    puts "make sure the username/password works"
+    # make sure the username/password works
     browser.goto('http://www.facebook.com/login.php')
     fb_login(browser)
     wait { browser.button(:value, 'Login') }.click
-    wait { browser.link(:text, 'Logout') }
 
-    puts "logout"
-    browser.link(:text, 'Logout').click
+    # logout
+    wait { browser.link(:text, 'Logout') }.click
 
-    puts "start the tests"
+    # start the tests
     browser.goto('http://daaku.org:8080/tests/index.html')
 
-    puts "share without calling Mu.init"
+    # share without calling Mu.init
     wait { browser.button(:class, 'share-without-init') }.click
     browser = wait { Watir::Browser.attach(:url, /sharer.php/) }
     fb_login(browser)
-    wait { browser.button(:id, 'login') }.click
+    wait { browser.button(:value, 'Login') }.click
     will_throw {
-      wait { browser.button(:id, 'cancel') }.click
+      wait { browser.button(:value, 'Cancel') }.click
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts "clear status if exists"
+    # clear status if exists
     wait { browser.button(:class, 'clear-session-if-exists') }.click
 
-    puts "get the status"
+    # get the status
     wait { browser.button(:class, 'get-status') }.click
 
-    puts "cancel login using cancel button"
+    # cancel login using cancel button
     wait { browser.button(:class, 'login-cancel-button') }.click
     browser = wait { Watir::Browser.attach(:url, /tos.php/) }
     will_throw {
-      wait { browser.button(:id, 'cancel') }.click
+      wait { browser.button(:value, 'Cancel') }.click
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts "cancel login using os chrome"
+    # cancel login using os chrome
     wait { browser.button(:class, 'login-close-window') }.click
     browser = wait { Watir::Browser.attach(:url, /tos.php/) }
     browser.close
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts "login using connect button"
+    # login using connect button
     wait { browser.button(:class, 'login-with-connect-button') }.click
     browser = wait { Watir::Browser.attach(:url, /tos.php/) }
     will_throw {
-      wait { browser.button(:id, 'confirm_button') }.click
+      wait { browser.button(:value, 'Connect') }.click
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts "login with email/pass"
+    # login with email/pass
     wait { browser.button(:class, 'login-with-email-pass') }.click
     browser = wait { Watir::Browser.attach(:url, /login.php/) }
     fb_login(browser)
@@ -103,7 +102,7 @@ class Delegator < Test::Unit::TestCase
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts "dont allow for offline_access extended perms"
+    # dont allow for offline_access extended perms
     wait { browser.button(:class, 'dont-allow-perms') }.click
     browser = wait { Watir::Browser.attach(:url, /prompt_permissions.php/) }
     will_throw {
@@ -111,7 +110,7 @@ class Delegator < Test::Unit::TestCase
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts "allow for offline_access extended perms"
+    # allow for offline_access extended perms
     wait { browser.button(:class, 'allow-perms') }.click
     browser = wait { Watir::Browser.attach(:url, /prompt_permissions.php/) }
     will_throw {
@@ -119,7 +118,7 @@ class Delegator < Test::Unit::TestCase
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts 'connect and dont allow for offline_access extended permission'
+    # connect and dont allow for offline_access extended permission
     wait { browser.button(:class, 'connect-and-dont-allow') }.click
     browser = wait { Watir::Browser.attach(:url, /tos.php/) }
     wait { browser.button(:value, 'Connect') }.click
@@ -128,7 +127,7 @@ class Delegator < Test::Unit::TestCase
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts 'connect and allow for offline_access extended permission'
+    # connect and allow for offline_access extended permission
     wait { browser.button(:class, 'connect-and-allow') }.click
     browser = wait { Watir::Browser.attach(:url, /tos.php/) }
     wait { browser.button(:value, 'Connect') }.click
@@ -137,13 +136,13 @@ class Delegator < Test::Unit::TestCase
     }
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-    puts 'cancel add friend'
+    # cancel add friend
     wait { browser.button(:class, 'cancel-add-friend') }.click
     browser = wait { Watir::Browser.attach(:url, /addfriend.php/) }
     browser.close
     browser = Watir::Browser.attach(:title, 'Mu Tests')
 
-#    puts 'publish story'
+#    # publish story
 #    wait { browser.button(:class, 'publish-story') }.click
 #    browser = wait { Watir::Browser.attach(:url, /prompt_feed.php/) }
 #    wait { browser.button(:value, 'Publish') }.click
