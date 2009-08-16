@@ -223,13 +223,21 @@ var Mu = {
       // ignore prototype properties, and ones without a default callback
       if (Mu._xdFrames.hasOwnProperty(id) && id in Mu._callbacks) {
         var win = Mu._xdFrames[id];
+
         // ignore iframes
-        if (!win.tagName) {
-          // found a closed window
-          if (win.closed) {
-            Mu._winCount--;
-            Mu.xdRecv({ cb: id, frame: id });
+        try {
+          if (win.tagName) {
+            // is an iframe, we're done
+            continue;
           }
+        } catch (x) {
+          // do nothing
+        }
+
+        // found a closed window
+        if (win.closed) {
+          Mu._winCount--;
+          Mu.xdRecv({ cb: id, frame: id });
         }
       }
     }
@@ -299,16 +307,26 @@ var Mu = {
   xdRecv: function(params) {
     var
       frame = Mu._xdFrames[params.frame],
-      cb    = Mu._callbacks[params.cb];
+      cb    = Mu._callbacks[params.cb],
+      clear = false;
 
     // remove an iframe or close a popup window
-    if (frame.tagName) {
-      // timeout of 500 prevents the safari forever waiting bug if we end up
-      // using this for visible iframe dialogs, the 500 would be unacceptable
-      window.setTimeout(function() {
-        frame.parentNode.removeChild(frame);
-      }, 500);
-    } else {
+    try {
+      if (frame.tagName) {
+        clear = true;
+
+        // timeout of 500 prevents the safari forever waiting bug if we end up
+        // using this for visible iframe dialogs, the 500 would be unacceptable
+        window.setTimeout(function() {
+                            frame.parentNode.removeChild(frame);
+                          }, 500);
+      }
+    } catch (x) {
+      // do nothing, is expected
+    }
+
+    // is a popup window
+    if (!clear && frame.close) {
       frame.close();
     }
 
@@ -514,7 +532,7 @@ var Mu = {
         attachment          : JSON.stringify(attach || {}),
         callback            : g && Mu.xdResult(cb, g),
         message             : message,
-        preview             : true,
+        preview             : 1,
         session_key         : Mu._session && Mu._session.session_key,
         target_id           : target_id,
         user_message_prompt : prompt_message
