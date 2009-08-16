@@ -55,16 +55,16 @@ function md5sum(input) {
       raw_input += String.fromCharCode(x);
     } else if (x <= 0x7FF) {
       raw_input += String.fromCharCode(0xC0 | ((x >>> 6 ) & 0x1F),
-                                     0x80 | ( x         & 0x3F));
+                                       0x80 | ( x         & 0x3F));
     } else if (x <= 0xFFFF) {
       raw_input += String.fromCharCode(0xE0 | ((x >>> 12) & 0x0F),
-                                     0x80 | ((x >>> 6 ) & 0x3F),
-                                     0x80 | ( x         & 0x3F));
+                                       0x80 | ((x >>> 6 ) & 0x3F),
+                                       0x80 | ( x         & 0x3F));
     } else if (x <= 0x1FFFFF) {
       raw_input += String.fromCharCode(0xF0 | ((x >>> 18) & 0x07),
-                                     0x80 | ((x >>> 12) & 0x3F),
-                                     0x80 | ((x >>> 6 ) & 0x3F),
-                                     0x80 | ( x         & 0x3F));
+                                       0x80 | ((x >>> 12) & 0x3F),
+                                       0x80 | ((x >>> 6 ) & 0x3F),
+                                       0x80 | ( x         & 0x3F));
     }
   }
 
