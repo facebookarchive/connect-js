@@ -1,8 +1,8 @@
 require 'test/unit'
 require 'watir'
 
-FB_EMAIL = 'FIXME'
-FB_PASS = 'FIXME'
+FB_EMAIL = ENV['fb_email']
+FB_PASS = ENV['fb_pass']
 
 def wait(&cond)
   Watir::Waiter.wait_until {
@@ -49,7 +49,7 @@ class Delegator < Test::Unit::TestCase
     browser.link(:text, 'Logout').click
 
     puts "start the tests"
-    browser.goto('http://connect.daaku.org/mu/tests/index.html')
+    browser.goto('http://daaku.org:8080/tests/index.html')
 
     puts "share without calling Mu.init"
     wait { browser.button(:class, 'share-without-init') }.click
@@ -154,12 +154,17 @@ class Delegator < Test::Unit::TestCase
 
     sleep 4
 
+    puts 'publish story'
+    wait { browser.button(:class, 'publish-story') }.click
+    wait { browser.attach(:url, /prompt_feed.php/) }
+    wait { browser.button(:value, 'Publish') }.click
+    sleep 4
+    browser.attach(:title, 'Mu Tests')
+
+    sleep 4
+
 
     assert('pass' == browser.h2(:id, 'banner').attribute_value('className'))
-
-    # finally logout
-    browser.goto('http://www.facebook.com/home.php')
-    browser.link(:text, 'Logout').click
   end
 
 end
