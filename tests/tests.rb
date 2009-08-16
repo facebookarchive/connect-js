@@ -4,6 +4,21 @@ require 'watir'
 FB_EMAIL = ENV['fb_email']
 FB_PASS = ENV['fb_pass']
 
+# monkey patch the IE browser to have an attach method
+module WatirIEAttach
+  def attach(how, what)
+    Watir::IE.attach(how, what)
+  end
+end
+
+if Watir.options[:browser] == 'ie'
+  module Watir
+    class IE
+      include WatirIEAttach
+    end
+  end
+end
+
 def wait(&cond)
   Watir::Waiter.wait_until {
     begin
@@ -53,13 +68,13 @@ class Delegator < Test::Unit::TestCase
 
     puts "share without calling Mu.init"
     wait { browser.button(:class, 'share-without-init') }.click
-    wait { browser.attach(:url, /sharer.php/) }
+    browser = wait { browser.attach(:url, /sharer.php/) }
     fb_login(browser)
     wait { browser.button(:id, 'login') }.click
     will_throw {
       wait { browser.button(:id, 'cancel') }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     puts "clear status if exists"
     wait { browser.button(:class, 'clear-session-if-exists') }.click
@@ -71,95 +86,95 @@ class Delegator < Test::Unit::TestCase
 
     puts "cancel login using cancel button"
     wait { browser.button(:class, 'login-cancel-button') }.click
-    wait { browser.attach(:url, /tos.php/) }
+    browser = wait { browser.attach(:url, /tos.php/) }
     will_throw {
       wait { browser.button(:id, 'cancel') }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     puts "cancel login using os chrome"
     wait { browser.button(:class, 'login-close-window') }.click
-    wait { browser.attach(:url, /tos.php/) }
+    browser = wait { browser.attach(:url, /tos.php/) }
     browser.close
     sleep 0.5
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     puts "login using connect button"
     wait { browser.button(:class, 'login-with-connect-button') }.click
-    wait { browser.attach(:url, /tos.php/) }
+    browser = wait { browser.attach(:url, /tos.php/) }
     will_throw {
       wait { browser.button(:id, 'confirm_button') }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     sleep 4
 
     puts "login with email/pass"
     wait { browser.button(:class, 'login-with-email-pass') }.click
-    wait { browser.attach(:url, /login.php/) }
+    browser = wait { browser.attach(:url, /login.php/) }
     fb_login(browser)
     will_throw {
       wait { browser.button(:value, 'Connect') }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     puts "dont allow for offline_access extended perms"
     wait { browser.button(:class, 'dont-allow-perms') }.click
-    wait { browser.attach(:url, /prompt_permissions.php/) }
+    browser = wait { browser.attach(:url, /prompt_permissions.php/) }
     will_throw {
       wait { browser.button(:value, "Don't Allow") }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     puts "allow for offline_access extended perms"
     wait { browser.button(:class, 'allow-perms') }.click
-    wait { browser.attach(:url, /prompt_permissions.php/) }
+    browser = wait { browser.attach(:url, /prompt_permissions.php/) }
     will_throw {
       wait { browser.button(:value, "Allow") }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     sleep 4
 
     puts 'connect and dont allow for offline_access extended permission'
     wait { browser.button(:class, 'connect-and-dont-allow') }.click
-    wait { browser.attach(:url, /tos.php/) }
+    browser = wait { browser.attach(:url, /tos.php/) }
     wait {browser.button(:value, 'Connect') }.click
     sleep 4
     will_throw {
       wait { browser.button(:value, "Don't Allow") }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     sleep 4
 
     puts 'connect and allow for offline_access extended permission'
     wait { browser.button(:class, 'connect-and-allow') }.click
-    wait { browser.attach(:url, /tos.php/) }
+    browser = wait { browser.attach(:url, /tos.php/) }
     wait { browser.button(:value, 'Connect') }.click
     sleep 4
     will_throw {
       wait { browser.button(:value, "Allow") }.click
     }
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     sleep 4
 
     puts 'cancel add friend'
     wait { browser.button(:class, 'cancel-add-friend') }.click
-    wait { browser.attach(:url, /addfriend.php/) }
+    browser = wait { browser.attach(:url, /addfriend.php/) }
     browser.close
     sleep 0.5
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     sleep 4
 
     puts 'publish story'
     wait { browser.button(:class, 'publish-story') }.click
-    wait { browser.attach(:url, /prompt_feed.php/) }
+    browser = wait { browser.attach(:url, /prompt_feed.php/) }
     wait { browser.button(:value, 'Publish') }.click
     sleep 4
-    browser.attach(:title, 'Mu Tests')
+    browser = browser.attach(:title, 'Mu Tests')
 
     sleep 4
 
