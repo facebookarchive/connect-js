@@ -292,7 +292,11 @@ var Mu = {
 
     // silently do nothing when target is missing
     if ('target' in params) {
-      window[params.target].Mu.xdRecv(params);
+      try {
+        window[params.target].Mu.xdRecv(params);
+      } catch (x) {
+        // ignore, not much we can do
+      }
     }
   },
 
