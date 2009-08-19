@@ -5,16 +5,16 @@ $ = function(i) { return document.getElementById(i); };
 
 // publish something
 function publishExample() {
-  Mu.publish(
-    'This is some text',
-    undefined,
-    [{text:'custom action link', href:'http://mu.daaku.org/'}],
-    undefined,
-    'Tell the world about Popups?',
-    function(result) {
-      alert('Publish Result: "' + result + '"');
-    }
-  );
+  var post = {
+    message: 'This is some text',
+    action_links: [
+      { text:'custom action link', href:'http://mu.daaku.org/' }
+    ],
+    user_message_prompt: 'Tell the world about Popups?'
+  };
+  Mu.publish(post, function(result) {
+               alert('Publish Result: "' + result + '"');
+             });
 }
 
 function showUserInfo() {

@@ -14,11 +14,45 @@ This guide is for using the Mu JavaScript library to access the above on your
 site. Mu is a very small library which you can use along with your favourite
 JavaScript library such as Dojo_, jQuery_, MooTools_ or YUI_.
 
+.. _Connect: http://www.facebook.com/advertising/?connect
+.. _User: http://wiki.developers.facebook.com/index.php/User_(FQL)
+.. _Connection: http://wiki.developers.facebook.com/index.php/Connection_(FQL)
+.. _Dojo: http://www.dojotoolkit.org/
+.. _jQuery: http://jquery.com/
+.. _MooTools: http://mootools.net/
+.. _YUI: http://developer.yahoo.com/yui/
 
 
 ===============
 Getting Started
 ===============
+
+Console
+-------
+
+A Console_ is available which demonstrates the various features provided
+by the library. `Click here and try it out`__.
+
+.. _Console: http://mu.daaku.org/console/
+__ Console_
+
+
+Examples
+--------
+
+- `Dojo / Login`_
+- `jQuery / Login`_
+- `MooTools / Login`_
+- `YUI2 / Login`_
+
+.. _Dojo / Login: http://mu.daaku.org/examples/dojo/login.html
+.. _jQuery / Login: http://mu.daaku.org/examples/jquery/login.html
+.. _MooTools / Login: http://mu.daaku.org/examples/mootools/login.html
+.. _YUI2 / Login: http://mu.daaku.org/examples/yui2/login.html
+
+
+Bootstrap
+---------
 
 #. Create a application at http://www.facebook.com/developers/createapp.php
     #. Give it a name, Agree to the TOS.
@@ -29,8 +63,7 @@ Getting Started
 #. Copy the xd.html_ file to your webserver. The Mu library requires you to
    copy this static file to your webserver in order to allow facebook.com
    communicate with your site.
-#. *Optional:* Use one of the exampels to get started:
-   http://mu.daaku.org/#examples.
+#. *Optional:* Use one of the Examples_ to get started.
 
 Here's the minimal you need before calling most of the API::
 
@@ -40,7 +73,9 @@ Here's the minimal you need before calling most of the API::
     </script>
 
 Note: ``Mu.publish()`` and ``Mu.share()`` can be used without registering an
-application or copying the ``xd.html_`` file to your webserver.
+application or copying the ``xd.html`` file to your webserver.
+
+.. _xd.html: http://mu.daaku.org/xd.html
 
 
 
@@ -68,7 +103,10 @@ Here's how you find out::
         }
     });
 
-You should make this call in your DOM ready event (aka DOMContentLoaded).
+You **must** make this call in your DOM ready event (*aka*
+DOMContentLoaded). If your library does not support this event (most
+do, see library `Examples`_), you should fallback to using
+window.onload.
 
 
 Login
@@ -87,7 +125,9 @@ Facebook" button bound to an event handler which does the following::
         }
     });
 
-You should only call this in a onclick event as it opens a popup.
+You should **only** call this in a onclick event as it opens a
+popup. Most browsers block popups, *unless* they were initiated from a
+user event, such as a click on a button or a link.
 
 
 Permissions
@@ -97,8 +137,9 @@ Depending on your application's needs, you may need additional permissions from
 the user. A large number of calls do not require any additional permissions, so
 you should first make sure you need a permission. This is a good idea because
 this process potentially adds friction to the user's process. Another point to
-remember is that this call can be made even after the user has first connected.
-So you may want to delay asking for permissions until as late as possible::
+remember is that this call can be made even *after* the user has first
+connected. So you may want to delay asking for permissions until as
+late as possible::
 
     Mu.login(function(session, perms) {
         if (session) {
@@ -117,9 +158,9 @@ So you may want to delay asking for permissions until as late as possible::
 Logout
 ------
 
-Since Facebook is the authority for who the currently logged in user is,
-logging the user out entails logging the user out of facebook.com. This is a
-simple call::
+Just like logging in is tied to facebook.com, so is logging out.  The
+status shared between your site and Facebook, and logging out affects
+both sites. This is a simple call::
 
     Mu.logout(function() {
         // user is now logged out
@@ -184,6 +225,7 @@ FQL is described here: http://wiki.developers.facebook.com/index.php/FQL
 FQL Tables are listed here:
 http://wiki.developers.facebook.com/index.php/FQL_Tables
 
+.. _FQL: http://wiki.developers.facebook.com/index.php/FQL
 
 
 ===========
@@ -208,9 +250,9 @@ may also specify a target for the story, such as another user or a page.
 
 Here's an example call utilizing some of the features::
 
-    Mu.publish(
-        'getting educated about Facebook Connect',
-        {
+    var post = {
+        message: 'getting educated about Facebook Connect',
+        attachment: {
           name: 'Mu Connect',
           caption: 'A micro Facebook Connect library.',
           description: (
@@ -220,12 +262,15 @@ Here's an example call utilizing some of the features::
           ),
           href: 'http://mu.daaku.org/',
         },
-        [
+        action_links: [
             { text: 'Mu Console', href: 'http://mu.daaku.org/' },
             { text: 'GitHub Repo', href: 'http://github.com/nshah/mu' }
         ],
-        null,
-        'Share your thoughts about Mu Connect',
+        user_prompt_message: 'Share your thoughts about Mu Connect'
+    };
+
+    Mu.publish(
+        post,
         function(post_id) {
             if (post_id) {
                 alert(
@@ -267,8 +312,8 @@ current page.
 How does it work?
 =================
 
-Facebook Connect works on top of HTTP. There are two primary techniques you
-should be aware of.
+Facebook Connect works on top of HTTP. If you're interested in the
+underlying techniques, there are two you should be aware of.
 
 
 Redirects
@@ -311,21 +356,3 @@ with Python, PHP, Perl or virtually any other language.
 These are standard GET/POST calls identical to what a browser usually does. If
 you are accessing Authenticated data, then you may need to sign them.
 Signatures are discussed in the next section.
-
-
-
-
-
-
-
-
-.. _Connect: http://www.facebook.com/advertising/?connect
-.. _User: http://wiki.developers.facebook.com/index.php/User_(FQL)
-.. _Connection: http://wiki.developers.facebook.com/index.php/Connection_(FQL)
-.. _Dojo: http://www.dojotoolkit.org/
-.. _jQuery: http://jquery.com/
-.. _MooTools: http://mootools.net/
-.. _YUI: http://developer.yahoo.com/yui/
-.. _FQL: http://wiki.developers.facebook.com/index.php/FQL
-.. _xd.html: http://mu.daaku.org/xd.html
-.. _example.html: http://mu.daaku.org/example.html

@@ -354,7 +354,9 @@ var Mu = {
    */
   xdResult: function(cb, frame, target, id) {
     return Mu.xdHandler(function(params) {
-      cb(params.result != 'xxRESULTTOKENxx' && params.result);
+      cb(params.result != 'xxRESULTTOKENxx' &&
+         params.result != 'null' &&
+         params.result);
     }, frame, target, id) + '&result=xxRESULTTOKENxx';
   },
 
@@ -515,31 +517,36 @@ var Mu = {
    * post_id of the published post, or find out if the user did not publish
    * (clicked on the skipped button).
    *
-   * All parameters are optional.
+   * A post may contain the following properties:
+   *   message             {String}   this allows prepopulating the message
+   *   attachment          {Array}    an array of attachments
+   *   action_links        {Array}    an array of action links
+   *   target_id           {String}   a target profile id
+   *   user_message_prompt {String}   custom prompt message
+   *
+   * The post and all the parameters are optional, so use what is best
+   * for your specific case.
    *
    * FIXME: the callback function does not get invoked.
    *
    * @access public
-   * @param message        {String}   this allows prepopulating the message
-   * @param attach         {Array}    an array of attachments
-   * @param actions        {Array}    an array of action links
-   * @param target_id      {String}   a target profile id
-   * @param prompt_message {String}   custom prompt message
-   * @param cb             {Function} called with the result of the action
+   * @param post  {Object}   the post object
+   * @param cb    {Function} called with the result of the action
    */
-  publish: function(message, attach, actions, target_id, prompt_message, cb) {
+  publish: function(post, cb) {
+    post = post || {};
     var
       g   = Mu._apiKey && Mu.guid(),
       url = Mu._domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
-        action_links        : JSON.stringify(actions || {}),
+        action_links        : JSON.stringify(post.action_links || {}),
         api_key             : Mu._apiKey,
-        attachment          : JSON.stringify(attach || {}),
+        attachment          : JSON.stringify(post.attachment || {}),
         callback            : g && Mu.xdResult(cb, g),
-        message             : message,
+        message             : post.message,
         preview             : 1,
         session_key         : Mu._session && Mu._session.session_key,
-        target_id           : target_id,
-        user_message_prompt : prompt_message
+        target_id           : post.target_id,
+        user_message_prompt : post.user_message_prompt
       });
 
     Mu.popup(url, 550, 242, g);

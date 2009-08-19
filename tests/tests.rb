@@ -18,14 +18,6 @@ class Delegator < Test::Unit::TestCase
     browser.goto('http://www.facebook.com/home.php')
     browser.maybe.link(:text, 'Logout').click
 
-    # make sure the username/password works
-    browser.goto('http://www.facebook.com/login.php')
-    fb_login(browser)
-    browser.await.button(:value, 'Login').click
-
-    # logout
-    browser.await.link(:text, 'Logout').click
-
     # start the tests
     browser.goto('http://daaku.org:8080/tests/index.html')
 
@@ -100,11 +92,23 @@ class Delegator < Test::Unit::TestCase
     browser.close
     browser = SlowWatir.attach(:title, 'Mu Tests')
 
-#    # publish story
-#    browser.await.button(:class, 'publish-story').click
-#    browser = SlowWatir.attach(:url, /prompt_feed.php/)
-#    browser.await.button(:value, 'Publish').click
-#    browser = SlowWatir.attach(:title, 'Mu Tests')
+    # publish post
+    browser.await.button(:class, 'publish-post').click
+    browser = SlowWatir.attach(:url, /prompt_feed.php/)
+    browser.await.button(:value, 'Publish').click
+    browser = SlowWatir.attach(:title, 'Mu Tests')
+
+    # skip publishing post
+    browser.await.button(:class, 'skip-publish-post').click
+    browser = SlowWatir.attach(:url, /prompt_feed.php/)
+    browser.await.button(:value, 'Skip').click
+    browser = SlowWatir.attach(:title, 'Mu Tests')
+
+    # close publish post window
+    browser.await.button(:class, 'close-publish-post').click
+    browser = SlowWatir.attach(:url, /prompt_feed.php/)
+    browser.close
+    browser = SlowWatir.attach(:title, 'Mu Tests')
 
     assert(browser.await.h2(:class, 'pass').exists?)
   end

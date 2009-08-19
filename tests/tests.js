@@ -344,27 +344,75 @@ test(
 ////////////////////////////////////////////////////////////////////////////////
 module('publish');
 ////////////////////////////////////////////////////////////////////////////////
-/*
 test(
-  'publish a story',
+  'publish a post',
 
   function() {
     action.onclick = function() {
-      Mu.publish('I am Test', null, null, null, null, function(result) {
+      var post = {
+        message: 'I am Test'
+      };
+      Mu.publish(post, function(result) {
                    ok(result, 'expect a post id back');
                    action.innerHTML = '';
                    action.className = '';
                    start();
                  });
     };
-    action.innerHTML = 'Publish a Story';
-    action.className = 'publish-story';
+    action.innerHTML = 'Publish a Post';
+    action.className = 'publish-post';
 
     expect(1);
     stop();
   }
 );
-*/
+
+test(
+  'skip publishing a post',
+
+  function() {
+    action.onclick = function() {
+      var post = {
+        message: 'I am Test'
+      };
+      Mu.publish(post, function(result) {
+                   ok(!result, 'expect falsy back');
+                   action.innerHTML = '';
+                   action.className = '';
+                   start();
+                 });
+    };
+    action.innerHTML = 'Skip publishing a Post';
+    action.className = 'skip-publish-post';
+
+    expect(1);
+    stop();
+  }
+);
+
+
+test(
+  'close publish a window',
+
+  function() {
+    action.onclick = function() {
+      var post = {
+        message: 'I am Test'
+      };
+      Mu.publish(post, function(result) {
+                   ok(!result, 'expect falsy back');
+                   action.innerHTML = '';
+                   action.className = '';
+                   start();
+                 });
+    };
+    action.innerHTML = 'Close publish window';
+    action.className = 'close-publish-post';
+
+    expect(1);
+    stop();
+  }
+);
 
 ////////////////////////////////////////////////////////////////////////////////
 module('cleanup');
