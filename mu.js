@@ -354,9 +354,9 @@ var Mu = {
    */
   xdResult: function(cb, frame, target, id) {
     return Mu.xdHandler(function(params) {
-      cb(params.result != 'xxRESULTTOKENxx' &&
-         params.result != 'null' &&
-         params.result);
+      cb && cb(params.result != 'xxRESULTTOKENxx' &&
+               params.result != 'null' &&
+               params.result);
     }, frame, target, id) + '&result=xxRESULTTOKENxx';
   },
 

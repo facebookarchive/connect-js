@@ -390,6 +390,27 @@ test(
   }
 );
 
+test(
+  'close publish a window with no callback',
+
+  function() {
+    action.onclick = function() {
+      var post = {
+        message: 'I am Test'
+      };
+      Mu.publish(post);
+      ok(true, 'should not get a error');
+      action.innerHTML = '';
+      action.className = '';
+      start();
+    };
+    action.innerHTML = 'Close publish window';
+    action.className = 'close-publish-post-no-cb';
+
+    expect(1);
+    stop();
+  }
+);
 
 test(
   'close publish a window',

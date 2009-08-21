@@ -104,6 +104,12 @@ class Delegator < Test::Unit::TestCase
     browser.await.button(:value, 'Skip').click
     browser = SlowWatir.attach(:title, 'Mu Tests')
 
+    # close publish post window with no callback
+    browser.await.button(:class, 'close-publish-post-no-cb').click
+    browser = SlowWatir.attach(:url, /prompt_feed.php/)
+    browser.close
+    browser = SlowWatir.attach(:title, 'Mu Tests')
+
     # close publish post window
     browser.await.button(:class, 'close-publish-post').click
     browser = SlowWatir.attach(:url, /prompt_feed.php/)
