@@ -527,8 +527,6 @@ var Mu = {
    * The post and all the parameters are optional, so use what is best
    * for your specific case.
    *
-   * FIXME: the callback function does not get invoked.
-   *
    * @access public
    * @param post  {Object}   the post object
    * @param cb    {Function} called with the result of the action
