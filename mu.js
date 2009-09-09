@@ -5,9 +5,8 @@ var Mu = {
   _xdUrl   : null,
 
   // the various domains needed for using Connect
-  _apiDomain     : window.location.protocol + '//api.facebook.com/',
-  _connectDomain : window.location.protocol + '//www.connect.facebook.com/',
-  _domain        : window.location.protocol + '//www.facebook.com/',
+  _apiDomain : window.location.protocol + '//api.facebook.com/',
+  _domain    : window.location.protocol + '//www.facebook.com/',
 
   // these are used the cross-domain communication and jsonp logic
   _callbacks  : {},
@@ -417,7 +416,7 @@ var Mu = {
     var
       g     = Mu.guid(),
       xdUrl = Mu.xdSession(cb, g, 'parent'),
-      url   = Mu._connectDomain + 'extern/login_status.php?' + Mu.encodeQS({
+      url   = Mu._domain + 'extern/login_status.php?' + Mu.encodeQS({
         api_key    : Mu._apiKey,
         no_session : xdUrl,
         no_user    : xdUrl,
