@@ -1,5 +1,3 @@
-Mu.init('48f06bc570aaf9ed454699ec4fe416df', '../xd.html');
-
 $ = function(i) { return document.getElementById(i); };
 
 

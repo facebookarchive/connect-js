@@ -2,7 +2,6 @@ var Mu = {
   // use the init method to set these values correctly
   _apiKey  : null,
   _session : null,
-  _xdUrl   : null,
 
   // the various domains needed for using Connect
   _apiDomain : window.location.protocol + '//api.facebook.com/',
@@ -21,32 +20,13 @@ var Mu = {
    *
    * @access public
    * @param apiKey  {String} your application API key
-   * @param xdUrl   {String} URL to the xd.html file
    * @param session {Object} (optional) an existing session
    */
-  init: function(apiKey, xdUrl, session) {
-    // handle relative, absolute or fully qualified url
-    if (xdUrl.indexOf(window.location.protocol) !== 0) {
-      var base = window.location.protocol + '//' + window.location.host;
-      if (xdUrl.charAt(0) == '/') {
-        xdUrl = base + xdUrl;
-      } else {
-        var path = window.location.pathname;
-        xdUrl = (
-          base +
-          path.substr(0, path.lastIndexOf('/') + 1) +
-          xdUrl
-        );
-      }
-    }
-    // we should never be busting the cache
-    if (xdUrl.indexOf('#') < 0) {
-      xdUrl += '#';
-    }
-
+  init: function(apiKey, session) {
     Mu._apiKey  = apiKey;
     Mu._session = session;
-    Mu._xdUrl   = xdUrl;
+
+    Mu.XD.init();
   },
 
 
@@ -134,6 +114,13 @@ var Mu = {
     return params;
   },
 
+  hideNode: function(node) {
+    var style = node.style;
+    style.position = 'absolute';
+    style.top      = style.left   = '-10000px';
+    style.width    = style.height = 0;
+  },
+
   /**
    * Builds and inserts a hidden iframe.
    *
@@ -142,15 +129,9 @@ var Mu = {
    * @param id  {String} the id to store the node against in _xdFrames
    */
   hiddenIframe: function(url, id) {
-    var
-      node  = document.createElement('iframe'),
-      style = node.style;
-
-    style.position = 'absolute';
-    style.top      = style.left   = '-10000px';
-    style.width    = style.height = 0;
-
+    var node = document.createElement('iframe');
     node.setAttribute('src', url);
+    Mu.hideNode(node);
 
     Mu._xdFrames[id] = document.body.appendChild(node);
   },
@@ -248,53 +229,111 @@ var Mu = {
   // the cross domain communication layer
   //
 
-  /**
-   * Builds a url attached to a callback for xd messages.
-   *
-   * This is one half of the XD layer. Given a callback function, we generate a
-   * xd URL which will invoke the function. This allows us to generate redirect
-   * urls (used for next/cancel and so on) which will invoke our callback
-   * functions.
-   *
-   * @access private
-   * @param cb     {Function} the callback function
-   * @param frame  {String}   the frame id for the callback will be used with
-   * @param target {String}   parent or opener to indicate the window relation
-   * @param id     {String}   custom id for this callback. defaults to frame id
-   * @returns      {String}   the xd url bound to the callback
-   */
-  xdHandler: function(cb, frame, target, id) {
-    id = id || frame;
-    Mu._callbacks[id] = cb;
-    return Mu._xdUrl + Mu.encodeQS({
-      frame  : frame,
-      cb     : id,
-      target : target || 'opener'
-    });
-  },
+  XD: {
+    _target: null,
+    _transport: null,
 
-  /**
-   * This function is invoked internally by the xd.html file. It parses the
-   * url, and uses the target value to pass on the parameters to xdRecv in the
-   * original window.
-   *
-   * @access private
-   * @param href {String}  the full url including the fragment
-   */
-  xdChild: function(href) {
-    // FIXME on fb side
-    // merge the query and fragment params because the session can be returned
-    // in either.
-    var
-      merged = href.replace('?', '&').replace('#', '&'),
-      params = Mu.decodeQS(merged.substr(merged.indexOf('&') + 1));
+    init: function() {
+      Mu.XD._target = 'http://' + window.location.host + '/' + Mu.guid();
 
-    // silently do nothing when target is missing
-    if ('target' in params) {
-      try {
-        window[params.target].Mu.xdRecv(params);
-      } catch (x) {
-        // ignore, not much we can do
+      if (window.postMessage) {
+        Mu.XD.PostMessage.init();
+        Mu.XD._transport = 'postmessage';
+      } else if (Mu.XD.Flash.hasMinVersion()) {
+        Mu.XD.Flash.init();
+        Mu.XD._transport = 'flash';
+      } else {
+        throw new Error('Could not find postMessage or Flash.');
+      }
+    },
+
+    recv: function(message) {
+      message = message.toString();
+      Mu.xdRecv(Mu.decodeQS(message));
+    },
+
+    /**
+     * Builds a url attached to a callback for xd messages.
+     *
+     * This is one half of the XD layer. Given a callback function, we generate a
+     * xd URL which will invoke the function. This allows us to generate redirect
+     * urls (used for next/cancel and so on) which will invoke our callback
+     * functions.
+     *
+     * @access private
+     * @param cb       {Function} the callback function
+     * @param frame    {String}   the frame id for the callback will be used with
+     * @param relation {String}   parent or opener to indicate the window relation
+     * @param id       {String}   custom id for this callback. defaults to frame id
+     * @returns        {String}   the xd url bound to the callback
+     */
+    handler: function(cb, frame, relation, id) {
+      // the ?=& tricks login.php into appending at the end instead
+      // of before the fragment as a query string
+      // FIXME
+//      var xdProxy = Mu._domain + 'connect/xd_proxy.php#?=&';
+      var xdProxy = 'http://naitik.fbcdn.net/' + 'connect/xd_proxy.php#?=&';
+      id = id || frame;
+      Mu._callbacks[id] = cb;
+      return xdProxy + Mu.encodeQS({
+        frame  : frame,
+        cb     : id,
+        relation : relation || 'opener',
+        target : Mu.XD._target,
+        transport : Mu.XD._transport
+      });
+    },
+
+    PostMessage: {
+      init: function() {
+        window.addEventListener
+          ? window.addEventListener('message', Mu.XD.PostMessage.onMessage, false)
+          : window.attachEvent('onmessage', Mu.XD.PostMessage.onMessage);
+      },
+
+      onMessage: function(event) {
+        Mu.XD.recv(event.data);
+      }
+    },
+
+    Flash: {
+      init: function() {
+        window.FB_OnFlashXdCommReady = function() {
+          document.XdComm.postMessage_init('Mu.XD.Flash.onMessage', Mu.XD._target);
+        };
+        Mu.XD.Flash.createSwf();
+      },
+
+      onMessage: function(message) {
+        Mu.XD.recv(decodeURIComponent(message));
+      },
+
+      hasMinVersion: function() {
+        //FIXME
+        return true;
+      },
+
+      createSwf: function() {
+        var IE = !!document.attachEvent;
+        var html = (
+          '<object ' +
+            'type="application/x-shockwave-flash" ' +
+            'id="XdComm" ' +
+            (IE ? 'name="XdComm" ' : '') +
+            (IE ? '' : 'data="' + swf + '" ') +
+            (IE
+                ? 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" '
+                : ''
+            ) +
+            'allowscriptaccess="always">' +
+            '<param name="movie" value="' + swf + '"></param>' +
+            '<param name="allowscriptaccess" value="always"></param>' +
+          '</object>'
+        );
+
+        var div = document.createElement('div');
+        Mu.hideNode(div);
+        document.body.appendChild(div).innerHTML = html;
       }
     }
   },
@@ -310,14 +349,11 @@ var Mu = {
   xdRecv: function(params) {
     var
       frame = Mu._xdFrames[params.frame],
-      cb    = Mu._callbacks[params.cb],
-      clear = false;
+      cb    = Mu._callbacks[params.cb];
 
-    // remove an iframe or close a popup window
+    // iframe
     try {
       if (frame.tagName) {
-        clear = true;
-
         // timeout of 500 prevents the safari forever waiting bug if we end up
         // using this for visible iframe dialogs, the 500 would be unacceptable
         window.setTimeout(function() {
@@ -325,12 +361,16 @@ var Mu = {
                           }, 500);
       }
     } catch (x) {
-      // do nothing, is expected
+      // do nothing, permission error
     }
 
-    // is a popup window
-    if (!clear && frame.close) {
-      frame.close();
+    // popup window
+    try {
+      if (frame.close) {
+        frame.close();
+      }
+    } catch (x) {
+      // do nothing, permission error
     }
 
     // cleanup and fire
@@ -352,7 +392,7 @@ var Mu = {
    * @returns      {String}   the xd url bound to the callback
    */
   xdResult: function(cb, frame, target, id) {
-    return Mu.xdHandler(function(params) {
+    return Mu.XD.handler(function(params) {
       cb && cb(params.result != 'xxRESULTTOKENxx' &&
                params.result != 'null' &&
                params.result);
@@ -376,7 +416,7 @@ var Mu = {
    * @returns      {String}   the xd url bound to the callback
    */
   xdSession: function(cb, frame, target, id) {
-    return Mu.xdHandler(function(params) {
+    return Mu.XD.handler(function(params) {
       // try to extract a session
       try {
         Mu._session = JSON.parse(params.session);
