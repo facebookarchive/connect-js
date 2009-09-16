@@ -236,7 +236,7 @@ var Mu = {
     init: function() {
       Mu.XD._target = 'http://' + window.location.host + '/' + Mu.guid();
 
-      if (window.postMessage) {
+      if (window.addEventListener && window.postMessage) {
         Mu.XD.PostMessage.init();
         Mu.XD._transport = 'postmessage';
       } else if (Mu.XD.Flash.hasMinVersion()) {
@@ -271,8 +271,7 @@ var Mu = {
       // the ?=& tricks login.php into appending at the end instead
       // of before the fragment as a query string
       // FIXME
-//      var xdProxy = Mu._domain + 'connect/xd_proxy.php#?=&';
-      var xdProxy = 'http://naitik.fbcdn.net/' + 'connect/xd_proxy.php#?=&';
+      var xdProxy = Mu._domain + 'connect/xd_proxy.php#?=&';
       id = id || frame;
       Mu._callbacks[id] = cb;
       return xdProxy + Mu.encodeQS({
