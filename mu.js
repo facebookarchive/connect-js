@@ -348,6 +348,7 @@ var Mu = {
   XD: {
     _origin: null,
     _transport: null,
+    _resultToken: '"xxRESULTTOKENxx"',
 
     /**
      * Initialize the XD layer. Native postMessage or Flash is required.
@@ -468,11 +469,14 @@ var Mu = {
      * @returns      {String}   the xd url bound to the callback
      */
     result: function(cb, frame, target, id) {
-      return Mu.XD.handler(function(params) {
-        cb && cb(params.result != 'xxRESULTTOKENxx' &&
-                 params.result != 'null' &&
-                 params.result);
-      }, frame, target, id) + '&result=xxRESULTTOKENxx';
+      return (
+        Mu.XD.handler(function(params) {
+          console.log(params);
+          cb && cb(params.result != Mu.XD._resultTokens &&
+                   JSON.parse(params.result));
+        }, frame, target, id) +
+        '&result=' + encodeURIComponent(Mu.XD._resultToken)
+      );
     },
 
     /**
@@ -704,6 +708,22 @@ var Mu = {
    * @param cb    {Function} called with the result of the action
    */
   publish: function(post, cb) {
+    // YUCK
+    if (cb) {
+      var old_cb = cb;
+      cb = function(result) {
+        if (result && result.postId) {
+          result = {
+            message: result.data.user_message,
+            post_id: result.postId
+          };
+        } else if (!result.postId) {
+          result = null;
+        }
+        old_cb(result);
+      }
+    }
+
     post = post || {};
     var
       g   = Mu._apiKey && Mu.guid(),

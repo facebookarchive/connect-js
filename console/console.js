@@ -11,8 +11,8 @@ function publishExample() {
     user_message_prompt: 'Tell the world about Popups?'
   };
   Mu.publish(post, function(result) {
-               alert('Publish Result: "' + result + '"');
-             });
+    alert('Publish Result: ' + JSON.stringify(result));
+  });
 }
 
 function showUserInfo() {
