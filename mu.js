@@ -470,7 +470,6 @@ var Mu = {
     result: function(cb, frame, target, id) {
       return (
         Mu.XD.handler(function(params) {
-          console.log(params);
           cb && cb(params.result != Mu.XD._resultTokens &&
                    JSON.parse(params.result));
         }, frame, target, id) +
@@ -613,14 +612,21 @@ var Mu = {
    */
   login: function(cb, perms) {
     var
-      g   = Mu.guid(),
+      g = Mu.guid(),
+
+      // if we already have a session, this prevents us from losing it when
+      // this API is used for requesting permissions
+      xdHandler = Mu._session
+                    ? Mu.XD.result(function(p) { cb(Mu.session(), p); }, g)
+                    : Mu.XD.session(cb, g, 'opener', g),
+
       url = Mu._domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
-        cancel_url     : Mu.XD.result(function(p) { cb(Mu.session(), p); }, g),
+        cancel_url     : xdHandler,
         display        : 'popup',
         fbconnect      : 1,
-        next           : Mu.XD.session(cb, g, 'opener', Mu.guid()),
+        next           : xdHandler,
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
