@@ -153,8 +153,18 @@ var Mu = {
    */
   hiddenIframe: function(url, id) {
     var node = document.createElement('iframe');
-    node.setAttribute('src', url);
+    // In IE, we must set the iframe src _before_ injecting the node into the
+    // document to prevent the click noise.
+    if (document.attachEvent) {
+      node.setAttribute('src', url);
+    }
     Mu._xdFrames[id] = Mu.hiddenContent(node);
+    // For Firefox, we must set the iframe src _after_ injecting the node into
+    // the document to prevent caching issues. This also works fine in other
+    // browsers.
+    if (!document.attachEvent) {
+      node.setAttribute('src', url);
+    }
   },
 
   /**
