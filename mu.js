@@ -5,6 +5,7 @@ var Mu = {
 
   // the various domains needed for using Connect
   _apiDomain : window.location.protocol + '//api.facebook.com/',
+  _cdnDomain : window.location.protocol + '//static.ak.fbcdn.net/',
   _domain    : window.location.protocol + '//www.facebook.com/',
 
   // these are used the cross-domain communication and jsonp logic
@@ -291,7 +292,7 @@ var Mu = {
       // the ?=& tricks login.php into appending at the end instead
       // of before the fragment as a query string
       // FIXME
-      var xdProxy = Mu._domain + 'connect/xd_proxy.php#?=&';
+      var xdProxy = Mu._cdnDomain + 'connect/xd_proxy.php#?=&';
       id = id || frame;
       Mu._callbacks[id] = cb;
       return xdProxy + Mu.encodeQS({
@@ -334,6 +335,7 @@ var Mu = {
 
       createSwf: function() {
         var IE = !!document.attachEvent;
+        var swf = Mu._cdnDomain + 'swf/XdComm.swf';
         var html = (
           '<object ' +
             'type="application/x-shockwave-flash" ' +
