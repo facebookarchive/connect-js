@@ -495,7 +495,7 @@ var Mu = {
         // try to extract a session
         try {
           Mu._session = JSON.parse(params.session);
-        } catch(e) {
+        } catch(x) {
           Mu._session = null;
         }
 
