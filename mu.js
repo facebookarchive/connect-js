@@ -114,11 +114,33 @@ var Mu = {
     return params;
   },
 
-  hideNode: function(node) {
-    var style = node.style;
-    style.position = 'absolute';
-    style.top      = style.left   = '-10000px';
-    style.width    = style.height = 0;
+  /**
+   * Append some hidden content.
+   *
+   * @access private
+   * @param content {String|Node} a DOM Node or HTML string
+   * @returns {Node} the node that was just appended
+   */
+  hiddenContent: function(content) {
+    if (!Mu._hiddenRoot) {
+      Mu._hiddenRoot = document.getElementById('mu-hidden-root');
+      if (!Mu._hiddenRoot) {
+        Mu._hiddenRoot = document.createElement('div');
+        document.body.appendChild(Mu._hiddenRoot);
+      }
+      var style = Mu._hiddenRoot.style;
+      style.position = 'absolute';
+      style.top      = '-10000px';
+      style.width    = style.height = 0;
+    }
+
+    if (typeof content == 'string') {
+      var div = document.createElement('div');
+      Mu._hiddenRoot.appendChild(div).innerHTML = content;
+      return div;
+    } else {
+      return Mu._hiddenRoot.appendChild(content);
+    }
   },
 
   /**
@@ -131,9 +153,7 @@ var Mu = {
   hiddenIframe: function(url, id) {
     var node = document.createElement('iframe');
     node.setAttribute('src', url);
-    Mu.hideNode(node);
-
-    Mu._xdFrames[id] = document.body.appendChild(node);
+    Mu._xdFrames[id] = Mu.hiddenContent(node);
   },
 
   /**
@@ -330,9 +350,7 @@ var Mu = {
           '</object>'
         );
 
-        var div = document.createElement('div');
-        Mu.hideNode(div);
-        document.body.appendChild(div).innerHTML = html;
+        Mu.hiddenContent(html);
       }
     }
   },
