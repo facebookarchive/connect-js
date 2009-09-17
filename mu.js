@@ -243,13 +243,17 @@ var Mu = {
             continue;
           }
         } catch (x) {
-          // do nothing
+          // probably a permission error
         }
 
-        // found a closed window
-        if (win.closed) {
-          Mu._winCount--;
-          Mu.XD.recv({ cb: id, frame: id });
+        try {
+          // found a closed window
+          if (win.closed) {
+            Mu._winCount--;
+            Mu.XD.recv({ cb: id, frame: id });
+          }
+        } catch(x) {
+          // probably a permission error
         }
       }
     }
