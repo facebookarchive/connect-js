@@ -14,14 +14,14 @@
       <button id="disconnect">Disconnect</button>
     </div>
     <div id="user-info" style="display: none;"></div>
-    <script>
-      $(document).ready(function() {
-        // initialize the library with the API key and path to xd.html
-        Mu.init('48f06bc570aaf9ed454699ec4fe416df', '/xd.html');
 
-        // fetch the status on load
-        Mu.status(handleSessionResponse);
-      });
+    <div id="mu-hidden-root"></div>
+    <script>
+      // initialize the library with the API key
+      Mu.init('48f06bc570aaf9ed454699ec4fe416df');
+
+      // fetch the status on load
+      Mu.status(handleSessionResponse);
 
       $('#login').bind('click', function() {
         Mu.login(handleSessionResponse);
