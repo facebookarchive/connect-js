@@ -255,7 +255,13 @@ var Mu = {
     _transport: null,
 
     init: function() {
-      Mu.XD._origin = 'http://' + window.location.host + '/' + Mu.guid();
+      Mu.XD._origin = (
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        '/' +
+        Mu.guid()
+      );
 
       if (window.addEventListener && window.postMessage) {
         Mu.XD.PostMessage.init();
