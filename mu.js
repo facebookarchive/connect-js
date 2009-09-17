@@ -127,6 +127,7 @@ var Mu = {
       Mu._hiddenRoot = document.getElementById('mu-hidden-root');
       if (!Mu._hiddenRoot) {
         Mu._hiddenRoot = document.createElement('div');
+        Mu._hiddenRoot.id = 'mu-hidden-root';
         document.body.appendChild(Mu._hiddenRoot);
       }
       var style = Mu._hiddenRoot.style;
