@@ -289,8 +289,8 @@ var Mu = {
 
       // create the swf
       var
-        IE = !!document.attachEvent,
-        swf = Mu._cdnDomain + 'swf/XdComm.swf',
+        IE   = !!document.attachEvent,
+        swf  = Mu._cdnDomain + 'swf/XdComm.swf',
         html = (
           '<object ' +
             'type="application/x-shockwave-flash" ' +
@@ -346,9 +346,9 @@ var Mu = {
   //
 
   XD: {
-    _origin: null,
-    _transport: null,
-    _resultToken: '"xxRESULTTOKENxx"',
+    _origin      : null,
+    _transport   : null,
+    _resultToken : '"xxRESULTTOKENxx"',
 
     /**
      * Initialize the XD layer. Native postMessage or Flash is required.
@@ -411,9 +411,8 @@ var Mu = {
     },
 
     /**
-     * After the xdChild function has done the minimal processing to find the
-     * target window, it passes the parameters onto this function to let it
-     * invoke the bound callback with the data and remove to window/frame.
+     * Handles the raw or parsed message and invokes the bound callback with
+     * the data and removes the related window/frame.
      *
      * @access private
      * @param data {String|Object} the parameters passed on by xdChild
