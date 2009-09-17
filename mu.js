@@ -251,11 +251,11 @@ var Mu = {
   //
 
   XD: {
-    _target: null,
+    _origin: null,
     _transport: null,
 
     init: function() {
-      Mu.XD._target = 'http://' + window.location.host + '/' + Mu.guid();
+      Mu.XD._origin = 'http://' + window.location.host + '/' + Mu.guid();
 
       if (window.addEventListener && window.postMessage) {
         Mu.XD.PostMessage.init();
@@ -299,7 +299,7 @@ var Mu = {
         frame  : frame,
         cb     : id,
         relation : relation || 'opener',
-        target : Mu.XD._target,
+        origin : Mu.XD._origin,
         transport : Mu.XD._transport
       });
     },
@@ -319,7 +319,7 @@ var Mu = {
     Flash: {
       init: function() {
         window.FB_OnFlashXdCommReady = function() {
-          document.XdComm.postMessage_init('Mu.XD.Flash.onMessage', Mu.XD._target);
+          document.XdComm.postMessage_init('Mu.XD.Flash.onMessage', Mu.XD._origin);
         };
         Mu.XD.Flash.createSwf();
       },
