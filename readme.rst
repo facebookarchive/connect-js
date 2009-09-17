@@ -60,23 +60,18 @@ Bootstrap
     #. Enter your website URL in *Connect URL*.
     #. Save Changes
     #. Copy the API Key
-#. Copy the xd.html_ file to your webserver. The Mu library requires you to
-   copy this static file to your webserver in order to allow facebook.com
-   communicate with your site.
 #. *Optional:* Use one of the Examples_ to get started.
 
 Here's the minimal you need before calling most of the API::
 
+    <div id="mu-hidden-root"></div>
     <script src="http://mu.daaku.org/m.js"></script>
     <script>
-        Mu.init('YOUR API KEY', 'path/to/xd.html');
+        Mu.init('YOUR API KEY');
     </script>
 
 Note: ``Mu.publish()`` and ``Mu.share()`` can be used without registering an
-application or copying the ``xd.html`` file to your webserver.
-
-.. _xd.html: http://mu.daaku.org/xd.html
-
+application or calling ``Mu.init()``.
 
 
 ==============================
@@ -103,11 +98,6 @@ Here's how you find out::
         }
     });
 
-You **must** make this call in your DOM ready event (*aka*
-DOMContentLoaded). If your library does not support this event (most
-do, see library `Examples`_), you should fallback to using
-window.onload.
-
 
 Login
 -----
@@ -125,7 +115,7 @@ Facebook" button bound to an event handler which does the following::
         }
     });
 
-You should **only** call this in a onclick event as it opens a
+You should **only** call this on a user event as it opens a
 popup. Most browsers block popups, *unless* they were initiated from a
 user event, such as a click on a button or a link.
 
@@ -271,11 +261,12 @@ Here's an example call utilizing some of the features::
 
     Mu.publish(
         post,
-        function(post_id) {
-            if (post_id) {
+        function(post) {
+            if (post) {
                 alert(
                     'The post was successfully published. ' +
-                    'The post id is: ' + post_id
+                    'Post ID: ' + post.post_id +
+                    ' .Message: ' + post.message
                 );
             } else {
                 alert('The post was not published.');
