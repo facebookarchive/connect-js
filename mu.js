@@ -238,7 +238,7 @@ var Mu = {
         // found a closed window
         if (win.closed) {
           Mu._winCount--;
-          Mu.xdRecv({ cb: id, frame: id });
+          Mu.XD.recv({ cb: id, frame: id });
         }
       }
     }
@@ -247,102 +247,40 @@ var Mu = {
 
 
   //
-  // the cross domain communication layer
+  // Flash Support
   //
 
-  XD: {
-    _origin: null,
-    _transport: null,
-
-    init: function() {
-      Mu.XD._origin = (
-        window.location.protocol +
-        '//' +
-        window.location.host +
-        '/' +
-        Mu.guid()
-      );
-
-      if (window.addEventListener && window.postMessage) {
-        Mu.XD.PostMessage.init();
-        Mu.XD._transport = 'postmessage';
-      } else if (Mu.XD.Flash.hasMinVersion()) {
-        Mu.XD.Flash.init();
-        Mu.XD._transport = 'flash';
-      } else {
-        throw new Error('Could not find postMessage or Flash.');
-      }
-    },
-
-    recv: function(message) {
-      message = message.toString();
-      Mu.xdRecv(Mu.decodeQS(message));
-    },
+  Flash: {
+    _callbacks: [],
 
     /**
-     * Builds a url attached to a callback for xd messages.
-     *
-     * This is one half of the XD layer. Given a callback function, we generate a
-     * xd URL which will invoke the function. This allows us to generate redirect
-     * urls (used for next/cancel and so on) which will invoke our callback
-     * functions.
+     * Initialize the SWF.
      *
      * @access private
-     * @param cb       {Function} the callback function
-     * @param frame    {String}   the frame id for the callback will be used with
-     * @param relation {String}   parent or opener to indicate the window relation
-     * @param id       {String}   custom id for this callback. defaults to frame id
-     * @returns        {String}   the xd url bound to the callback
      */
-    handler: function(cb, frame, relation, id) {
-      // the ?=& tricks login.php into appending at the end instead
-      // of before the fragment as a query string
-      // FIXME
-      var xdProxy = Mu._cdnDomain + 'connect/xd_proxy.php#?=&';
-      id = id || frame;
-      Mu._callbacks[id] = cb;
-      return xdProxy + Mu.encodeQS({
-        frame  : frame,
-        cb     : id,
-        relation : relation || 'opener',
-        origin : Mu.XD._origin,
-        transport : Mu.XD._transport
-      });
-    },
-
-    PostMessage: {
-      init: function() {
-        window.addEventListener
-          ? window.addEventListener('message', Mu.XD.PostMessage.onMessage, false)
-          : window.attachEvent('onmessage', Mu.XD.PostMessage.onMessage);
-      },
-
-      onMessage: function(event) {
-        Mu.XD.recv(event.data);
+    init: function() {
+      // only initialize once
+      if (Mu.Flash._init) {
+        return;
       }
-    },
+      Mu.Flash._init = true;
 
-    Flash: {
-      init: function() {
-        window.FB_OnFlashXdCommReady = function() {
-          document.XdComm.postMessage_init('Mu.XD.Flash.onMessage', Mu.XD._origin);
-        };
-        Mu.XD.Flash.createSwf();
-      },
+      // the SWF calls this global function to notify that its ready
+      // FIXME: should allow the SWF to take a flashvar that controls the name
+      // of this function. we should not have any globals other than Mu.
+      window.FB_OnFlashXdCommReady = function() {
+        Mu.Flash._ready = true;
+        for (var i=0, l=Mu.Flash._callbacks.length; i<l; i++) {
+          Mu.Flash._callbacks[i]();
+        }
+        Mu.Flash._callbacks = [];
+      };
 
-      onMessage: function(message) {
-        Mu.XD.recv(decodeURIComponent(message));
-      },
-
-      hasMinVersion: function() {
-        //FIXME
-        return true;
-      },
-
-      createSwf: function() {
-        var IE = !!document.attachEvent;
-        var swf = Mu._cdnDomain + 'swf/XdComm.swf';
-        var html = (
+      // create the swf
+      var
+        IE = !!document.attachEvent,
+        swf = Mu._cdnDomain + 'swf/XdComm.swf',
+        html = (
           '<object ' +
             'type="application/x-shockwave-flash" ' +
             'id="XdComm" ' +
@@ -358,109 +296,268 @@ var Mu = {
           '</object>'
         );
 
-        Mu.hiddenContent(html);
-      }
-    }
-  },
+      Mu.hiddenContent(html);
+    },
 
-  /**
-   * After the xdChild function has done the minimal processing to find the
-   * target window, it passes the parameters onto this function to let it
-   * invoke the bound callback with the params and remove to window/frame.
-   *
-   * @access private
-   * @param params {Object} the parameters passed on by xdChild
-   */
-  xdRecv: function(params) {
-    var
-      frame = Mu._xdFrames[params.frame],
-      cb    = Mu._callbacks[params.cb];
+    /**
+     * Check that the minimal version of Flash we need is available.
+     *
+     * @access private
+     * @returns {Boolean} true if the minimum version requirements are matched
+     */
+    hasMinVersion: function() {
+      //FIXME
+      return true;
+    },
 
-    // iframe
-    try {
-      if (frame.tagName) {
-        // timeout of 500 prevents the safari forever waiting bug if we end up
-        // using this for visible iframe dialogs, the 500 would be unacceptable
-        window.setTimeout(function() {
-                            frame.parentNode.removeChild(frame);
-                          }, 500);
-      }
-    } catch (x) {
-      // do nothing, permission error
-    }
-
-    // popup window
-    try {
-      if (frame.close) {
-        frame.close();
-      }
-    } catch (x) {
-      // do nothing, permission error
-    }
-
-    // cleanup and fire
-    delete Mu._xdFrames[params.frame];
-    delete Mu._callbacks[params.cb];
-    cb(params);
-  },
-
-  /**
-   * Some Facebook redirect URLs use a special 'xxRESULTTOKENxx' to return
-   * custom values. This is a convenience function to wrap a callback that
-   * expects this value back.
-   *
-   * @access private
-   * @param cb     {Function} the callback function
-   * @param frame  {String}   the frame id for the callback will be used with
-   * @param target {String}   parent or opener to indicate the window relation
-   * @param id     {String}   custom id for this callback. defaults to frame id
-   * @returns      {String}   the xd url bound to the callback
-   */
-  xdResult: function(cb, frame, target, id) {
-    return Mu.XD.handler(function(params) {
-      cb && cb(params.result != 'xxRESULTTOKENxx' &&
-               params.result != 'null' &&
-               params.result);
-    }, frame, target, id) + '&result=xxRESULTTOKENxx';
-  },
-
-  /**
-   * This handles receiving a session from:
-   *  - login_status.php
-   *  - login.php
-   *  - tos.php
-   * It also (optionally) handles the xxRESULTTOKENxx response from:
-   *  - prompt_permissions.php
-   * And calls the given callback with the (session, perms)
-   *
-   * @access private
-   * @param cb     {Function} the callback function
-   * @param frame  {String}   the frame id for the callback will be used with
-   * @param target {String}   parent or opener to indicate the window relation
-   * @param id     {String}   custom id for this callback. defaults to frame id
-   * @returns      {String}   the xd url bound to the callback
-   */
-  xdSession: function(cb, frame, target, id) {
-    return Mu.XD.handler(function(params) {
-      // try to extract a session
-      try {
-        Mu._session = JSON.parse(params.session);
-      } catch(e) {
-        Mu._session = null;
-      }
-
-      // incase we were granted some new permissions
-      var perms = params.result != 'xxRESULTTOKENxx' && params.result;
-
-      // if we were just granted the offline_access permission, we refresh the
-      // session information before calling the user defined callback
-      if (perms && perms.indexOf('offline_access') > -1) {
-        Mu.status(function(session) { cb(session, perms); });
+    /**
+     * Register a function that needs to ensure Flash is ready.
+     *
+     * @access private
+     * @param cb {Function} the function
+     */
+    onFlashReady: function(cb) {
+      Mu.Flash.init();
+      if (Mu.Flash._ready) {
+        // this forces the cb to be asynchronous to ensure no one relies on the
+        // _potential_ synchronous nature.
+        window.setTimeout(cb, 0);
       } else {
-        // user defined callback
-        cb(Mu._session, perms);
+        Mu.Flash._callbacks.push(cb);
       }
-    }, frame, target, id) + '&result=xxRESULTTOKENxx';
+    }
+  },
+
+
+
+  //
+  // the cross domain communication layer
+  //
+
+  XD: {
+    _origin: null,
+    _transport: null,
+
+    /**
+     * Initialize the XD layer. Native postMessage or Flash is required.
+     */
+    init: function() {
+      // The origin is used for:
+      // 1) postMessage origin, provides security
+      // 2) Flash Local Connection name
+      // It is required and validated by Facebook as part of the xd_proxy.php.
+      Mu.XD._origin = (
+        window.location.protocol +
+        '//' +
+        window.location.host +
+        '/' +
+        Mu.guid()
+      );
+
+      // We currently disable postMessage in IE8 because it does not work with
+      // window.opener. We can probably be smarter about it.
+      if (window.addEventListener && window.postMessage) {
+        Mu.XD.PostMessage.init();
+        Mu.XD._transport = 'postmessage';
+      } else if (Mu.Flash.hasMinVersion()) {
+        Mu.XD.Flash.init();
+        Mu.XD._transport = 'flash';
+      } else {
+        throw new Error('Could not find postMessage or Flash.');
+      }
+    },
+
+    /**
+     * Builds a url attached to a callback for xd messages.
+     *
+     * This is one half of the XD layer. Given a callback function, we generate
+     * a xd URL which will invoke the function. This allows us to generate
+     * redirect urls (used for next/cancel and so on) which will invoke our
+     * callback functions.
+     *
+     * @access private
+     * @param cb       {Function} the callback function
+     * @param frame    {String}   frame id for the callback will be used with
+     * @param relation {String}   parent or opener to indicate window relation
+     * @param id       {String}   custom id for callback. defaults to frame id
+     * @returns        {String}   the xd url bound to the callback
+     */
+    handler: function(cb, frame, relation, id) {
+      // the ?=& tricks login.php into appending at the end instead
+      // of before the fragment as a query string
+      // FIXME
+      var xdProxy = Mu._cdnDomain + 'connect/xd_proxy.php#?=&';
+      id = id || frame;
+      Mu._callbacks[id] = cb;
+      return xdProxy + Mu.encodeQS({
+        cb        : id,
+        frame     : frame,
+        origin    : Mu.XD._origin,
+        relation  : relation || 'opener',
+        transport : Mu.XD._transport
+      });
+    },
+
+    /**
+     * After the xdChild function has done the minimal processing to find the
+     * target window, it passes the parameters onto this function to let it
+     * invoke the bound callback with the data and remove to window/frame.
+     *
+     * @access private
+     * @param data {String|Object} the parameters passed on by xdChild
+     */
+    recv: function(data) {
+      if (typeof data == 'string') {
+        data = Mu.decodeQS(data);
+      }
+
+      var
+        frame = Mu._xdFrames[data.frame],
+        cb    = Mu._callbacks[data.cb];
+
+      // iframe
+      try {
+        if (frame.tagName) {
+          // timeout of 500 prevents the safari forever waiting bug if we end
+          // up using this for visible iframe dialogs, the 500 would be
+          // unacceptable
+          window.setTimeout(function() {
+                              frame.parentNode.removeChild(frame);
+                            }, 500);
+        }
+      } catch (x) {
+        // do nothing, permission error
+      }
+
+      // popup window
+      try {
+        if (frame.close) {
+          frame.close();
+        }
+      } catch (x) {
+        // do nothing, permission error
+      }
+
+      // cleanup and fire
+      delete Mu._xdFrames[data.frame];
+      delete Mu._callbacks[data.cb];
+      cb(data);
+    },
+
+    /**
+     * Some Facebook redirect URLs use a special 'xxRESULTTOKENxx' to return
+     * custom values. This is a convenience function to wrap a callback that
+     * expects this value back.
+     *
+     * @access private
+     * @param cb     {Function} the callback function
+     * @param frame  {String}   the frame id for the callback will be used with
+     * @param target {String}   parent or opener to indicate the window relation
+     * @param id     {String}   custom id for callback. defaults to frame id
+     * @returns      {String}   the xd url bound to the callback
+     */
+    result: function(cb, frame, target, id) {
+      return Mu.XD.handler(function(params) {
+        cb && cb(params.result != 'xxRESULTTOKENxx' &&
+                 params.result != 'null' &&
+                 params.result);
+      }, frame, target, id) + '&result=xxRESULTTOKENxx';
+    },
+
+    /**
+     * This handles receiving a session from:
+     *  - login_status.php
+     *  - login.php
+     *  - tos.php
+     * It also (optionally) handles the xxRESULTTOKENxx response from:
+     *  - prompt_permissions.php
+     * And calls the given callback with the (session, perms)
+     *
+     * @access private
+     * @param cb     {Function} the callback function
+     * @param frame  {String}   the frame id for the callback will be used with
+     * @param target {String}   parent or opener to indicate the window relation
+     * @param id     {String}   custom id for callback. defaults to frame id
+     * @returns      {String}   the xd url bound to the callback
+     */
+    session: function(cb, frame, target, id) {
+      return Mu.XD.handler(function(params) {
+        // try to extract a session
+        try {
+          Mu._session = JSON.parse(params.session);
+        } catch(e) {
+          Mu._session = null;
+        }
+
+        // incase we were granted some new permissions
+        var perms = params.result != 'xxRESULTTOKENxx' && params.result;
+
+        // if we were just granted the offline_access permission, we refresh the
+        // session information before calling the user defined callback
+        if (perms && perms.indexOf('offline_access') > -1) {
+          Mu.status(function(session) { cb(session, perms); });
+        } else {
+          // user defined callback
+          cb(Mu._session, perms);
+        }
+      }, frame, target, id) + '&result=xxRESULTTOKENxx';
+    },
+
+
+
+    /**
+     * Provides Native window.postMessage based XD support.
+     */
+    PostMessage: {
+      /**
+       * Initialize the native PostMessage system.
+       *
+       * @access private
+       */
+      init: function() {
+        var H = Mu.XD.PostMessage.onMessage;
+        window.addEventListener
+          ? window.addEventListener('message', H, false)
+          : window.attachEvent('onmessage', H);
+      },
+
+      /**
+       * Handles a message event.
+       *
+       * @access private
+       * @param event {Event} the event object
+       */
+      onMessage: function(event) {
+        Mu.XD.recv(event.data);
+      }
+    },
+
+    /**
+     * Provides Flash Local Connection based XD support.
+     */
+    Flash: {
+      /**
+       * Initialize the Flash Local Connection.
+       *
+       * @access private
+       */
+      init: function() {
+        Mu.Flash.onFlashReady(function() {
+          document.XdComm.postMessage_init('Mu.XD.Flash.onMessage',
+                                           Mu.XD._origin);
+        });
+      },
+
+      /**
+       * Handles a message received by the Flash Local Connection.
+       *
+       * @access private
+       * @param message {String} the URI encoded string sent by the SWF
+       */
+      onMessage: function(message) {
+        Mu.XD.recv(decodeURIComponent(message));
+      }
+    }
   },
 
 
@@ -480,7 +577,7 @@ var Mu = {
   status: function(cb) {
     var
       g     = Mu.guid(),
-      xdUrl = Mu.xdSession(cb, g, 'parent'),
+      xdUrl = Mu.XD.session(cb, g, 'parent'),
       url   = Mu._domain + 'extern/login_status.php?' + Mu.encodeQS({
         api_key    : Mu._apiKey,
         no_session : xdUrl,
@@ -506,10 +603,10 @@ var Mu = {
       url = Mu._domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
-        cancel_url     : Mu.xdResult(function(p) { cb(Mu.session(), p); }, g),
+        cancel_url     : Mu.XD.result(function(p) { cb(Mu.session(), p); }, g),
         display        : 'popup',
         fbconnect      : 1,
-        next           : Mu.xdSession(cb, g, 'opener', Mu.guid()),
+        next           : Mu.XD.session(cb, g, 'opener', Mu.guid()),
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
@@ -529,7 +626,7 @@ var Mu = {
       g   = Mu.guid(),
       url = Mu._domain + 'logout.php?' + Mu.encodeQS({
         api_key     : Mu._apiKey,
-        next        : Mu.xdSession(cb, g, 'parent'),
+        next        : Mu.XD.session(cb, g, 'parent'),
         session_key : Mu._session.session_key
       });
 
@@ -603,7 +700,7 @@ var Mu = {
         action_links        : JSON.stringify(post.action_links || {}),
         api_key             : Mu._apiKey,
         attachment          : JSON.stringify(post.attachment || {}),
-        callback            : g && Mu.xdResult(cb, g),
+        callback            : g && Mu.XD.result(cb, g),
         message             : post.message,
         preview             : 1,
         session_key         : Mu._session && Mu._session.session_key,
@@ -628,7 +725,7 @@ var Mu = {
         api_key     : Mu._apiKey,
         display     : 'dialog',
         id          : id,
-        next        : Mu.xdResult(cb, g),
+        next        : Mu.XD.result(cb, g),
         session_key : Mu._session.session_key
       });
 
