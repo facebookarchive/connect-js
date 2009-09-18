@@ -730,7 +730,7 @@ var Mu = {
           result = null;
         }
         old_cb(result);
-      }
+      };
     }
 
     post = post || {};
@@ -738,6 +738,7 @@ var Mu = {
       g   = Mu._apiKey && Mu.guid(),
       url = Mu._domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
         action_links        : JSON.stringify(post.action_links || {}),
+        actor_id            : post.actor_id,
         api_key             : Mu._apiKey,
         attachment          : JSON.stringify(post.attachment || {}),
         callback            : g && Mu.XD.result(cb, g),
