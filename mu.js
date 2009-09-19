@@ -530,14 +530,8 @@ var Mu = {
         // incase we were granted some new permissions
         var perms = params.result != 'xxRESULTTOKENxx' && params.result || '';
 
-        // if we were just granted the offline_access permission, we refresh the
-        // session information before calling the user defined callback
-        if (perms && perms.indexOf('offline_access') > -1) {
-          Mu.status(function(session) { cb(session, perms); });
-        } else {
-          // user defined callback
-          cb(Mu._session, perms);
-        }
+        // user defined callback
+        cb(Mu._session, perms);
       }, frame, target, id) + '&result=xxRESULTTOKENxx';
     },
 
