@@ -17,9 +17,11 @@ var Mu = {
   _session : null,
 
   // the various domains needed for using Connect
-  _apiDomain : window.location.protocol + '//api.facebook.com/',
-  _cdnDomain : window.location.protocol + '//static.ak.fbcdn.net/',
-  _domain    : window.location.protocol + '//www.facebook.com/',
+  _domain: {
+    api : window.location.protocol + '//api.facebook.com/',
+    cdn : window.location.protocol + '//static.ak.fbcdn.net/',
+    www : window.location.protocol + '//www.facebook.com/'
+  },
 
   // these are used the cross-domain communication and jsonp logic
   _callbacks  : {},
@@ -310,7 +312,7 @@ var Mu = {
       // create the swf
       var
         IE   = !!document.attachEvent,
-        swf  = Mu._cdnDomain + 'swf/XdComm.swf',
+        swf  = Mu._domain.cdn + 'swf/XdComm.swf',
         html = (
           '<object ' +
             'type="application/x-shockwave-flash" ' +
@@ -423,7 +425,7 @@ var Mu = {
       // the ?=& tricks login.php into appending at the end instead
       // of before the fragment as a query string
       // FIXME
-      var xdProxy = Mu._cdnDomain + 'connect/xd_proxy.php#?=&';
+      var xdProxy = Mu._domain.cdn + 'connect/xd_proxy.php#?=&';
       id = id || frame;
       Mu._callbacks[id] = cb;
       return xdProxy + Mu.encodeQS({
@@ -619,7 +621,7 @@ var Mu = {
     var
       g     = Mu.guid(),
       xdUrl = Mu.XD.session(cb, g, 'parent'),
-      url   = Mu._domain + 'extern/login_status.php?' + Mu.encodeQS({
+      url   = Mu._domain.www + 'extern/login_status.php?' + Mu.encodeQS({
         api_key    : Mu._apiKey,
         no_session : xdUrl,
         no_user    : xdUrl,
@@ -657,7 +659,7 @@ var Mu = {
     var
       g         = Mu.guid(),
       xdHandler = Mu.XD.session(cb, g, 'opener', g),
-      url       = Mu._domain + 'login.php?' + Mu.encodeQS({
+      url       = Mu._domain.www + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
         cancel_url     : xdHandler,
@@ -681,7 +683,7 @@ var Mu = {
   logout: function(cb) {
     var
       g   = Mu.guid(),
-      url = Mu._domain + 'logout.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'logout.php?' + Mu.encodeQS({
         api_key     : Mu._apiKey,
         next        : Mu.XD.session(cb, g, 'parent'),
         session_key : Mu._session.session_key
@@ -714,7 +716,7 @@ var Mu = {
    */
   share: function(u, title) {
     var
-      url = Mu._domain + 'sharer.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'sharer.php?' + Mu.encodeQS({
         title : title,
         u     : u || window.location.toString()
       });
@@ -769,7 +771,7 @@ var Mu = {
     post = post || {};
     var
       g   = Mu._apiKey && Mu.guid(),
-      url = Mu._domain + 'connect/prompt_feed.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'connect/prompt_feed.php?' + Mu.encodeQS({
         action_links        : JSON.stringify(post.action_links || {}),
         actor_id            : post.actor_id,
         api_key             : Mu._apiKey,
@@ -795,7 +797,7 @@ var Mu = {
   addFriend: function(id, cb) {
     var
       g   = Mu.guid(),
-      url = Mu._domain + 'addfriend.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'addfriend.php?' + Mu.encodeQS({
         api_key     : Mu._apiKey,
         display     : 'dialog',
         id          : id,
@@ -877,7 +879,7 @@ var Mu = {
       script.parentNode.removeChild(script);
     };
 
-    script.src = Mu._apiDomain + 'restserver.php?' + Mu.encodeQS(params);
+    script.src = Mu._domain.api + 'restserver.php?' + Mu.encodeQS(params);
     document.getElementsByTagName('head')[0].appendChild(script);
   },
 
