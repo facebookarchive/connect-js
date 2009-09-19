@@ -1,5 +1,5 @@
 // thanks http://pajhome.org.uk/crypt/md5/md5.html
-function md5sum(input) {
+Mu.md5sum = function(input) {
   // FLOW: input -> utf8 input -> bin input -> bin md5 -> utf8 md5 -> hex md5
   var
     hex_vocab = '0123456789abcdef',

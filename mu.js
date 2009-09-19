@@ -838,7 +838,7 @@ var Mu = {
     if (secret || Mu._session) {
       // the signature is described at:
       // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
-      params.sig = md5sum(
+      params.sig = Mu.md5sum(
         Mu.encodeQS(params, '', false) +
         (secret || Mu._session.secret)
       );
