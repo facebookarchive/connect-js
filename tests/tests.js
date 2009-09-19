@@ -1,5 +1,4 @@
 var API_KEY = '48f06bc570aaf9ed454699ec4fe416df';
-var XD_URL = '../xd.html';
 var action = document.getElementById('action');
 var addFriendId = 5526183;
 
@@ -32,12 +31,11 @@ module('initialize');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
-  'api key and xd url',
+  'api key',
 
   function() {
-    Mu.init(API_KEY, XD_URL);
+    Mu.init(API_KEY);
     ok(Mu._apiKey == API_KEY, 'should have the api key');
-    ok(Mu._xdUrl.indexOf('http') === 0, 'xd url should be absolute');
   }
 );
 
@@ -352,8 +350,11 @@ test(
       var post = {
         message: 'I am Test'
       };
-      Mu.publish(post, function(result) {
-                   ok(result, 'expect a post id back');
+      Mu.publish(post, function(published_post) {
+                   ok(published_post, 'expect a post object back');
+                   ok(published_post.post_id, 'expect a post_id in object');
+                   ok(published_post.message == post.message,
+                      'expect the message in object');
                    action.innerHTML = '';
                    action.className = '';
                    start();
@@ -362,7 +363,7 @@ test(
     action.innerHTML = 'Publish a Post';
     action.className = 'publish-post';
 
-    expect(1);
+    expect(3);
     stop();
   }
 );
