@@ -528,7 +528,7 @@ var Mu = {
         }
 
         // incase we were granted some new permissions
-        var perms = params.result != 'xxRESULTTOKENxx' && params.result;
+        var perms = params.result != 'xxRESULTTOKENxx' && params.result || '';
 
         // if we were just granted the offline_access permission, we refresh the
         // session information before calling the user defined callback
@@ -645,16 +645,25 @@ var Mu = {
    * @param perms {String}   (optional) comma separated list of permissions
    */
   login: function(cb, perms) {
+    // if we already have a session, this prevents us from losing it when
+    // the API is used for requesting permissions alone
+    if (Mu._session) {
+      var
+        old_cb      = cb,
+        old_session = Mu._session;
+
+      cb = function(session, perms) {
+        if (!session) {
+          Mu._session = session = old_session;
+        }
+        old_cb(session, perms);
+      };
+    }
+
     var
-      g = Mu.guid(),
-
-      // if we already have a session, this prevents us from losing it when
-      // this API is used for requesting permissions
-      xdHandler = Mu._session
-                    ? Mu.XD.result(function(p) { cb(Mu.session(), p); }, g)
-                    : Mu.XD.session(cb, g, 'opener', g),
-
-      url = Mu._domain + 'login.php?' + Mu.encodeQS({
+      g         = Mu.guid(),
+      xdHandler = Mu.XD.session(cb, g, 'opener', g),
+      url       = Mu._domain + 'login.php?' + Mu.encodeQS({
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
         cancel_url     : xdHandler,
