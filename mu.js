@@ -347,7 +347,7 @@ var Mu = {
      * @access private
      * @param cb {Function} the function
      */
-    onFlashReady: function(cb) {
+    onReady: function(cb) {
       Mu.Flash.init();
       if (Mu.Flash._ready) {
         // this forces the cb to be asynchronous to ensure no one relies on the
@@ -588,7 +588,7 @@ var Mu = {
        * @access private
        */
       init: function() {
-        Mu.Flash.onFlashReady(function() {
+        Mu.Flash.onReady(function() {
           document.XdComm.postMessage_init('Mu.XD.Flash.onMessage',
                                            Mu.XD._origin);
         });
