@@ -1,3 +1,16 @@
+/**
+ * Mu is a JavaScript library that provides Facebook Connect
+ * integration.
+ *
+ * @module Mu
+ */
+
+/**
+ * This is the top level for all the APIs.
+ *
+ * @class Mu
+ * @static
+ */
 var Mu = {
   // use the init method to set these values correctly
   _apiKey  : null,
@@ -39,11 +52,11 @@ var Mu = {
   /**
    * Copy stuff from one object to another.
    *
-   * @access protected
+   * @access private
    * @param target    {Object}  the target object to copy into
    * @param source    {Object}  the source object to copy from
    * @param overwrite {Boolean} indicate if we should overwrite
-   * @returns the _same_ target object back
+   * @returns {Object} the _same_ target object back
    */
   copy: function(target, source, overwrite) {
     for (var k in source) {
@@ -67,7 +80,7 @@ var Mu = {
   /**
    * Encode parameters to a query string.
    *
-   * @access protected
+   * @access private
    * @param   params {Object}  the parameters to encode
    * @param   sep    {String}  the separator string (defaults to '&')
    * @param   encode {Boolean} indicate if the key/values should be URI encoded
@@ -95,7 +108,7 @@ var Mu = {
   /**
    * Decode a query string into a parameters object.
    *
-   * @access protected
+   * @access private
    * @param   str {String} the query string
    * @returns     {Object} the parameters to encode
    */
@@ -261,10 +274,13 @@ var Mu = {
 
 
 
-  //
-  // Flash Support
-  //
-
+  /**
+   * Flash Support.
+   *
+   * @class Mu.Flash
+   * @static
+   * @for Mu
+   */
   Flash: {
     _callbacks: [],
 
@@ -345,10 +361,13 @@ var Mu = {
 
 
 
-  //
-  // the cross domain communication layer
-  //
-
+  /**
+   * The cross domain communication layer.
+   *
+   * @class Mu.XD
+   * @static
+   * @for Mu
+   */
   XD: {
     _origin      : null,
     _transport   : null,
@@ -356,6 +375,8 @@ var Mu = {
 
     /**
      * Initialize the XD layer. Native postMessage or Flash is required.
+     *
+     * @access private
      */
     init: function() {
       // The origin is used for:
@@ -524,6 +545,10 @@ var Mu = {
 
     /**
      * Provides Native window.postMessage based XD support.
+     *
+     * @class Mu.XD.PostMessage
+     * @static
+     * @for Mu.XD
      */
     PostMessage: {
       /**
@@ -551,6 +576,10 @@ var Mu = {
 
     /**
      * Provides Flash Local Connection based XD support.
+     *
+     * @class Mu.XD.Flash
+     * @static
+     * @for Mu.XD
      */
     Flash: {
       /**
@@ -590,6 +619,7 @@ var Mu = {
    *
    * @access public
    * @param cb {Function} the callback function
+   * @for Mu
    */
   status: function(cb) {
     var
@@ -778,11 +808,11 @@ var Mu = {
    * explicit secret or using the current session. It updates the given params
    * object _in place_ with the necessary parameters.
    *
-   * @access protected
+   * @access public
    * @param params {Object} the parameters to sign
    * @param secret {String} secret to sign the call (defaults to the current
    *                        session secret)
-   * @returns the _same_ params object back
+   * @returns {Object} the _same_ params object back
    */
   sign: function(params, secret) {
     // general api call parameters
