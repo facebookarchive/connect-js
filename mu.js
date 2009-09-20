@@ -663,6 +663,7 @@ var Mu = {
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
         cancel_url     : xdHandler,
+        channel_url    : Mu.XD._origin,
         display        : 'popup',
         fbconnect      : 1,
         next           : xdHandler,
