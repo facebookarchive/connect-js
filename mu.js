@@ -309,6 +309,13 @@ var Mu = {
         Mu.Flash._callbacks = [];
       };
 
+      // the SWF calls this global function when a HTTP response is available
+      // FIXME: remove global
+      window.FB_OnXdHttpResult = function(reqId, data) {
+        //fixme decode data
+        Mu._callbacks[reqId](data);
+      };
+
       // create the swf
       var
         IE   = !!document.attachEvent,
@@ -358,6 +365,81 @@ var Mu = {
       } else {
         Mu.Flash._callbacks.push(cb);
       }
+    },
+
+    /**
+     * Custom decoding to workaround bug in flash's ExternInterface
+     * Code is from Dojo's library.
+     *
+     * FIXME should check if encodeURIComponent can be used instead.
+     *
+     * @param  {String} data
+     * @returns  String
+     */
+    decode: function(data) {
+      // wierdly enough, Flash sometimes returns the result as an
+      // 'object' that is actually an array, rather than as a String;
+      // detect this by looking for a length property; for IE
+      // we also make sure that we aren't dealing with a typeof string
+      // since string objects have length property there
+      if (data && data.length && typeof data != 'string') {
+        data = data[0];
+      }
+
+      if (!data || typeof data != 'string') {
+        return data;
+      }
+
+      // certain XMLish characters break Flash's wire serialization for
+      // ExternalInterface; these are encoded on the
+      // DojoExternalInterface side into a custom encoding, rather than
+      // the standard entity encoding, because otherwise we won't be able to
+      // differentiate between our own encoding and any entity characters
+      // that are being used in the string itself
+      data = data.replace(/\&custom_lt\;/g, '<');
+      data = data.replace(/\&custom_gt\;/g, '>');
+      data = data.replace(/\&custom_backslash\;/g, '\\');
+
+      // needed for IE; \0 is the NULL character
+      data = data.replace(/\\0/g, "\0");
+      return data;
+    },
+
+    /**
+     * Make a API call to restserver.php using Flash.
+     *
+     * @access private
+     * @param params {Object}   the parameters for the query
+     * @param cb     {Function} the callback function to handle the response
+     * @param secret {String}   secret to sign the call (defaults to the current
+     *                          session secret)
+     */
+    api: function(params, cb, secret) {
+      Mu.Flash.onReady(function() {
+        var method, url, body, reqId;
+
+        // shallow clone of params, sign, and encode as query string
+        body = Mu.encodeQS(Mu.sign(Mu.copy({}, params), secret));
+        url = Mu._domain.api + 'restserver.php';
+
+        // GET or POST
+        if (url.length + body.length > 2000) {
+          method = 'POST';
+        } else {
+          method = 'GET';
+          url += '?' + body;
+          body = '';
+        }
+
+        // fire the request
+        reqId = document.XdComm.sendXdHttpRequest(method, url, body, null);
+
+        // callback
+        Mu._callbacks[reqId] = function(response) {
+          cb(JSON.parse(Mu.Flash.decode(response)));
+          delete Mu._callbacks[reqId];
+        };
+      });
     }
   },
 
@@ -854,10 +936,7 @@ var Mu = {
   },
 
   /**
-   * Make a API call to restserver.php. This call will be automatically signed
-   * if a session is available. The call is made using JSONP, which is
-   * restricted to a GET with a maximum payload of 2k (including the signature
-   * and other params).
+   * Make a API call to restserver.php using JSONP or Flash.
    *
    * @access public
    * @param params {Object}   the parameters for the query
@@ -866,12 +945,42 @@ var Mu = {
    *                          session secret)
    */
   api: function(params, cb, secret) {
+    try {
+      Mu.jsonp(params, cb, secret);
+    } catch (x) {
+      if (Mu.Flash.hasMinVersion()) {
+        Mu.Flash.api(params, cb, secret);
+      } else {
+        throw new Error('Flash is required for this API call.');
+      }
+    }
+  },
+
+  /**
+   * Make a API call to restserver.php. This call will be automatically signed
+   * if a session is available. The call is made using JSONP, which is
+   * restricted to a GET with a maximum payload of 2k (including the signature
+   * and other params).
+   *
+   * @access private
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   * @param secret {String}   secret to sign the call (defaults to the current
+   *                          session secret)
+   */
+  jsonp: function(params, cb, secret) {
     var
       g      = Mu.guid(),
-      script = document.createElement('script');
+      script = document.createElement('script'),
+      url;
 
     // shallow clone of params, add callback and sign
     params = Mu.sign(Mu.copy({callback: 'Mu._callbacks.' + g}, params), secret);
+
+    url = Mu._domain.api + 'restserver.php?' + Mu.encodeQS(params);
+    if (url.length > 2000) {
+      throw new Error('JSONP only support a maximum of 2000 bytes of input.');
+    }
 
     // this is the JSONP callback invoked by the response from restserver.php
     Mu._callbacks[g] = function(response) {
@@ -880,7 +989,7 @@ var Mu = {
       script.parentNode.removeChild(script);
     };
 
-    script.src = Mu._domain.api + 'restserver.php?' + Mu.encodeQS(params);
+    script.src = url;
     document.getElementsByTagName('head')[0].appendChild(script);
   },
 
