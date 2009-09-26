@@ -64,6 +64,7 @@ Bootstrap
     #. Give it a name, Agree to the TOS.
     #. Click on the *Connect* entry on the left hand navigation.
     #. Enter your website URL in *Connect URL*.
+    #. Enter your domain in *Base Domain*.
     #. Save Changes
     #. Copy the API Key
 #. *Optional:* Use one of the Examples_ to get started.
