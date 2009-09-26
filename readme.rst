@@ -5,10 +5,10 @@ Introduction
 Facebook Connect_ is way to make your application more social. With the
 it you gain access to:
 
-    #. **Identity**: the user's name, photo and more [User_].
-    #. **Social Graph**: the user's friends and connections [Connection_].
-    #. **Distribution**: the Stream, and the ability to communicate [Publishing_]
-    #. **Integration**: publishers, canvas pages, profile boxes & tabs.
+#. **Identity**: the user's name, photo and more [User_].
+#. **Social Graph**: the user's friends and connections [Connection_].
+#. **Distribution**: the Stream, and the ability to communicate [Publishing_]
+#. **Integration**: publishers, canvas pages, profile boxes & tabs.
 
 This guide is for using the Mu JavaScript library to access the above on your
 site. Mu is a very small library which you can use along with your favourite
@@ -26,6 +26,12 @@ JavaScript library such as Dojo_, jQuery_, MooTools_ or YUI_.
 ===============
 Getting Started
 ===============
+
+API Documentation
+-----------------
+
+API Documentation (including the full contents of this readme) is
+available at: http://mu.daaku.org/
 
 Console
 -------
@@ -135,7 +141,7 @@ late as possible::
         if (session) {
             if (perms) {
                 // user is logged in and granted some permissions.
-                // perms is a command separated list of the granted permissions
+                // perms is a command separated list of granted permissions
             } else {
                 // user is logged in, but did not grant any permissions
             }
@@ -246,9 +252,9 @@ Here's an example call utilizing some of the features::
           name: 'Mu Connect',
           caption: 'A micro Facebook Connect library.',
           description: (
-            'Mu is a small JavaScript library that allows you to harness the ' +
-            'power of Facebook, bringing the user\'s identity, social graph ' +
-            'and distribution power to your site.'
+            'Mu is a small JavaScript library that allows you to harness ' +
+            'the power of Facebook, bringing the user\'s identity, ' +
+            'social graph and distribution power to your site.'
           ),
           href: 'http://mu.daaku.org/',
         },
@@ -261,12 +267,12 @@ Here's an example call utilizing some of the features::
 
     Mu.publish(
         post,
-        function(post) {
-            if (post) {
+        function(published_post) {
+            if (published_post) {
                 alert(
                     'The post was successfully published. ' +
-                    'Post ID: ' + post.post_id +
-                    ' .Message: ' + post.message
+                    'Post ID: ' + published_post.post_id +
+                    '. Message: ' + published_post.message
                 );
             } else {
                 alert('The post was not published.');
@@ -296,54 +302,3 @@ provide the URL and optionally a title::
 
 Both arguments are optional, and just calling ``Mu.share()`` will share the
 current page.
-
-
-
-=================
-How does it work?
-=================
-
-Facebook Connect works on top of HTTP. If you're interested in the
-underlying techniques, there are two you should be aware of.
-
-
-Redirects
----------
-
-The browser driven flows used by Connect for `Authentication & Authorization`_,
-Permissions_, Publishing_ and so on are built using redirects. When you popup a
-window for the user to perform an action on facebook.com, you may want to know
-the result of the action that the user took. In order to get this result, we
-pass URLs to facebook.com that the user's browser will get redirected to based
-on the action they performed. This is most often seen with the 'next' and
-'cancel_url' parameters.
-
-For example, suppose we want facebook.com to prompt the user to perform an
-action. As part of this, facebook.com shows a dialog, which has two buttons:
-"Okay" and "Cancel". We want find out if the user clicked on "Okay" or
-"Cancel". We would popup a URL with two parameters, such as:
-
-    - next: http://mu.daaku.org/prompt/yes
-    - cancel_url: http://mu.daaku.org/prompt/cancel
-
-Now when we popup the facebook.com window with the two parameters as above
-given in the URL, facebook.com will redirect the user to one of the given URLs
-based on the user's action. If the user visits http://mu.daaku.org/prompt/yes
-then you know they clicked on "Okay", and if they visit
-http://mu.daaku.org/prompt/cancel you know they clicked on the cancel button.
-You should be aware of CSRF issues and use tokens as appropriate if you are
-directly using these URLs (Mu takes care of it for you). Note, this is made
-available only on some dialogs, and typically only when a session key is
-provided to ensure the user's privacy and safety.
-
-
-REST
-----
-
-In order to access user's data or make API calls to facebook, you will use REST
-style HTTP calls. These can be made via JavaScript, Flash or on your server
-with Python, PHP, Perl or virtually any other language.
-
-These are standard GET/POST calls identical to what a browser usually does. If
-you are accessing Authenticated data, then you may need to sign them.
-Signatures are discussed in the next section.

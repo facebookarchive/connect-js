@@ -10,6 +10,7 @@
  *
  * @class Mu
  * @static
+ * @access public
  */
 var Mu = {
   // use the init method to set these values correctly
@@ -58,7 +59,7 @@ var Mu = {
    * @param target    {Object}  the target object to copy into
    * @param source    {Object}  the source object to copy from
    * @param overwrite {Boolean} indicate if we should overwrite
-   * @returns {Object} the _same_ target object back
+   * @returns {Object} the *same* target object back
    */
   copy: function(target, source, overwrite) {
     for (var k in source) {
@@ -282,6 +283,7 @@ var Mu = {
    * @class Mu.Flash
    * @static
    * @for Mu
+   * @access private
    */
   Flash: {
     _callbacks: [],
@@ -412,7 +414,7 @@ var Mu = {
      * @param params {Object}   the parameters for the query
      * @param cb     {Function} the callback function to handle the response
      * @param secret {String}   secret to sign the call (defaults to the current
-     *                          session secret)
+     * session secret)
      */
     api: function(params, cb, secret) {
       Mu.Flash.onReady(function() {
@@ -451,6 +453,7 @@ var Mu = {
    * @class Mu.XD
    * @static
    * @for Mu
+   * @access private
    */
   XD: {
     _origin      : null,
@@ -524,7 +527,7 @@ var Mu = {
      * the data and removes the related window/frame.
      *
      * @access private
-     * @param data {String|Object} the parameters passed on by xdChild
+     * @param data {String|Object} the message fragment string or parameters
      */
     recv: function(data) {
       if (typeof data == 'string') {
@@ -565,7 +568,7 @@ var Mu = {
     },
 
     /**
-     * Some Facebook redirect URLs use a special 'xxRESULTTOKENxx' to return
+     * Some Facebook redirect URLs use a special ``xxRESULTTOKENxx`` to return
      * custom values. This is a convenience function to wrap a callback that
      * expects this value back.
      *
@@ -591,8 +594,10 @@ var Mu = {
      *  - login_status.php
      *  - login.php
      *  - tos.php
-     * It also (optionally) handles the xxRESULTTOKENxx response from:
+     *
+     * It also (optionally) handles the ``xxRESULTTOKENxx`` response from:
      *  - prompt_permissions.php
+     *
      * And calls the given callback with the (session, perms)
      *
      * @access private
@@ -622,11 +627,12 @@ var Mu = {
 
 
     /**
-     * Provides Native window.postMessage based XD support.
+     * Provides Native ``window.postMessage`` based XD support.
      *
      * @class Mu.XD.PostMessage
      * @static
      * @for Mu.XD
+     * @access private
      */
     PostMessage: {
       /**
@@ -658,6 +664,7 @@ var Mu = {
      * @class Mu.XD.Flash
      * @static
      * @for Mu.XD
+     * @access private
      */
     Flash: {
       /**
@@ -695,6 +702,16 @@ var Mu = {
    * Find out the current status from the server, and get a session if the user
    * is connected. The callback is invoked with (session).
    *
+   * Example::
+   *
+   *     Mu.status(function(session) {
+   *         if (session) {
+   *             // logged in and connected user
+   *         } else {
+   *             // no user session available
+   *         }
+   *     });
+   *
    * @access public
    * @param cb {Function} the callback function
    * @for Mu
@@ -717,6 +734,21 @@ var Mu = {
    * Login/Authorize/Permissions.
    *
    * The callback is invoked with (session, permissions).
+   *
+   * Example::
+   *
+   *     Mu.login(function(session, perms) {
+   *         if (session) {
+   *             if (perms) {
+   *                 // user is logged in and granted some permissions.
+   *                 // perms is a command separated list of granted permissions
+   *             } else {
+   *                 // user is logged in, but did not grant any permissions
+   *             }
+   *         } else {
+   *             // user is not logged in
+   *         }
+   *     }, 'read_stream,publish_stream,offline_access');
    *
    * @access public
    * @param cb    {Function} the callback function
@@ -759,6 +791,12 @@ var Mu = {
 
   /**
    * Logout the user in the background using a hidden iframe.
+   *
+   * Example::
+   *
+   *     Mu.logout(function() {
+   *         // user is now logged out
+   *     });
    *
    * @access public
    * @param cb    {Function} the callback function
@@ -814,21 +852,67 @@ var Mu = {
    * the Facebook News Feed or The Stream. This function can be used without
    * requiring a user to login or even having an API key.
    *
-   * If you have a registered application, you may fist call Mu.init with your
-   * API key if you want the Application Icon and attribution to show up. You
-   * must also do this if you wish to use the callback to get notified of the
-   * post_id of the published post, or find out if the user did not publish
-   * (clicked on the skipped button).
+   * If you have a registered application, you may fist call
+   * ``Mu.init`` with your API key if you want the Application Icon
+   * and attribution to show up. You must also do this if you wish to
+   * use the callback to get notified of the ``post_id`` and the
+   * ``message`` the user typed in the published post, or find out if
+   * the user did not publish (clicked on the skipped button).
    *
    * A post may contain the following properties:
-   *   message             {String}   this allows prepopulating the message
-   *   attachment          {Array}    an array of attachments
-   *   action_links        {Array}    an array of action links
-   *   target_id           {String}   a target profile id
-   *   user_message_prompt {String}   custom prompt message
+   *
+   * ===================   ======   =====================================
+   * Property              Type     Description
+   * ===================   ======   =====================================
+   * message               String   this allows prepopulating the message
+   * attachment            Array    an attachment_ object
+   * action_links          Array    an array of `action links`_
+   * actor_id              String   a actor profile/page id
+   * target_id             String   a target profile id
+   * user_message_prompt   String   custom prompt message
+   * ===================   ======   =====================================
    *
    * The post and all the parameters are optional, so use what is best
    * for your specific case.
+   *
+   * .. _attachment: http://wiki.developers.facebook.com/index.php/Attachment_(Streams)
+   * .. _action links: http://wiki.developers.facebook.com/index.php/Action_Links
+   *
+   * Example::
+   *
+   *     var post = {
+   *         message: 'getting educated about Facebook Connect',
+   *         attachment: {
+   *           name: 'Mu Connect',
+   *           caption: 'A micro Facebook Connect library.',
+   *           description: (
+   *             'Mu is a small JavaScript library that allows you to harness ' +
+   *             'the power of Facebook, bringing the user\'s identity, ' +
+   *             'social graph and distribution power to your site.'
+   *           ),
+   *           href: 'http://mu.daaku.org/',
+   *         },
+   *         action_links: [
+   *             { text: 'Mu Console', href: 'http://mu.daaku.org/' },
+   *             { text: 'GitHub Repo', href: 'http://github.com/nshah/mu' }
+   *         ],
+   *         user_prompt_message: 'Share your thoughts about Mu Connect'
+   *     };
+   *
+   *     Mu.publish(
+   *         post,
+   *         function(published_post) {
+   *             if (published_post) {
+   *                 alert(
+   *                     'The post was successfully published. ' +
+   *                     'Post ID: ' + published_post.post_id +
+   *                     '. Message: ' + published_post.message
+   *                 );
+   *             } else {
+   *                 alert('The post was not published.');
+   *             }
+   *         }
+   *     );
    *
    * @access public
    * @param post  {Object}   the post object
@@ -894,13 +978,13 @@ var Mu = {
   /**
    * Sign the given params and prepare them for an API call, either using an
    * explicit secret or using the current session. It updates the given params
-   * object _in place_ with the necessary parameters.
+   * object *in place* with the necessary parameters.
    *
    * @access public
    * @param params {Object} the parameters to sign
    * @param secret {String} secret to sign the call (defaults to the current
-   *                        session secret)
-   * @returns {Object} the _same_ params object back
+   * session secret)
+   * @returns {Object} the *same* params object back
    */
   sign: function(params, secret) {
     // general api call parameters
@@ -936,13 +1020,26 @@ var Mu = {
   },
 
   /**
-   * Make a API call to restserver.php using JSONP or Flash.
+   * Make a API call to restserver.php. API methods are documented at:
+   * http://wiki.developers.facebook.com/index.php/API
+   *
+   * Example::
+   *
+   *     Mu.api(
+   *       {
+   *         method: 'fql.query',
+   *         query: 'SELECT name FROM profile WHERE id=' + Mu.session().uid
+   *       },
+   *       function(response) {
+   *         alert(response[0].name);
+   *       }
+   *     );
    *
    * @access public
    * @param params {Object}   the parameters for the query
    * @param cb     {Function} the callback function to handle the response
    * @param secret {String}   secret to sign the call (defaults to the current
-   *                          session secret)
+   * session secret)
    */
   api: function(params, cb, secret) {
     try {
@@ -966,7 +1063,7 @@ var Mu = {
    * @param params {Object}   the parameters for the query
    * @param cb     {Function} the callback function to handle the response
    * @param secret {String}   secret to sign the call (defaults to the current
-   *                          session secret)
+   * session secret)
    */
   jsonp: function(params, cb, secret) {
     var
