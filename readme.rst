@@ -70,7 +70,7 @@ Bootstrap
 
 Here's the minimal you need before calling most of the API::
 
-    <div id="mu-hidden-root"></div>
+    <div id="mu-root"></div>
     <script src="http://mu.daaku.org/m.js"></script>
     <script>
         Mu.init('YOUR API KEY');

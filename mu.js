@@ -25,10 +25,7 @@ var Mu = {
   },
 
   // these are used the cross-domain communication and jsonp logic
-  _callbacks  : {},
-  _xdFrames   : {},
-  _winCount   : 0,
-  _winMonitor : null,
+  _callbacks : {},
 
 
 
@@ -131,145 +128,186 @@ var Mu = {
     return params;
   },
 
-  /**
-   * Append some hidden content.
-   *
-   * @access private
-   * @param content {String|Node} a DOM Node or HTML string
-   * @returns {Node} the node that was just appended
-   */
-  hiddenContent: function(content) {
-    if (!Mu._hiddenRoot) {
-      Mu._hiddenRoot = document.getElementById('mu-hidden-root');
-      if (!Mu._hiddenRoot) {
-        Mu._hiddenRoot = document.createElement('div');
-        Mu._hiddenRoot.id = 'mu-hidden-root';
-        document.body.appendChild(Mu._hiddenRoot);
-      }
-      var style = Mu._hiddenRoot.style;
-      style.position = 'absolute';
-      style.top      = '-10000px';
-      style.width    = style.height = 0;
-    }
-
-    if (typeof content == 'string') {
-      var div = document.createElement('div');
-      Mu._hiddenRoot.appendChild(div).innerHTML = content;
-      return div;
-    } else {
-      return Mu._hiddenRoot.appendChild(content);
-    }
-  },
 
   /**
-   * Builds and inserts a hidden iframe.
+   * "Content" is a very flexible term. Helpers for things like hidden
+   * DOM content, iframes and popups.
    *
-   * @access private
-   * @param url {String} the URL for the iframe
-   * @param id  {String} the id to store the node against in _xdFrames
-   */
-  hiddenIframe: function(url, id) {
-    var node = document.createElement('iframe');
-    // In IE, we must set the iframe src _before_ injecting the node into the
-    // document to prevent the click noise.
-    if (document.attachEvent) {
-      node.setAttribute('src', url);
-    }
-    Mu._xdFrames[id] = Mu.hiddenContent(node);
-    // For Firefox, we must set the iframe src _after_ injecting the node into
-    // the document to prevent caching issues. This also works fine in other
-    // browsers.
-    if (!document.attachEvent) {
-      node.setAttribute('src', url);
-    }
-  },
-
-  /**
-   * Open a popup window with the given url and dimensions and place it at the
-   * center of the current window.
-   *
-   * @access private
-   * @param url    {String}  the url for the popup
-   * @param width  {Integer} the initial width for the popup
-   * @param height {Integer} the initial height for the popup
-   * @param id     {String}  the id to store the window against in _xdFrames
-   */
-  popup: function(url, width, height, id) {
-    // we try to place it at the center of the current window
-    var
-      screenX    = typeof window.screenX      != 'undefined'
-        ? window.screenX
-        : window.screenLeft,
-      screenY    = typeof window.screenY      != 'undefined'
-        ? window.screenY
-        : window.screenTop,
-      outerWidth = typeof window.outerWidth   != 'undefined'
-        ? window.outerWidth
-        : document.body.clientWidth,
-      outerHeight = typeof window.outerHeight != 'undefined'
-        ? window.outerHeight
-        : (document.body.clientHeight - 22),
-      left     = parseInt(screenX + ((outerWidth - width) / 2), 10),
-      top      = parseInt(screenY + ((outerHeight - height) / 2.5), 10),
-      features = (
-        'width=' + width +
-        ',height=' + height +
-        ',left=' + left +
-        ',top=' + top
-      );
-
-    Mu._xdFrames[id] = window.open(url, '_blank', features);
-
-    // if there's a default close action, setup the monitor for it
-    if (id in Mu._callbacks) {
-      Mu._winCount++;
-      Mu.winMonitor();
-    }
-  },
-
-  /**
-   * Start and manage the window monitor interval. This allows us to invoke the
-   * default callback for a window when the user closes the window directly.
-   *
+   * @class Mu.Content
+   * @static
+   * @for Mu
    * @access private
    */
-  winMonitor: function() {
-    // shutdown if we have nothing to monitor
-    if (Mu._winCount < 1) {
-      window.clearInterval(Mu._winMonitor);
-      Mu._winMonitor = null;
-      return;
-    }
+  Content: {
+    _root       : null,
+    _hiddenRoot : null,
+    _winMonitor : null,
+    _winCount   : 0,
+    _xdFrames   : {},
 
-    // start the monitor if its not already running
-    if (!Mu._winMonitor) {
-      Mu._winMonitor = window.setInterval(Mu.winMonitor, 100);
-    }
-
-    // check all open windows
-    for (var id in Mu._xdFrames) {
-      // ignore prototype properties, and ones without a default callback
-      if (Mu._xdFrames.hasOwnProperty(id) && id in Mu._callbacks) {
-        var win = Mu._xdFrames[id];
-
-        // ignore iframes
-        try {
-          if (win.tagName) {
-            // is an iframe, we're done
-            continue;
+    /**
+     * Append some content.
+     *
+     * @access private
+     * @param content {String|Node} a DOM Node or HTML string
+     * @param root    {Node}        (optional) a custom root node
+     * @returns {Node} the node that was just appended
+     */
+    append: function(content, root) {
+      // setup the root node, creating it if necessary
+      if (!root) {
+        if (!Mu.Content._root) {
+          root = document.getElementById('mu-root');
+          if (!root) {
+            root = document.createElement('div');
+            root.id = 'mu-root';
+            Mu.Content._root = document.body.appendChild(root);
           }
-        } catch (x) {
-          // probably a permission error
+        } else {
+          root = Mu.Content._root;
         }
+      }
 
-        try {
-          // found a closed window
-          if (win.closed) {
-            Mu._winCount--;
-            Mu.XD.recv({ cb: id, frame: id });
+      if (typeof content == 'string') {
+        var div = document.createElement('div');
+        root.appendChild(div).innerHTML = content;
+        return div;
+      } else {
+        return root.appendChild(content);
+      }
+    },
+
+    /**
+     * Append some hidden content.
+     *
+     * @access private
+     * @param content {String|Node} a DOM Node or HTML string
+     * @returns {Node} the node that was just appended
+     */
+    hidden: function(content) {
+      if (!Mu.Content._hiddenRoot) {
+        var
+          hiddenRoot = document.createElement('div'),
+          style      = hiddenRoot.style;
+        style.position = 'absolute';
+        style.top      = '-10000px';
+        style.width    = style.height = 0;
+        Mu.Content._hiddenRoot = Mu.Content.append(hiddenRoot);
+      }
+
+      return Mu.Content.append(content, Mu.Content._hiddenRoot);
+    },
+
+    /**
+     * Builds and inserts a hidden iframe.
+     *
+     * @access private
+     * @param url {String} the URL for the iframe
+     * @param id  {String} the id to store the node against in _xdFrames
+     */
+    hiddenIframe: function(url, id) {
+      var node = document.createElement('iframe');
+      // In IE, we must set the iframe src _before_ injecting the node into the
+      // document to prevent the click noise.
+      if (document.attachEvent) {
+        node.setAttribute('src', url);
+      }
+      Mu.Content._xdFrames[id] = Mu.Content.hidden(node);
+      // For Firefox, we must set the iframe src _after_ injecting the node into
+      // the document to prevent caching issues. This also works fine in other
+      // browsers.
+      if (!document.attachEvent) {
+        node.setAttribute('src', url);
+      }
+    },
+
+    /**
+     * Open a popup window with the given url and dimensions and place it at the
+     * center of the current window.
+     *
+     * @access private
+     * @param url    {String}  the url for the popup
+     * @param width  {Integer} the initial width for the popup
+     * @param height {Integer} the initial height for the popup
+     * @param id     {String}  the id to store the window against in _xdFrames
+     */
+    popup: function(url, width, height, id) {
+      // we try to place it at the center of the current window
+      var
+        screenX    = typeof window.screenX      != 'undefined'
+          ? window.screenX
+          : window.screenLeft,
+        screenY    = typeof window.screenY      != 'undefined'
+          ? window.screenY
+          : window.screenTop,
+        outerWidth = typeof window.outerWidth   != 'undefined'
+          ? window.outerWidth
+          : document.body.clientWidth,
+        outerHeight = typeof window.outerHeight != 'undefined'
+          ? window.outerHeight
+          : (document.body.clientHeight - 22),
+        left     = parseInt(screenX + ((outerWidth - width) / 2), 10),
+        top      = parseInt(screenY + ((outerHeight - height) / 2.5), 10),
+        features = (
+          'width=' + width +
+          ',height=' + height +
+          ',left=' + left +
+          ',top=' + top
+        );
+
+      Mu.Content._xdFrames[id] = window.open(url, '_blank', features);
+
+      // if there's a default close action, setup the monitor for it
+      if (id in Mu._callbacks) {
+        Mu.Content._winCount++;
+        Mu.Content.winMonitor();
+      }
+    },
+
+    /**
+     * Start and manage the window monitor interval. This allows us to invoke the
+     * default callback for a window when the user closes the window directly.
+     *
+     * @access private
+     */
+    winMonitor: function() {
+      // shutdown if we have nothing to monitor
+      if (Mu.Content._winCount < 1) {
+        window.clearInterval(Mu.Content._winMonitor);
+        Mu.Content._winMonitor = null;
+        return;
+      }
+
+      // start the monitor if its not already running
+      if (!Mu.Content._winMonitor) {
+        Mu.Content._winMonitor = window.setInterval(Mu.Content.winMonitor, 100);
+      }
+
+      // check all open windows
+      for (var id in Mu.Content._xdFrames) {
+        // ignore prototype properties, and ones without a default callback
+        if (Mu.Content._xdFrames.hasOwnProperty(id) && id in Mu._callbacks) {
+          var win = Mu.Content._xdFrames[id];
+
+          // ignore iframes
+          try {
+            if (win.tagName) {
+              // is an iframe, we're done
+              continue;
+            }
+          } catch (x) {
+            // probably a permission error
           }
-        } catch(x) {
-          // probably a permission error
+
+          try {
+            // found a closed window
+            if (win.closed) {
+              Mu.Content._winCount--;
+              Mu.XD.recv({ cb: id, frame: id });
+            }
+          } catch(x) {
+            // probably a permission error
+          }
         }
       }
     }
@@ -338,7 +376,7 @@ var Mu = {
           '</object>'
         );
 
-      Mu.hiddenContent(html);
+      Mu.Content.hidden(html);
     },
 
     /**
@@ -535,7 +573,7 @@ var Mu = {
       }
 
       var
-        frame = Mu._xdFrames[data.frame],
+        frame = Mu.Content._xdFrames[data.frame],
         cb    = Mu._callbacks[data.cb];
 
       // iframe
@@ -562,7 +600,7 @@ var Mu = {
       }
 
       // cleanup and fire
-      delete Mu._xdFrames[data.frame];
+      delete Mu.Content._xdFrames[data.frame];
       delete Mu._callbacks[data.cb];
       cb(data);
     },
@@ -727,7 +765,7 @@ var Mu = {
         ok_session : xdUrl
       });
 
-    Mu.hiddenIframe(url, g);
+    Mu.Content.hiddenIframe(url, g);
   },
 
   /**
@@ -786,7 +824,7 @@ var Mu = {
         v              : '1.0'
       });
 
-    Mu.popup(url, 450, 415, g);
+    Mu.Content.popup(url, 450, 415, g);
   },
 
   /**
@@ -810,7 +848,7 @@ var Mu = {
         session_key : Mu._session.session_key
       });
 
-    Mu.hiddenIframe(url, g);
+    Mu.Content.hiddenIframe(url, g);
   },
 
   /**
@@ -842,7 +880,7 @@ var Mu = {
         u     : u || window.location.toString()
       });
 
-    Mu.popup(url, 575, 380);
+    Mu.Content.popup(url, 575, 380);
   },
 
   /**
@@ -951,7 +989,7 @@ var Mu = {
         user_message_prompt : post.user_message_prompt
       });
 
-    Mu.popup(url, 550, 242, g);
+    Mu.Content.popup(url, 550, 242, g);
   },
 
   /**
@@ -972,7 +1010,7 @@ var Mu = {
         session_key : Mu._session.session_key
       });
 
-    Mu.popup(url, 565, 240, g);
+    Mu.Content.popup(url, 565, 240, g);
   },
 
   /**
