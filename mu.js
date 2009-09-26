@@ -77,56 +77,69 @@ var Mu = {
     return 'f' + (Math.random() * (1<<30)).toString(16).replace('.', '');
   },
 
+
+
   /**
-   * Encode parameters to a query string.
+   * Query String encoding & decoding.
    *
+   * @class Mu.QS
+   * @static
+   * @for Mu
    * @access private
-   * @param   params {Object}  the parameters to encode
-   * @param   sep    {String}  the separator string (defaults to '&')
-   * @param   encode {Boolean} indicate if the key/values should be URI encoded
-   * @returns        {String}  the query string
    */
-  encodeQS: function(params, sep, encode) {
-    sep    = sep === undefined ? '&' : sep;
-    encode = encode === false ? function(s) { return s; } : encodeURIComponent;
+  QS: {
+    /**
+     * Encode parameters to a query string.
+     *
+     * @access private
+     * @param   params {Object}  the parameters to encode
+     * @param   sep    {String}  the separator string (defaults to '&')
+     * @param   encode {Boolean} indicate if the key/value should be URI encoded
+     * @returns        {String}  the query string
+     */
+    encode: function(params, sep, encode) {
+      sep    = sep === undefined ? '&' : sep;
+      encode = encode === false ? function(s) {return s;} : encodeURIComponent;
 
-    var
-      pairs = [],
-      k;
+      var
+        pairs = [],
+        k;
 
-    for (k in params) {
-      if (params.hasOwnProperty(k) &&
-          params[k] !== null &&
-          typeof params[k] != 'undefined') {
-        pairs.push(encode(k) + '=' + encode(params[k]));
+      for (k in params) {
+        if (params.hasOwnProperty(k) &&
+            params[k] !== null &&
+            typeof params[k] != 'undefined') {
+          pairs.push(encode(k) + '=' + encode(params[k]));
+        }
       }
+      pairs.sort();
+      return pairs.join(sep);
+    },
+
+    /**
+     * Decode a query string into a parameters object.
+     *
+     * @access private
+     * @param   str {String} the query string
+     * @returns     {Object} the parameters to encode
+     */
+    decode: function(str) {
+      var
+        decode = decodeURIComponent,
+        params = {},
+        parts  = str.split('&'),
+        i,
+        pair;
+
+      for (i=0; i<parts.length; i++) {
+        pair = parts[i].split('=', 2);
+        params[decode(pair[0])] = decode(pair[1]);
+      }
+
+      return params;
     }
-    pairs.sort();
-    return pairs.join(sep);
   },
 
-  /**
-   * Decode a query string into a parameters object.
-   *
-   * @access private
-   * @param   str {String} the query string
-   * @returns     {Object} the parameters to encode
-   */
-  decodeQS: function(str) {
-    var
-      decode = decodeURIComponent,
-      params = {},
-      parts  = str.split('&'),
-      i,
-      pair;
-
-    for (i=0; i<parts.length; i++) {
-      pair = parts[i].split('=', 2);
-      params[decode(pair[0])] = decode(pair[1]);
-    }
-
-    return params;
-  },
 
 
   /**
@@ -265,8 +278,9 @@ var Mu = {
     },
 
     /**
-     * Start and manage the window monitor interval. This allows us to invoke the
-     * default callback for a window when the user closes the window directly.
+     * Start and manage the window monitor interval. This allows us to invoke
+     * the default callback for a window when the user closes the window
+     * directly.
      *
      * @access private
      */
@@ -459,7 +473,7 @@ var Mu = {
         var method, url, body, reqId;
 
         // shallow clone of params, sign, and encode as query string
-        body = Mu.encodeQS(Mu.sign(Mu.copy({}, params), secret));
+        body = Mu.QS.encode(Mu.sign(Mu.copy({}, params), secret));
         url = Mu._domain.api + 'restserver.php';
 
         // GET or POST
@@ -551,7 +565,7 @@ var Mu = {
       var xdProxy = Mu._domain.cdn + 'connect/xd_proxy.php#?=&';
       id = id || frame;
       Mu._callbacks[id] = cb;
-      return xdProxy + Mu.encodeQS({
+      return xdProxy + Mu.QS.encode({
         cb        : id,
         frame     : frame,
         origin    : Mu.XD._origin,
@@ -569,7 +583,7 @@ var Mu = {
      */
     recv: function(data) {
       if (typeof data == 'string') {
-        data = Mu.decodeQS(data);
+        data = Mu.QS.decode(data);
       }
 
       var
@@ -758,7 +772,7 @@ var Mu = {
     var
       g     = Mu.guid(),
       xdUrl = Mu.XD.session(cb, g, 'parent'),
-      url   = Mu._domain.www + 'extern/login_status.php?' + Mu.encodeQS({
+      url   = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
         api_key    : Mu._apiKey,
         no_session : xdUrl,
         no_user    : xdUrl,
@@ -811,7 +825,7 @@ var Mu = {
     var
       g         = Mu.guid(),
       xdHandler = Mu.XD.session(cb, g, 'opener', g),
-      url       = Mu._domain.www + 'login.php?' + Mu.encodeQS({
+      url       = Mu._domain.www + 'login.php?' + Mu.QS.encode({
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
         cancel_url     : xdHandler,
@@ -842,7 +856,7 @@ var Mu = {
   logout: function(cb) {
     var
       g   = Mu.guid(),
-      url = Mu._domain.www + 'logout.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'logout.php?' + Mu.QS.encode({
         api_key     : Mu._apiKey,
         next        : Mu.XD.session(cb, g, 'parent'),
         session_key : Mu._session.session_key
@@ -875,7 +889,7 @@ var Mu = {
    */
   share: function(u, title) {
     var
-      url = Mu._domain.www + 'sharer.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'sharer.php?' + Mu.QS.encode({
         title : title,
         u     : u || window.location.toString()
       });
@@ -976,7 +990,7 @@ var Mu = {
     post = post || {};
     var
       g   = Mu._apiKey && Mu.guid(),
-      url = Mu._domain.www + 'connect/prompt_feed.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'connect/prompt_feed.php?' + Mu.QS.encode({
         action_links        : JSON.stringify(post.action_links || {}),
         actor_id            : post.actor_id,
         api_key             : Mu._apiKey,
@@ -1002,7 +1016,7 @@ var Mu = {
   addFriend: function(id, cb) {
     var
       g   = Mu.guid(),
-      url = Mu._domain.www + 'addfriend.php?' + Mu.encodeQS({
+      url = Mu._domain.www + 'addfriend.php?' + Mu.QS.encode({
         api_key     : Mu._apiKey,
         display     : 'dialog',
         id          : id,
@@ -1049,7 +1063,7 @@ var Mu = {
       // the signature is described at:
       // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
       params.sig = Mu.md5sum(
-        Mu.encodeQS(params, '', false) +
+        Mu.QS.encode(params, '', false) +
         (secret || Mu._session.secret)
       );
     }
@@ -1112,7 +1126,7 @@ var Mu = {
     // shallow clone of params, add callback and sign
     params = Mu.sign(Mu.copy({callback: 'Mu._callbacks.' + g}, params), secret);
 
-    url = Mu._domain.api + 'restserver.php?' + Mu.encodeQS(params);
+    url = Mu._domain.api + 'restserver.php?' + Mu.QS.encode(params);
     if (url.length > 2000) {
       throw new Error('JSONP only support a maximum of 2000 bytes of input.');
     }
