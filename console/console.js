@@ -10,8 +10,12 @@ function publishExample() {
     ],
     user_message_prompt: 'Tell the world about Popups?'
   };
-  Mu.publish(post, function(result) {
-    alert('Publish Result: ' + JSON.stringify(result));
+  Mu.publish(post, function(published_post) {
+    statusUpdate(
+      'sans-session-info',
+      'post was ' + (published_post ? '' : 'not ') + 'published.',
+      published_post
+    );
   });
 }
 

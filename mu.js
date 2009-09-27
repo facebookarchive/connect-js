@@ -1020,9 +1020,9 @@ var Mu = {
    *       function(published_post) {
    *         if (published_post) {
    *           alert(
-   *               'The post was successfully published. ' +
-   *               'Post ID: ' + published_post.post_id +
-   *               '. Message: ' + published_post.message
+   *             'The post was successfully published. ' +
+   *             'Post ID: ' + published_post.post_id +
+   *             '. Message: ' + published_post.message
    *           );
    *         } else {
    *           alert('The post was not published.');
