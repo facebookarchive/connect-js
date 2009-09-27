@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <title>Mu Prototype Login Example</title>
+    <script src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"></script>
+    <script src="http://mu.daaku.org/m.js"></script>
+  </head>
+  <body>
+    <h1>Mu Prototype Login Example</h1>
+    <div>
+      <button id="login">Login</button>
+      <button id="logout">Logout</button>
+      <button id="disconnect">Disconnect</button>
+    </div>
+    <div id="user-info"></div>
+
+    <div id="mu-root"></div>
+    <script>
+      // initialize the library with the API key
+      Mu.init('48f06bc570aaf9ed454699ec4fe416df');
+
+      // fetch the status on load
+      Mu.status(handleSessionResponse);
+
+      $('login').observe('click', function() {
+        Mu.login(handleSessionResponse);
+      });
+
+      $('logout').observe('click', function() {
+        Mu.logout(handleSessionResponse);
+      });
+
+      $('disconnect').observe('click', function() {
+        Mu.disconnect(handleSessionResponse);
+      });
+
+      // handle a session response from any of the auth related calls
+      function handleSessionResponse(session) {
+        // if we dont have a session, just hide the user info
+        if (!session) {
+          document.getElementById('user-info').innerHTML = '';
+          return;
+        }
+
+        // if we have a session, query for the user's profile picture and name
+        Mu.api(
+          {
+            method: 'fql.query',
+            query: 'SELECT name, pic FROM profile WHERE id=' + session.uid
+          },
+          function(response) {
+            var user = response[0];
+            var userInfo = document.getElementById('user-info');
+            userInfo.innerHTML = '<img src="' + user.pic + '">' + user.name;
+          }
+        );
+      }
+    </script>
+
+
+
+    <script src="http://www.google-analytics.com/ga.js"></script>
+    <script>
+      try {
+        var pageTracker = _gat._getTracker('UA-7621205-4');
+        pageTracker._trackPageview();
+      } catch(e) {}
+    </script>
+  </body>
+</html>
