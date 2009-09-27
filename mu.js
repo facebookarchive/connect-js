@@ -30,7 +30,21 @@ var Mu = {
 
 
   /**
-   * Initialize the library.
+   * Initialize the library::
+   *
+   *    <div id="mu-root"></div>
+   *    <script src="http://mu.daaku.org/m.js"></script>
+   *    <script>
+   *      Mu.init('YOUR API KEY');
+   *    </script>
+   *
+   * The best place to put this code is right before the closing </body> tag.
+   *
+   * *Note*: `Mu.publish()`_ and `Mu.share()`_ can be used without
+   * registering an application or calling this method.
+   *
+   * .. _Mu.publish(): #method_publish
+   * .. _Mu.share(): #method_share
    *
    * @access public
    * @param apiKey  {String} your application API key
@@ -754,14 +768,23 @@ var Mu = {
    * Find out the current status from the server, and get a session if the user
    * is connected. The callback is invoked with (session).
    *
-   * Example::
+   * The User's Status or the question of "who is the current user" is
+   * the first thing you will typically start with. For the answer, we
+   * ask facebook.com.  Facebook will answer this question in one of
+   * two ways:
+   *
+   *     #. Someone you don't know.
+   *     #. Someone you know and have interacted with. Here's a
+   *        session for them.
+   *
+   * Here's how you find out::
    *
    *     Mu.status(function(session) {
-   *         if (session) {
-   *             // logged in and connected user
-   *         } else {
-   *             // no user session available
-   *         }
+   *       if (session) {
+   *         // logged in and connected user, someone you know
+   *       } else {
+   *         // no user session available, someone you dont know
+   *       }
    *     });
    *
    * @access public
@@ -785,21 +808,45 @@ var Mu = {
   /**
    * Login/Authorize/Permissions.
    *
-   * The callback is invoked with (session, permissions).
+   * Once you have determined the user's status, you may need to
+   * prompt the user to login. It is best to delay this action to
+   * reduce user friction when they first arrive at your site. You can
+   * then prompt and show them the "Connect with Facebook" button
+   * bound to an event handler which does the following::
    *
-   * Example::
+   *    Mu.login(function(session) {
+   *      if (session) {
+   *        // user successfully logged in
+   *      } else {
+   *        // user cancelled login
+   *      }
+   *    });
+   *
+   * You should **only** call this on a user event as it opens a
+   * popup. Most browsers block popups, *unless* they were initiated
+   * from a user event, such as a click on a button or a link.
+   *
+   *
+   * Depending on your application's needs, you may need additional
+   * permissions from the user. A large number of calls do not require
+   * any additional permissions, so you should first make sure you
+   * need a permission. This is a good idea because this step
+   * potentially adds friction to the user's process. Another point to
+   * remember is that this call can be made even *after* the user has
+   * first connected. So you may want to delay asking for permissions
+   * until as late as possible::
    *
    *     Mu.login(function(session, perms) {
-   *         if (session) {
-   *             if (perms) {
-   *                 // user is logged in and granted some permissions.
-   *                 // perms is a command separated list of granted permissions
-   *             } else {
-   *                 // user is logged in, but did not grant any permissions
-   *             }
+   *       if (session) {
+   *         if (perms) {
+   *           // user is logged in and granted some permissions.
+   *           // perms is a comma separated list of granted permissions
    *         } else {
-   *             // user is not logged in
+   *           // user is logged in, but did not grant any permissions
    *         }
+   *       } else {
+   *         // user is not logged in
+   *       }
    *     }, 'read_stream,publish_stream,offline_access');
    *
    * @access public
@@ -842,12 +889,14 @@ var Mu = {
   },
 
   /**
-   * Logout the user in the background using a hidden iframe.
+   * Logout the user in the background.
    *
-   * Example::
+   * Just like logging in is tied to facebook.com, so is logging out.
+   * The status shared between your site and Facebook, and logging out
+   * affects both sites. This is a simple call::
    *
    *     Mu.logout(function() {
-   *         // user is now logged out
+   *       // user is now logged out
    *     });
    *
    * @access public
@@ -879,7 +928,14 @@ var Mu = {
   },
 
   /**
-   * Share a given URL with the specified title.
+   * Sharing is the light weight way of distributing your content. As opposed to the
+   * structured data explicitly given in the publish call, with share you simply
+   * provide the URL and optionally a title::
+   *
+   *    Mu.share('http://mu.daaku.org/', 'Mu Connect');
+   *
+   * Both arguments are optional, and just calling ``Mu.share()`` will share the
+   * current page.
    *
    * This call can be used without requiring the user to sign in.
    *
@@ -900,16 +956,24 @@ var Mu = {
   /**
    * Publish a post to the stream.
    *
-   * This is the preferred way of providing content from your application into
-   * the Facebook News Feed or The Stream. This function can be used without
-   * requiring a user to login or even having an API key.
+   * This is the main, fully featured distribution mechanism for you
+   * to publish into the user's stream. It can be used, with or
+   * without an API key. With an API key you can control the
+   * Application Icon and get attribution. You must also do this if
+   * you wish to use the callback to get notified of the ``post_id``
+   * and the ``message`` the user typed in the published post, or find
+   * out if the user did not publish (clicked on the skipped button).
    *
-   * If you have a registered application, you may fist call
-   * ``Mu.init`` with your API key if you want the Application Icon
-   * and attribution to show up. You must also do this if you wish to
-   * use the callback to get notified of the ``post_id`` and the
-   * ``message`` the user typed in the published post, or find out if
-   * the user did not publish (clicked on the skipped button).
+   * Publishing is a powerful feature that allows you to submit rich
+   * media and provide a integrated experience with control over your
+   * stream post. You can guide the user by choosing the prompt,
+   * and/or a default message which they may customize. In addition,
+   * you may provide image, video, audio or flash based attachments
+   * with along with their metadata. You also get the ability to
+   * provide action links which show next to the "Like" and "Comment"
+   * actions. All this together provides you full control over your
+   * stream post. In addition, if you may also specify a target for
+   * the story, such as another user or a page.
    *
    * A post may contain the following properties:
    *
@@ -933,37 +997,37 @@ var Mu = {
    * Example::
    *
    *     var post = {
-   *         message: 'getting educated about Facebook Connect',
-   *         attachment: {
-   *           name: 'Mu Connect',
-   *           caption: 'A micro Facebook Connect library.',
-   *           description: (
-   *             'Mu is a small JavaScript library that allows you to harness ' +
-   *             'the power of Facebook, bringing the user\'s identity, ' +
-   *             'social graph and distribution power to your site.'
-   *           ),
-   *           href: 'http://mu.daaku.org/',
-   *         },
-   *         action_links: [
-   *             { text: 'Mu Console', href: 'http://mu.daaku.org/' },
-   *             { text: 'GitHub Repo', href: 'http://github.com/nshah/mu' }
-   *         ],
-   *         user_prompt_message: 'Share your thoughts about Mu Connect'
+   *       message: 'getting educated about Facebook Connect',
+   *       attachment: {
+   *         name: 'Mu Connect',
+   *         caption: 'A micro Facebook Connect library.',
+   *         description: (
+   *           'Mu is a small JavaScript library that allows you to harness ' +
+   *           'the power of Facebook, bringing the user\'s identity, ' +
+   *           'social graph and distribution power to your site.'
+   *         ),
+   *         href: 'http://mu.daaku.org/',
+   *       },
+   *       action_links: [
+   *         { text: 'Mu Console', href: 'http://mu.daaku.org/' },
+   *         { text: 'GitHub Repo', href: 'http://github.com/nshah/mu' }
+   *       ],
+   *       user_prompt_message: 'Share your thoughts about Mu Connect'
    *     };
    *
    *     Mu.publish(
-   *         post,
-   *         function(published_post) {
-   *             if (published_post) {
-   *                 alert(
-   *                     'The post was successfully published. ' +
-   *                     'Post ID: ' + published_post.post_id +
-   *                     '. Message: ' + published_post.message
-   *                 );
-   *             } else {
-   *                 alert('The post was not published.');
-   *             }
+   *       post,
+   *       function(published_post) {
+   *         if (published_post) {
+   *           alert(
+   *               'The post was successfully published. ' +
+   *               'Post ID: ' + published_post.post_id +
+   *               '. Message: ' + published_post.message
+   *           );
+   *         } else {
+   *           alert('The post was not published.');
    *         }
+   *       }
    *     );
    *
    * @access public
@@ -1032,7 +1096,7 @@ var Mu = {
    * explicit secret or using the current session. It updates the given params
    * object *in place* with the necessary parameters.
    *
-   * @access public
+   * @access private
    * @param params {Object} the parameters to sign
    * @param secret {String} secret to sign the call (defaults to the current
    * session secret)
@@ -1072,10 +1136,12 @@ var Mu = {
   },
 
   /**
-   * Make a API call to restserver.php. API methods are documented at:
-   * http://wiki.developers.facebook.com/index.php/API
-   *
-   * Example::
+   * Once you have a session for the current user, you will want to
+   * access data about that user, such as getting their name & profile
+   * picture, friends lists or upcoming events they will be
+   * attending. In order to do this, you will be making signed API
+   * calls to Facebook using their session. Suppose we want to alert
+   * the current user's name::
    *
    *     Mu.api(
    *       {
@@ -1086,6 +1152,20 @@ var Mu = {
    *         alert(response[0].name);
    *       }
    *     );
+   *
+   * API Calls are listed here: http://wiki.developers.facebook.com/index.php/API
+   *
+   * FQL is the preferred way of reading data from Facebook (write/update/delete
+   * queries are done via simpler URL parameters). FQL.multiQuery is also very
+   * crucial for good performance, as it allows efficiently collecting different
+   * types of data.
+   *
+   * FQL is described here: http://wiki.developers.facebook.com/index.php/FQL
+   *
+   * FQL Tables are listed here:
+   * http://wiki.developers.facebook.com/index.php/FQL_Tables
+   *
+   * .. _FQL: http://wiki.developers.facebook.com/index.php/FQL
    *
    * @access public
    * @param params {Object}   the parameters for the query
