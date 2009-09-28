@@ -380,8 +380,7 @@ var Mu = {
       // the SWF calls this global function when a HTTP response is available
       // FIXME: remove global
       window.FB_OnXdHttpResult = function(reqId, data) {
-        //fixme decode data
-        Mu._callbacks[reqId](data);
+        Mu._callbacks[reqId](Mu.Flash.decode(data));
       };
 
       // create the swf
