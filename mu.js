@@ -27,6 +27,9 @@ var Mu = {
   // these are used the cross-domain communication and jsonp logic
   _callbacks : {},
 
+  // session status change subscribers
+  _sessionCallbacks : [],
+
 
 
   /**
@@ -52,7 +55,7 @@ var Mu = {
    */
   init: function(apiKey, session) {
     Mu._apiKey  = apiKey;
-    Mu._session = session;
+    Mu.setSession(session);
 
     Mu.XD.init();
   },
@@ -666,19 +669,20 @@ var Mu = {
      * And calls the given callback with the (session, perms)
      *
      * @access private
-     * @param cb     {Function} the callback function
-     * @param frame  {String}   the frame id for the callback will be used with
-     * @param target {String}   parent or opener to indicate the window relation
-     * @param id     {String}   custom id for callback. defaults to frame id
-     * @returns      {String}   the xd url bound to the callback
+     * @param cb      {Function} the callback function
+     * @param frame   {String}   the frame id for the callback will be used with
+     * @param target  {String}   parent or opener to indicate window relation
+     * @param id      {String}   custom id for callback. defaults to frame id
+     * @param session {Object}   backup session, if none is found in response
+     * @returns       {String}   the xd url bound to the callback
      */
-    session: function(cb, frame, target, id) {
+    session: function(cb, frame, target, id, session) {
       return Mu.XD.handler(function(params) {
         // try to extract a session
         try {
-          Mu._session = JSON.parse(params.session);
+          Mu.setSession(JSON.parse(params.session));
         } catch(x) {
-          Mu._session = null;
+          Mu.setSession(session || null);
         }
 
         // incase we were granted some new permissions
@@ -786,11 +790,37 @@ var Mu = {
    *       }
    *     });
    *
+   * For more advanced use, you may also need a way to monitor status
+   * changes. For example, you may include something along these lines on all
+   * your logged-out pages::
+   *
+   *     Mu.status(function(session) {
+   *       if (session) {
+   *         window.location = '/dashboard';
+   *       }
+   *     }, true); // notice the second argument 'true'
+   *
+   * The call simply registers a subscriber. It does not trigger a actual
+   * status check against the server. Now if you get a session on a status
+   * check, or if the user Connect's with your site, they will get redirected
+   * to /dashboard.
+   *
    * @access public
-   * @param cb {Function} the callback function
+   * @param cb         {Function} the callback function
+   * @param subscriber {Boolean}  indicate if this is a subscriber
    * @for Mu
    */
-  status: function(cb) {
+  status: function(cb, subscriber) {
+    // a subscriber does not trigger actually getting the status.
+    // the caller can finally call `Mu.status()` to trigger getting
+    // the status, which would invoke all subscribers with the
+    // result.
+    if (subscriber) {
+      Mu._sessionCallbacks.push(cb);
+      return;
+    }
+
+
     var
       g     = Mu.guid(),
       xdUrl = Mu.XD.session(cb, g, 'parent'),
@@ -853,24 +883,9 @@ var Mu = {
    * @param perms {String}   (optional) comma separated list of permissions
    */
   login: function(cb, perms) {
-    // if we already have a session, this prevents us from losing it when
-    // the API is used for requesting permissions alone
-    if (Mu._session) {
-      var
-        old_cb      = cb,
-        old_session = Mu._session;
-
-      cb = function(session, perms) {
-        if (!session) {
-          Mu._session = session = old_session;
-        }
-        old_cb(session, perms);
-      };
-    }
-
     var
       g         = Mu.guid(),
-      xdHandler = Mu.XD.session(cb, g, 'opener', g),
+      xdHandler = Mu.XD.session(cb, g, 'opener', g, Mu._session),
       url       = Mu._domain.www + 'login.php?' + Mu.QS.encode({
         api_key        : Mu._apiKey,
         // if we already have a session, dont lose it if the user cancels
@@ -922,14 +937,15 @@ var Mu = {
    */
   disconnect: function(cb) {
     Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
-      cb(Mu._session = null);
+      Mu.setSession(null);
+      cb();
     });
   },
 
   /**
-   * Sharing is the light weight way of distributing your content. As opposed to the
-   * structured data explicitly given in the publish call, with share you simply
-   * provide the URL and optionally a title::
+   * Sharing is the light weight way of distributing your content. As opposed
+   * to the structured data explicitly given in the publish call, with share
+   * you simply provide the URL and optionally a title::
    *
    *    Mu.share('http://mu.daaku.org/', 'Mu Connect');
    *
@@ -1219,6 +1235,23 @@ var Mu = {
 
     script.src = url;
     document.getElementsByTagName('head')[0].appendChild(script);
+  },
+
+  /**
+   * Set a new session value. Invokes all the registered subscribers
+   * if needed.
+   *
+   * @access private
+   * @param session {Object}  the new Session
+   */
+  setSession: function(session) {
+    var changed = JSON.stringify(Mu._session) != JSON.stringify(session);
+    Mu._session = session;
+    if (changed) {
+      for (var i=0, l=Mu._sessionCallbacks.length; i<l; i++) {
+        Mu._sessionCallbacks[i](session);
+      }
+    }
   },
 
   /**

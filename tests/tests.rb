@@ -116,6 +116,18 @@ class Delegator < Test::Unit::TestCase
     browser.close
     browser = SlowWatir.attach(:title, 'Mu Tests')
 
+    # session subscribers
+    browser.await.button(:class, 'session-subscribers').click
+    browser = SlowWatir.attach(:url, /tos.php/)
+    browser.await.button(:value, 'Connect').click
+    browser = SlowWatir.attach(:url, /tos.php/)
+    browser.await.button(:value, 'Connect').click
+    browser = SlowWatir.attach(:url, /prompt_permissions.php/)
+    browser.await.button(:value, 'Allow').click
+    browser = SlowWatir.attach(:url, /prompt_permissions.php/)
+    browser.await.button(:value, "Don't Allow").click
+    browser = SlowWatir.attach(:title, 'Mu Tests')
+
     assert(browser.await.h2(:class, 'pass').exists?)
   end
 

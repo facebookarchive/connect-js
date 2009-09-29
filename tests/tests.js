@@ -39,6 +39,20 @@ test(
   }
 );
 
+test(
+  'get some status',
+
+  function() {
+    Mu.status(function(session) {
+      ok(true, 'status callback got invoked');
+      start();
+    });
+
+    expect(1);
+    stop();
+  }
+);
+
 ////////////////////////////////////////////////////////////////////////////////
 module('auth');
 ////////////////////////////////////////////////////////////////////////////////
@@ -437,6 +451,53 @@ test(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
+module('session subscribers');
+////////////////////////////////////////////////////////////////////////////////
+test(
+  'verify subscriber gets notified on disconnect',
+
+  function() {
+    var expected = 4;
+
+    Mu.status(function(session) {
+      ok(true, 'subscriber got called');
+      expected -= 1;
+    }, true);
+
+    action.onclick = function() {
+      // 1
+      Mu.disconnect(function() {
+        // 2
+        Mu.login(function() {
+          // 3
+          Mu.logout(function() {
+            // 4
+            Mu.login(function() {
+              // should not trigger subscriber
+              Mu.login(function() {
+                // reset the _sessionCallbacks once we're done with the test.
+                // otherwise, future tests will also trigger the subscriber
+                // causing tests to fail.
+                // 5
+                ok(expected == 0, 'got all expected callbacks');
+                Mu._sessionCallbacks = [];
+                start();
+              }, 'email');
+            }, 'offline_access');
+          });
+        });
+      });
+    };
+    action.innerHTML = (
+      '"Connect", then "Connect" and "Allow", finally "Dont Allow"');
+    action.className = 'session-subscribers';
+
+    expect(expected + 1);
+    stop();
+  }
+);
+
+////////////////////////////////////////////////////////////////////////////////
 module('flash API');
 ////////////////////////////////////////////////////////////////////////////////
 test(
@@ -447,7 +508,7 @@ test(
                    method: 'fql.query',
                    query: 'SELECT name FROM profile WHERE id=4'
                  },
-                 function(r){
+                 function(r) {
                    ok(r[0].name == 'Mark Zuckerberg', 'should get zuck\'s name');
                    start();
                  });
