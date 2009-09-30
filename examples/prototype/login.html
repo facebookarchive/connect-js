@@ -37,9 +37,9 @@
       });
 
       // handle a session response from any of the auth related calls
-      function handleSessionResponse(session) {
+      function handleSessionResponse(response) {
         // if we dont have a session, just hide the user info
-        if (!session) {
+        if (!response.session) {
           document.getElementById('user-info').innerHTML = '';
           return;
         }
@@ -48,7 +48,7 @@
         Mu.api(
           {
             method: 'fql.query',
-            query: 'SELECT name, pic FROM profile WHERE id=' + session.uid
+            query: 'SELECT name, pic FROM profile WHERE id=' + Mu.session().uid
           },
           function(response) {
             var user = response[0];

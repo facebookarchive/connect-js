@@ -14,8 +14,9 @@
  */
 var Mu = {
   // use the init method to set these values correctly
-  _apiKey  : null,
-  _session : null,
+  _apiKey    : null,
+  _session   : null,
+  _userState : 'unknown', // or 'disconnected' or 'connected'
 
   // the various domains needed for using Connect
   _domain: {
@@ -55,7 +56,7 @@ var Mu = {
    */
   init: function(apiKey, session) {
     Mu._apiKey  = apiKey;
-    Mu.setSession(session);
+    Mu.setSession(session, session ? 'connected' : 'unknown');
 
     Mu.XD.init();
   },
@@ -666,30 +667,39 @@ var Mu = {
      * It also (optionally) handles the ``xxRESULTTOKENxx`` response from:
      *  - prompt_permissions.php
      *
-     * And calls the given callback with the (session, perms)
+     * And calls the given callback with::
+     *
+     *   {
+     *     session: session or null,
+     *     state: 'unknown' or 'disconnected' or 'connected',
+     *     perms: comma separated string of perm names
+     *   }
      *
      * @access private
      * @param cb      {Function} the callback function
      * @param frame   {String}   the frame id for the callback will be used with
      * @param target  {String}   parent or opener to indicate window relation
      * @param id      {String}   custom id for callback. defaults to frame id
+     * @param state   {String}   the connect state this handler will trigger
      * @param session {Object}   backup session, if none is found in response
      * @returns       {String}   the xd url bound to the callback
      */
-    session: function(cb, frame, target, id, session) {
+    session: function(cb, frame, target, id, state, session) {
       return Mu.XD.handler(function(params) {
         // try to extract a session
+        var response;
         try {
-          Mu.setSession(JSON.parse(params.session));
+          response = Mu.setSession(JSON.parse(params.session), state);
         } catch(x) {
-          Mu.setSession(session || null);
+          response = Mu.setSession(session || null, state);
         }
 
         // incase we were granted some new permissions
-        var perms = params.result != 'xxRESULTTOKENxx' && params.result || '';
+        response.perms = (
+          params.result != 'xxRESULTTOKENxx' && params.result || '');
 
         // user defined callback
-        cb(Mu._session, perms);
+        cb(response);
       }, frame, target, id) + '&result=xxRESULTTOKENxx';
     },
 
@@ -782,8 +792,8 @@ var Mu = {
    *
    * Here's how you find out::
    *
-   *     Mu.status(function(session) {
-   *       if (session) {
+   *     Mu.status(function(response) {
+   *       if (response.session) {
    *         // logged in and connected user, someone you know
    *       } else {
    *         // no user session available, someone you dont know
@@ -794,8 +804,8 @@ var Mu = {
    * changes. For example, you may include something along these lines on all
    * your logged-out pages::
    *
-   *     Mu.status(function(session) {
-   *       if (session) {
+   *     Mu.status(function(response) {
+   *       if (response.session) {
    *         window.location = '/dashboard';
    *       }
    *     }, true); // notice the second argument 'true'
@@ -823,12 +833,11 @@ var Mu = {
 
     var
       g     = Mu.guid(),
-      xdUrl = Mu.XD.session(cb, g, 'parent'),
       url   = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
         api_key    : Mu._apiKey,
-        no_session : xdUrl,
-        no_user    : xdUrl,
-        ok_session : xdUrl
+        no_session : Mu.XD.session(cb, g, 'parent', g,     'disconnected'),
+        no_user    : Mu.XD.session(cb, g, 'parent', g+'1', 'unknown'),
+        ok_session : Mu.XD.session(cb, g, 'parent', g+'2', 'connected')
       });
 
     Mu.Content.hiddenIframe(url, g);
@@ -843,8 +852,8 @@ var Mu = {
    * then prompt and show them the "Connect with Facebook" button
    * bound to an event handler which does the following::
    *
-   *    Mu.login(function(session) {
-   *      if (session) {
+   *    Mu.login(function(response) {
+   *      if (response.session) {
    *        // user successfully logged in
    *      } else {
    *        // user cancelled login
@@ -865,9 +874,9 @@ var Mu = {
    * first connected. So you may want to delay asking for permissions
    * until as late as possible::
    *
-   *     Mu.login(function(session, perms) {
-   *       if (session) {
-   *         if (perms) {
+   *     Mu.login(function(response) {
+   *       if (response.session) {
+   *         if (response.perms) {
    *           // user is logged in and granted some permissions.
    *           // perms is a comma separated list of granted permissions
    *         } else {
@@ -884,16 +893,16 @@ var Mu = {
    */
   login: function(cb, perms) {
     var
-      g         = Mu.guid(),
-      xdHandler = Mu.XD.session(cb, g, 'opener', g, Mu._session),
-      url       = Mu._domain.www + 'login.php?' + Mu.QS.encode({
+      g      = Mu.guid(),
+      cancel = Mu.XD.session(cb, g, 'opener', g, Mu._userState, Mu._session),
+      next   = Mu.XD.session(cb, g, 'opener', g+'1', 'connected', Mu._session),
+      url    = Mu._domain.www + 'login.php?' + Mu.QS.encode({
         api_key        : Mu._apiKey,
-        // if we already have a session, dont lose it if the user cancels
-        cancel_url     : xdHandler,
+        cancel_url     : cancel,
         channel_url    : Mu.XD._origin,
         display        : 'popup',
         fbconnect      : 1,
-        next           : xdHandler,
+        next           : next,
         req_perms      : perms,
         return_session : 1,
         v              : '1.0'
@@ -909,7 +918,7 @@ var Mu = {
    * The status shared between your site and Facebook, and logging out
    * affects both sites. This is a simple call::
    *
-   *     Mu.logout(function() {
+   *     Mu.logout(function(response) {
    *       // user is now logged out
    *     });
    *
@@ -921,7 +930,7 @@ var Mu = {
       g   = Mu.guid(),
       url = Mu._domain.www + 'logout.php?' + Mu.QS.encode({
         api_key     : Mu._apiKey,
-        next        : Mu.XD.session(cb, g, 'parent'),
+        next        : Mu.XD.session(cb, g, 'parent', g, 'unknown'),
         session_key : Mu._session.session_key
       });
 
@@ -937,8 +946,7 @@ var Mu = {
    */
   disconnect: function(cb) {
     Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
-      Mu.setSession(null);
-      cb();
+      cb(Mu.setSession(null, 'disconnected'));
     });
   },
 
@@ -1168,7 +1176,8 @@ var Mu = {
    *       }
    *     );
    *
-   * API Calls are listed here: http://wiki.developers.facebook.com/index.php/API
+   * API Calls are listed here:
+   * http://wiki.developers.facebook.com/index.php/API
    *
    * FQL is the preferred way of reading data from Facebook (write/update/delete
    * queries are done via simpler URL parameters). FQL.multiQuery is also very
@@ -1243,15 +1252,22 @@ var Mu = {
    *
    * @access private
    * @param session {Object}  the new Session
+   * @param state   {String}  the new state
    */
-  setSession: function(session) {
-    var changed = JSON.stringify(Mu._session) != JSON.stringify(session);
+  setSession: function(session, state) {
+    var
+      response = { session: session, state: state },
+      changed  = (JSON.stringify(response) !=
+        JSON.stringify({ session: Mu._session, state: Mu._userState }));
+
     Mu._session = session;
+    Mu._userState = state;
     if (changed) {
       for (var i=0, l=Mu._sessionCallbacks.length; i<l; i++) {
-        Mu._sessionCallbacks[i](session);
+        Mu._sessionCallbacks[i](response);
       }
     }
+    return response;
   },
 
   /**

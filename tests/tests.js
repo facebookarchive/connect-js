@@ -43,7 +43,7 @@ test(
   'get some status',
 
   function() {
-    Mu.status(function(session) {
+    Mu.status(function(response) {
       ok(true, 'status callback got invoked');
       start();
     });
@@ -61,10 +61,10 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.status(function(session) {
-                  if (session) {
-                    Mu.disconnect(function(session) {
-                                    ok(!session, 'disconnected user');
+      Mu.status(function(response) {
+                  if (response.session) {
+                    Mu.disconnect(function(response) {
+                                    ok(!response.session, 'disconnected user');
                                     action.innerHTML = '';
                                     action.className = '';
                                     start();
@@ -90,8 +90,8 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.status(function(session) {
-                  ok(!session, 'should not get a session');
+      Mu.status(function(response) {
+                  ok(!response.session, 'should not get a session');
                   action.innerHTML = '';
                   action.className = '';
                   start();
@@ -110,8 +110,8 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session) {
-                 ok(!session, 'should not get a session');
+      Mu.login(function(response) {
+                 ok(!response.session, 'should not get a session');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -130,8 +130,8 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session) {
-                 ok(!session, 'should not get a session');
+      Mu.login(function(response) {
+                 ok(!response.session, 'should not get a session');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -150,8 +150,9 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session) {
-                 ok(session, 'should get a session');
+      Mu.login(function(response) {
+                 ok(response.session, 'should get a session');
+                 ok(response.state == 'connected', 'should be connected');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -160,7 +161,7 @@ test(
     action.innerHTML = 'Login with the "Connect" button';
     action.className = 'login-with-connect-button';
 
-    expect(1);
+    expect(2);
     stop();
   }
 );
@@ -169,12 +170,13 @@ test(
   'status should now return a session',
 
   function() {
-    Mu.status(function(session) {
-                ok(session, 'should get a session');
+    Mu.status(function(response) {
+                ok(response.session, 'should get a session');
+                ok(response.state == 'connected', 'should be connected');
                 start();
               });
 
-    expect(1);
+    expect(2);
     stop();
   }
 );
@@ -183,12 +185,13 @@ test(
   'logout',
 
   function() {
-    Mu.logout(function(session) {
-                ok(!session, 'should not get a session');
+    Mu.logout(function(response) {
+                ok(!response.session, 'should not get a session');
+                ok(response.state == 'unknown', 'should be unknown');
                 start();
               });
 
-    expect(1);
+    expect(2);
     stop();
   }
 );
@@ -198,8 +201,8 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session) {
-                 ok(session, 'should get a session');
+      Mu.login(function(response) {
+                 ok(response.session, 'should get a session');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -218,10 +221,11 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session, perms) {
-                 ok(session, 'should still have the session');
-                 ok(perms == '', 'should get no perms');
-                 ok(session.expires != 0, 'session.expires should not be 0');
+      Mu.login(function(response) {
+                 ok(response.session, 'should still have the session');
+                 ok(response.perms == '', 'should get no perms');
+                 ok(response.session.expires != 0, 'session.expires should not be 0');
+                 ok(response.state == 'connected', 'should be connected');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -230,7 +234,7 @@ test(
     action.innerHTML = 'Click on "Don\'t Allow"';
     action.className = 'dont-allow-perms';
 
-    expect(3);
+    expect(4);
     stop();
   }
 );
@@ -240,10 +244,10 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session, perms) {
-                 ok(session, 'should get a session');
-                 ok(perms == 'offline_access', 'should get offline_access perms');
-                 ok(session.expires == 0, 'session.expires should be 0');
+      Mu.login(function(response) {
+                 ok(response.session, 'should get a session');
+                 ok(response.perms == 'offline_access', 'should get offline_access perms');
+                 ok(response.session.expires == 0, 'session.expires should be 0');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -261,12 +265,13 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.disconnect(function(session) {
-                    ok(!session, 'should not get a session');
+    Mu.disconnect(function(response) {
+                    ok(!response.session, 'should not get a session');
+                    ok(response.state == 'disconnected', 'should be disconnected');
                     start();
                   });
 
-    expect(1);
+    expect(2);
     stop();
   }
 );
@@ -276,10 +281,10 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session, perms) {
-                 ok(session, 'should get a session');
-                 ok(perms == '', 'should not get offline_access perms');
-                 ok(session.expires != 0, 'session.expires should not be 0');
+      Mu.login(function(response) {
+                 ok(response.session, 'should get a session');
+                 ok(response.perms == '', 'should not get offline_access perms');
+                 ok(response.session.expires != 0, 'session.expires should not be 0');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -297,8 +302,8 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.disconnect(function(session) {
-                    ok(!session, 'should not get a session');
+    Mu.disconnect(function(response) {
+                    ok(!response.session, 'should not get a session');
                     start();
                   });
 
@@ -312,10 +317,10 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(session, perms) {
-                 ok(session, 'should get a session');
-                 ok(perms == 'offline_access', 'should get offline_access perms');
-                 ok(session.expires == 0, 'session.expires should be 0');
+      Mu.login(function(response) {
+                 ok(response.session, 'should get a session');
+                 ok(response.perms == 'offline_access', 'should get offline_access perms');
+                 ok(response.session.expires == 0, 'session.expires should be 0');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -459,7 +464,7 @@ test(
   function() {
     var expected = 4;
 
-    Mu.status(function(session) {
+    Mu.status(function(response) {
       ok(true, 'subscriber got called');
       expected -= 1;
     }, true);
@@ -506,7 +511,7 @@ test(
   function() {
     Mu.Flash.api({
                    method: 'fql.query',
-                   query: 'SELECT name FROM profile WHERE id=4'
+                   query: 'SELECT name FROM user WHERE uid=4'
                  },
                  function(r) {
                    ok(r[0].name == 'Mark Zuckerberg', 'should get zuck\'s name');
@@ -525,8 +530,8 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.disconnect(function(session) {
-                    ok(!session, 'should not get a session');
+    Mu.disconnect(function(response) {
+                    ok(!response.session, 'should not get a session');
                     start();
                   });
 

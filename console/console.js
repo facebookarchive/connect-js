@@ -71,20 +71,19 @@ function showSessionInfo() {
 }
 
 // handles a session (or lack thereof)
-function gotStatus(session) {
+function gotStatus(response) {
   showSessionInfo();
   showUserInfo();
 
-  var status = session ? 'connected' : 'disconnected';
-  $('status').innerHTML = status;
-  $('status').className = status;
+  $('status').innerHTML = response.state;
+  $('status').className = response.state;
 
   var input = $('integration').getElementsByTagName('input');
   for (var i=0, l=input.length; i<l; i++) {
-    input[i].disabled = !session;
+    input[i].disabled = !response.session;
   }
 
-  if (session) {
+  if (response.session) {
     $('bt-disconnect').disabled = $('bt-logout').disabled = false;
     $('bt-login').disabled = true;
   } else {
@@ -93,12 +92,12 @@ function gotStatus(session) {
   }
 }
 
-function gotPerms(session, perms) {
-  gotStatus(session);
+function gotPerms(response) {
+  gotStatus(response);
   statusUpdate(
     'perms-info',
-    'were ' + (perms ? '' : 'not ') + 'granted.',
-    perms
+    'were ' + (response.perms ? '' : 'not ') + 'granted.',
+    response.perms
   );
 }
 
