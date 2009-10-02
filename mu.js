@@ -26,10 +26,19 @@ var Mu = {
   },
 
   // these are used the cross-domain communication and jsonp logic
-  _callbacks : {},
+  _callbacks: {},
 
   // session status change subscribers
-  _sessionCallbacks : [],
+  _sessionCallbacks: [],
+
+  // "dynamic constants"
+  _registry: {
+    // minimum required flash versions
+    flashVersions: [
+      [9,  0, 159, 0],
+      [10, 0, 22,  87]
+    ]
+  },
 
 
 
@@ -417,8 +426,63 @@ var Mu = {
      * @returns {Boolean} true if the minimum version requirements are matched
      */
     hasMinVersion: function() {
-      //FIXME
-      return true;
+      if (typeof Mu.Flash._hasMinVersion === 'undefined') {
+        var
+          versionString,
+          version = [];
+        try {
+          versionString = new ActiveXObject('ShockwaveFlash.ShockwaveFlash')
+                            .GetVariable('$version');
+        } catch(x) {
+          var mimeType = 'application/x-shockwave-flash';
+          if (navigator.mimeTypes[mimeType].enabledPlugin) {
+            var name = 'Shockwave Flash';
+            versionString = (navigator.plugins[name + ' 2.0'] ||
+                             navigator.plugins[name])
+                            .description;
+          }
+        }
+
+        // take the string and come up with an array of integers:
+        //   [10, 0, 22]
+        if (versionString) {
+          var parts = versionString
+                        .replace(/\D+/g, ',')
+                        .match(/^,?(.+),?$/)[1]
+                        .split(',');
+          for (var i=0, l=parts.length; i<l; i++) {
+            version.push(parseInt(parts[i], 10));
+          }
+        }
+
+        // start by assuming we dont have the min version.
+        Mu.Flash._hasMinVersion = false;
+
+        // look through all the allowed version definitions.
+        majorVersion:
+        for (var i=0, l=Mu._registry.flashVersions.length; i<l; i++) {
+          var acceptable = Mu._registry.flashVersions[i];
+
+          // we only accept known major versions, and every supported major
+          // version has at least one entry in flashVersions. only if the major
+          // version matches, does the rest of the check make sense.
+          if (acceptable[0] != version[0]) {
+            continue;
+          }
+
+          // the rest of the version components must be equal or higher
+          for (var m=1, n=acceptable.length, o=version.length; m<n, m<o; m++) {
+            if (version[m] < acceptable[m]) {
+              continue majorVersion;
+            }
+          }
+
+          // if we get here, all available version information says we're good.
+          Mu.Flash._hasMinVersion = true;
+        }
+      }
+
+      return Mu.Flash._hasMinVersion;
     },
 
     /**
