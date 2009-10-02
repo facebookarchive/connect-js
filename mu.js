@@ -48,10 +48,22 @@ var Mu = {
    *    <div id="mu-root"></div>
    *    <script src="http://mu.daaku.org/m.js"></script>
    *    <script>
-   *      Mu.init('YOUR API KEY');
+   *      Mu.init({ apiKey: 'YOUR API KEY' });
    *    </script>
    *
    * The best place to put this code is right before the closing </body> tag.
+   *
+   *
+   * Options:
+   *
+   * ======== ======= ============================= ============ =============
+   * Property Type    Description                   Argument     Default Value
+   * ======== ======= ============================= ============ =============
+   * apiKey   String  your application API key      **Required**
+   * cookie   Boolean true to enable cookie support *Optional*   ``false``
+   * session  Object  use specified session object  *Optional*   ``null``
+   * status   Boolean true to fetch fresh status    *Optional*   ``false``
+   * ======== ======= ============================= ============ =============
    *
    * *Note*: `Mu.publish()`_ and `Mu.share()`_ can be used without
    * registering an application or calling this method.
@@ -60,14 +72,26 @@ var Mu = {
    * .. _Mu.share(): #method_share
    *
    * @access public
-   * @param apiKey  {String} your application API key
-   * @param session {Object} (optional) an existing session
+   * @param opts    {Object} options
    */
-  init: function(apiKey, session) {
-    Mu._apiKey  = apiKey;
-    Mu.setSession(session, session ? 'connected' : 'unknown');
+  init: function(opts) {
+    Mu._apiKey = opts.apiKey;
 
+    // enable cookie support and use cookie session if possible
+    if (opts.cookie) {
+      opts.session = opts.session || Mu.Cookie.init();
+    }
+
+    // set the given or cookie session
+    Mu.setSession(opts.session, opts.session ? 'connected' : 'unknown', true);
+
+    // initialize the XD layer
     Mu.XD.init();
+
+    // fetch a fresh status from facebook.com if requested
+    if (opts.status) {
+      Mu.status();
+    }
   },
 
 
@@ -763,7 +787,7 @@ var Mu = {
           params.result != 'xxRESULTTOKENxx' && params.result || '');
 
         // user defined callback
-        cb(response);
+        cb && cb(response);
       }, frame, target, id) + '&result=xxRESULTTOKENxx';
     },
 
@@ -831,6 +855,108 @@ var Mu = {
       onMessage: function(message) {
         Mu.XD.recv(decodeURIComponent(message));
       }
+    }
+  },
+
+
+  /**
+   * Cookie Support.
+   *
+   * @class Mu.Cookie
+   * @static
+   * @for Mu
+   * @access private
+   */
+  Cookie: {
+    /**
+     * Initialize the Cookie support. Sets up the handler to update the cookie
+     * as the session changes.
+     *
+     * @access private
+     * @returns {Object} the session object from the cookie if one is found
+     */
+    init: function() {
+      Mu.status(function(response) {
+        Mu.Cookie.set(response.session);
+      }, true);
+      return Mu.Cookie.load();
+    },
+
+    /**
+     * Try loading the session from the Cookie.
+     *
+     * @access private
+     * @returns {Object} the session object from the cookie if one is found
+     */
+    load: function() {
+      var
+        prefix  = 'fbs_' + Mu._apiKey + '=',
+        cookies = document.cookie.split(';'),
+        cookie,
+        session;
+
+      // look through all the cookies
+      for (var i=0, l=cookies.length; i<l; i++) {
+        cookie = cookies[i];
+
+        // bad browser bad
+        while (cookie.charAt(0) === ' ') {
+          cookie = cookie.substring(1, cookie.length);
+        }
+
+        // is it the cookie we want?
+        if (cookie.indexOf(prefix) === 0) {
+          // url encoded session
+          session = Mu.QS.decode(
+            cookie.substring(prefix.length, cookie.length));
+          // decodes as a string, convert to a number
+          session.expires = parseInt(session.expires, 10);
+
+          // dont use expired cookies, not that they should be around in the
+          // first place.
+          if (new Date(session.expires * 1000) < new Date()) {
+            session = null;
+          }
+          break;
+        }
+      }
+
+      return session;
+    },
+
+    /**
+     * Helper function to set cookie value.
+     *
+     * @access private
+     * @param val       {String} the string value (should already be encoded)
+     * @param timestamp {Number} a unix timestamp denoting expiry
+     */
+    setRaw: function(val, timestamp) {
+      document.cookie =
+        'fbs_' + Mu._apiKey + '=' + val +
+        '; expires=' + new Date(timestamp * 1000).toGMTString() +
+        '; path=/';
+    },
+
+    /**
+     * Set the cookie using the given session object.
+     *
+     * @access private
+     * @param session {Object} the session object
+     */
+    set: function(session) {
+      session
+        ? Mu.Cookie.setRaw(Mu.QS.encode(session), session.expires)
+        : Mu.Cookie.clear();
+    },
+
+    /**
+     * Clear the cookie.
+     *
+     * @access private
+     */
+    clear: function() {
+      Mu.Cookie.setRaw('', 0);
     }
   },
 
@@ -1317,12 +1443,16 @@ var Mu = {
    * @access private
    * @param session {Object}  the new Session
    * @param state   {String}  the new state
+   * @param forceCb {Boolean} force invoke the callbacks
    */
-  setSession: function(session, state) {
+  setSession: function(session, state, forceCb) {
     var
       response = { session: session, state: state },
-      changed  = (JSON.stringify(response) !=
-        JSON.stringify({ session: Mu._session, state: Mu._userState }));
+      changed  = (forceCb ||                   // force callbacks
+                  (session && !Mu._session) || // new session
+                  (!session && Mu._session) || // lost session
+                  (session && Mu._session &&   // updated session
+                   (session.session_key != Mu._session.session_key)));
 
     Mu._session = session;
     Mu._userState = state;

@@ -34,20 +34,20 @@
 
         <input type="button"
                value="Status"
-               onclick="Mu.status(gotStatus)">
+               onclick="Mu.status()">
         <input type="button"
                value="Login"
-               onclick="Mu.login(gotStatus)"
+               onclick="Mu.login()"
                id="bt-login"
                disabled="disabled">
         <input type="button"
                value="Disconnect"
-               onclick="Mu.disconnect(gotStatus)"
+               onclick="Mu.disconnect()"
                id="bt-disconnect"
                disabled="disabled">
         <input type="button"
                value="Logout"
-               onclick="Mu.logout(gotStatus)"
+               onclick="Mu.logout()"
                id="bt-logout"
                disabled="disabled">
       </div>
@@ -119,8 +119,13 @@
 
     <div id="mu-root"></div>
     <script>
-      Mu.init('48f06bc570aaf9ed454699ec4fe416df');
-      Mu.status(gotStatus);
+      // subscribe to all status changes
+      Mu.status(gotStatus, true);
+      Mu.init({
+        apiKey: '48f06bc570aaf9ed454699ec4fe416df',
+        cookie: true, // enable cookie support
+        status: true  // automatically check the status from facebook.com
+      });
     </script>
 
 

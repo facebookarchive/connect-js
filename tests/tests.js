@@ -34,7 +34,7 @@ test(
   'api key',
 
   function() {
-    Mu.init(API_KEY);
+    Mu.init({ apiKey: API_KEY });
     ok(Mu._apiKey == API_KEY, 'should have the api key');
   }
 );
