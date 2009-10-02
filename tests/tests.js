@@ -63,8 +63,8 @@ test(
     action.onclick = function() {
       Mu.status(function(response) {
                   if (response.session) {
-                    Mu.disconnect(function(response) {
-                                    ok(!response.session, 'disconnected user');
+                    Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+                                    ok(!Mu.session(), 'disconnected user');
                                     action.innerHTML = '';
                                     action.className = '';
                                     start();
@@ -265,9 +265,9 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.disconnect(function(response) {
-                    ok(!response.session, 'should not get a session');
-                    ok(response.state == 'disconnected', 'should be disconnected');
+    Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+                    ok(!Mu.session(), 'should not get a session');
+                    ok(Mu._userState == 'disconnected', 'should be disconnected');
                     start();
                   });
 
@@ -302,8 +302,8 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.disconnect(function(response) {
-                    ok(!response.session, 'should not get a session');
+    Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+                    ok(!Mu.session(), 'should not get a session');
                     start();
                   });
 
@@ -471,7 +471,7 @@ test(
 
     action.onclick = function() {
       // 1
-      Mu.disconnect(function() {
+      Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
         // 2
         Mu.login(function() {
           // 3
@@ -530,8 +530,8 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.disconnect(function(response) {
-                    ok(!response.session, 'should not get a session');
+    Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+                    ok(!Mu.session(), 'should not get a session');
                     start();
                   });
 

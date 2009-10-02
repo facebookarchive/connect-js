@@ -33,14 +33,21 @@
       });
 
       YAHOO.util.Event.addListener('disconnect', 'click', function() {
-        Mu.disconnect(handleSessionResponse);
+        Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
+          clearDisplay();
+        });
       });
+
+      // no user, clear display
+      function clearDisplay() {
+        document.getElementById('user-info').innerHTML = '';
+      }
 
       // handle a session response from any of the auth related calls
       function handleSessionResponse(response) {
         // if we dont have a session, just hide the user info
         if (!response.session) {
-          document.getElementById('user-info').innerHTML = '';
+          clearDisplay();
           return;
         }
 

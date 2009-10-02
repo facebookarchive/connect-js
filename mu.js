@@ -89,9 +89,7 @@ var Mu = {
     Mu.XD.init();
 
     // fetch a fresh status from facebook.com if requested
-    if (opts.status) {
-      Mu.status();
-    }
+    opts.status && Mu.status();
   },
 
 
@@ -969,7 +967,7 @@ var Mu = {
 
   /**
    * Find out the current status from the server, and get a session if the user
-   * is connected. The callback is invoked with (session).
+   * is connected.
    *
    * The User's Status or the question of "who is the current user" is
    * the first thing you will typically start with. For the answer, we
@@ -1004,6 +1002,12 @@ var Mu = {
    * status check against the server. Now if you get a session on a status
    * check, or if the user Connect's with your site, they will get redirected
    * to /dashboard.
+   *
+   * For **advanced** Cookie usage, you may register a subscriber
+   * *before* calling Mu.init(). You will then get notified of the
+   * initial load from the Cookie (null or otherwise). Using a Session
+   * from the Cookie requires you to handle multiple session change
+   * events on a single page load.
    *
    * @access public
    * @param cb         {Function} the callback function
@@ -1125,19 +1129,6 @@ var Mu = {
       });
 
     Mu.Content.hiddenIframe(url, g);
-  },
-
-  /**
-   * Make an API call and revoke the user's authorization with your
-   * application.
-   *
-   * @access public
-   * @param cb    {Function} the callback function
-   */
-  disconnect: function(cb) {
-    Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
-      cb(Mu.setSession(null, 'disconnected'));
-    });
   },
 
   /**
@@ -1388,6 +1379,17 @@ var Mu = {
    * session secret)
    */
   api: function(params, cb, secret) {
+    // Auth.revokeAuthorization affects the session
+    if (params.method == 'Auth.revokeAuthorization') {
+      var old_cb = cb;
+      cb = function(response) {
+        if (response === true) {
+          Mu.setSession(null, 'disconnected');
+        }
+        old_cb && old_cb(response);
+      };
+    }
+
     try {
       Mu.jsonp(params, cb, secret);
     } catch (x) {

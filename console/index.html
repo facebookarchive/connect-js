@@ -42,7 +42,7 @@
                disabled="disabled">
         <input type="button"
                value="Disconnect"
-               onclick="Mu.disconnect()"
+               onclick="Mu.api({ method: 'Auth.revokeAuthorization' })"
                id="bt-disconnect"
                disabled="disabled">
         <input type="button"
