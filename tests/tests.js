@@ -34,7 +34,7 @@ test(
   'api key',
 
   function() {
-    Mu.init({ apiKey: API_KEY });
+    Mu.init({ apiKey: API_KEY, cookie: false });
     ok(Mu._apiKey == API_KEY, 'should have the api key');
   }
 );
@@ -54,7 +54,7 @@ test(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
-module('auth');
+module('clear');
 ////////////////////////////////////////////////////////////////////////////////
 test(
   'clear session if exists',
@@ -85,6 +85,9 @@ test(
   }
 );
 
+////////////////////////////////////////////////////////////////////////////////
+module('auth');
+////////////////////////////////////////////////////////////////////////////////
 test(
   'should start with no session',
 
@@ -152,7 +155,7 @@ test(
     action.onclick = function() {
       Mu.login(function(response) {
                  ok(response.session, 'should get a session');
-                 ok(response.state == 'connected', 'should be connected');
+                 ok(response.status == 'connected', 'should be connected');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -172,7 +175,7 @@ test(
   function() {
     Mu.status(function(response) {
                 ok(response.session, 'should get a session');
-                ok(response.state == 'connected', 'should be connected');
+                ok(response.status == 'connected', 'should be connected');
                 start();
               });
 
@@ -187,7 +190,7 @@ test(
   function() {
     Mu.logout(function(response) {
                 ok(!response.session, 'should not get a session');
-                ok(response.state == 'unknown', 'should be unknown');
+                ok(response.status == 'unknown', 'should be unknown');
                 start();
               });
 
@@ -225,7 +228,7 @@ test(
                  ok(response.session, 'should still have the session');
                  ok(response.perms == '', 'should get no perms');
                  ok(response.session.expires != 0, 'session.expires should not be 0');
-                 ok(response.state == 'connected', 'should be connected');
+                 ok(response.status == 'connected', 'should be connected');
                  action.innerHTML = '';
                  action.className = '';
                  start();
@@ -267,7 +270,7 @@ test(
   function() {
     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
                     ok(!Mu.session(), 'should not get a session');
-                    ok(Mu._userState == 'disconnected', 'should be disconnected');
+                    ok(Mu._userStatus == 'disconnected', 'should be disconnected');
                     start();
                   });
 
@@ -456,45 +459,65 @@ test(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
+module('silent revoke');
+////////////////////////////////////////////////////////////////////////////////
+test(
+  'revoke authorization',
+
+  function() {
+    Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+                    ok(!Mu.session(), 'should not get a session');
+                    start();
+                  });
+
+    expect(1);
+    stop();
+  }
+);
+
+////////////////////////////////////////////////////////////////////////////////
 module('session subscribers');
 ////////////////////////////////////////////////////////////////////////////////
 test(
   'verify subscriber gets notified on disconnect',
 
   function() {
-    var expected = 4;
+    var expected = 5;
 
     Mu.status(function(response) {
       ok(true, 'subscriber got called');
       expected -= 1;
-    }, true);
+    }, { change: true, load: false });
 
     action.onclick = function() {
       // 1
-      Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+      Mu.login(function() {
         // 2
-        Mu.login(function() {
+        Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
           // 3
-          Mu.logout(function() {
+          Mu.login(function() {
             // 4
-            Mu.login(function() {
-              // should not trigger subscriber
+            Mu.logout(function() {
+              // 5
               Mu.login(function() {
-                // reset the _sessionCallbacks once we're done with the test.
-                // otherwise, future tests will also trigger the subscriber
-                // causing tests to fail.
-                // 5
-                ok(expected == 0, 'got all expected callbacks');
-                Mu._sessionCallbacks = [];
-                start();
-              }, 'email');
-            }, 'offline_access');
+                // should not trigger subscriber
+                Mu.login(function() {
+                  // reset the _sessionCallbacks once we're done with the test.
+                  // otherwise, future tests will also trigger the subscriber
+                  // causing tests to fail.
+                  // 6
+                  ok(expected == 0, 'got all expected callbacks');
+                  Mu._callbacks.sessionChange = [];
+                  start();
+                }, 'email');
+              }, 'offline_access');
+            });
           });
         });
       });
     };
     action.innerHTML = (
-      '"Connect", then "Connect" and "Allow", finally "Dont Allow"');
+      '"Connect" thrice, "Allow", finally "Dont Allow"');
     action.className = 'session-subscribers';
 
     expect(expected + 1);

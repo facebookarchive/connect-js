@@ -75,8 +75,8 @@ function gotStatus(response) {
   showSessionInfo();
   showUserInfo();
 
-  $('status').innerHTML = response.state;
-  $('status').className = response.state;
+  $('status').innerHTML = response.status;
+  $('status').className = response.status;
 
   var input = $('integration').getElementsByTagName('input');
   for (var i=0, l=input.length; i<l; i++) {

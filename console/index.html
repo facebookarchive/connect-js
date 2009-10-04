@@ -119,13 +119,11 @@
 
     <div id="mu-root"></div>
     <script>
-      // subscribe to all status changes
-      Mu.status(gotStatus, true);
       Mu.init({
         apiKey: '48f06bc570aaf9ed454699ec4fe416df',
-        cookie: true, // enable cookie support
-        status: true  // automatically check the status from facebook.com
+        cookie: true
       });
+      Mu.status(gotStatus, { change: true, load: true, cookie: true });
     </script>
 
 

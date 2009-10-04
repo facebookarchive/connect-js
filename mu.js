@@ -14,9 +14,9 @@
  */
 var Mu = {
   // use the init method to set these values correctly
-  _apiKey    : null,
-  _session   : null,
-  _userState : 'unknown', // or 'disconnected' or 'connected'
+  _apiKey     : null,
+  _session    : null,
+  _userStatus : 'unknown', // or 'disconnected' or 'connected'
 
   // the various domains needed for using Connect
   _domain: {
@@ -25,11 +25,11 @@ var Mu = {
     www : window.location.protocol + '//www.facebook.com/'
   },
 
-  // these are used the cross-domain communication and jsonp logic
-  _callbacks: {},
-
-  // session status change subscribers
-  _sessionCallbacks: [],
+  // various uses of callbacks
+  _callbacks: {
+    sessionChange: [],
+    sessionLoad: []
+  },
 
   // "dynamic constants"
   _registry: {
@@ -51,22 +51,24 @@ var Mu = {
    *      Mu.init({ apiKey: 'YOUR API KEY' });
    *    </script>
    *
-   * The best place to put this code is right before the closing </body> tag.
+   * The best place to put this code is right before the closing
+   * ``</body>`` tag.
    *
    *
    * Options:
    *
-   * ======== ======= ============================= ============ =============
-   * Property Type    Description                   Argument     Default Value
-   * ======== ======= ============================= ============ =============
-   * apiKey   String  your application API key      **Required**
-   * cookie   Boolean true to enable cookie support *Optional*   ``false``
-   * session  Object  use specified session object  *Optional*   ``null``
-   * status   Boolean true to fetch fresh status    *Optional*   ``false``
-   * ======== ======= ============================= ============ =============
+   * ======== ======= ================================== ============ =========
+   * Property Type    Description                        Argument     Default
+   * ======== ======= ================================== ============ =========
+   * apiKey   String  Your application API key.          **Required**
+   * cookie   Boolean ``true`` to enable cookie support. *Optional*   ``false``
+   * session  Object  Use specified session object.      *Optional*   ``null``
+   * status   Boolean ``true`` to fetch fresh status.    *Optional*   ``false``
+   * ======== ======= ================================== ============ =========
    *
    * *Note*: `Mu.publish()`_ and `Mu.share()`_ can be used without
-   * registering an application or calling this method.
+   * registering an application or calling this method. If you are
+   * using an API key, all methods **must** be called after this method.
    *
    * .. _Mu.publish(): #method_publish
    * .. _Mu.share(): #method_share
@@ -495,12 +497,17 @@ var Mu = {
           // the rest of the version components must be equal or higher
           for (var m=1, n=acceptable.length, o=version.length; m<n, m<o; m++) {
             if (version[m] < acceptable[m]) {
+              // less means this major version is no good
+              Mu.Flash._hasMinVersion = false;
               continue majorVersion;
+            } else {
+              Mu.Flash._hasMinVersion = true;
+              if (version[m] > acceptable[m]) {
+                // better than needed
+                break majorVersion;
+              }
             }
           }
-
-          // if we get here, all available version information says we're good.
-          Mu.Flash._hasMinVersion = true;
         }
       }
 
@@ -757,7 +764,7 @@ var Mu = {
      *
      *   {
      *     session: session or null,
-     *     state: 'unknown' or 'disconnected' or 'connected',
+     *     status: 'unknown' or 'disconnected' or 'connected',
      *     perms: comma separated string of perm names
      *   }
      *
@@ -766,18 +773,18 @@ var Mu = {
      * @param frame   {String}   the frame id for the callback will be used with
      * @param target  {String}   parent or opener to indicate window relation
      * @param id      {String}   custom id for callback. defaults to frame id
-     * @param state   {String}   the connect state this handler will trigger
+     * @param status  {String}   the connect status this handler will trigger
      * @param session {Object}   backup session, if none is found in response
      * @returns       {String}   the xd url bound to the callback
      */
-    session: function(cb, frame, target, id, state, session) {
+    session: function(cb, frame, target, id, status, session) {
       return Mu.XD.handler(function(params) {
         // try to extract a session
         var response;
         try {
-          response = Mu.setSession(JSON.parse(params.session), state);
+          response = Mu.setSession(JSON.parse(params.session), status);
         } catch(x) {
-          response = Mu.setSession(session || null, state);
+          response = Mu.setSession(session || null, status);
         }
 
         // incase we were granted some new permissions
@@ -874,9 +881,11 @@ var Mu = {
      * @returns {Object} the session object from the cookie if one is found
      */
     init: function() {
-      Mu.status(function(response) {
+      // directly place the cookie subscriber at index 0 in
+      // Mu._callbacks.sessionChange
+      Mu._callbacks.sessionChange.splice(0, 0, function(response) {
         Mu.Cookie.set(response.session);
-      }, true);
+      });
       return Mu.Cookie.load();
     },
 
@@ -988,50 +997,109 @@ var Mu = {
    *       }
    *     });
    *
-   * For more advanced use, you may also need a way to monitor status
-   * changes. For example, you may include something along these lines on all
-   * your logged-out pages::
+   * The example above will result in the callback being invoked once
+   * on load based on the session from www.facebook.com. For more
+   * advanced use, you may with to monitor the status on
+   * change. Potentially just get notified of a change across page
+   * loads. The status call will also also optimize away the request
+   * to www.facebook.com when possible (by doing it only once per page
+   * load), but you may need to force a refresh of the session.
    *
-   *     Mu.status(function(response) {
-   *       if (response.session) {
-   *         window.location = '/dashboard';
-   *       }
-   *     }, true); // notice the second argument 'true'
+   * Options:
    *
-   * The call simply registers a subscriber. It does not trigger a actual
-   * status check against the server. Now if you get a session on a status
-   * check, or if the user Connect's with your site, they will get redirected
-   * to /dashboard.
+   * =========  =============================================  =========
+   * Property   Description                                    Default
+   * =========  =============================================  =========
+   * change     Invoke the callback on every change.           ``false``
+   * cookie     Allow using the Cookie session. **Advanced!**  ``false``
+   * force      Force fetching the status from the server.     ``false``
+   * load       Invoke the callback once on load.              ``true``
+   * =========  =============================================  =========
    *
-   * For **advanced** Cookie usage, you may register a subscriber
-   * *before* calling Mu.init(). You will then get notified of the
-   * initial load from the Cookie (null or otherwise). Using a Session
-   * from the Cookie requires you to handle multiple session change
-   * events on a single page load.
+   * Note, ``change`` and ``load`` can be specified at the same time,
+   * which will ensure that your callback is invoked at least once on
+   * load, and then again for every change in session. For example::
+   *
+   *   Mu.status(
+   *     function(response) {
+   *       // will get invoked at least once on load, and then again
+   *       // on every change in session.
+   *     },
+   *     {
+   *       change: true,
+   *       load: true
+   *     }
+   *   );
    *
    * @access public
-   * @param cb         {Function} the callback function
-   * @param subscriber {Boolean}  indicate if this is a subscriber
+   * @param cb   {Function} the callback function
+   * @param opts {Object}   options as described above
    * @for Mu
    */
-  status: function(cb, subscriber) {
-    // a subscriber does not trigger actually getting the status.
-    // the caller can finally call `Mu.status()` to trigger getting
-    // the status, which would invoke all subscribers with the
-    // result.
-    if (subscriber) {
-      Mu._sessionCallbacks.push(cb);
+  status: function(cb, opts) {
+    // copy options supplying defaults as necessary
+    opts = Mu.copy(opts || {}, {
+      change : false,
+      cookie : false,
+      force  : false,
+      load   : true
+    });
+
+    // notify on change?
+    if (opts.change) {
+      Mu._callbacks.sessionChange.push(cb);
+    }
+
+    // invoking on load means we either setup a timeout to invoke the callback
+    // if the status has already been loaded, or queuing up the callback for
+    // when the load is done
+    if (cb && opts.load) {
+      if (!opts.force &&
+          (Mu.status._loadState ||
+           (opts.cookie && Mu._session))) {
+        window.setTimeout(function() {
+          cb({ status: Mu._userStatus, session: Mu._session });
+        }, 0);
+      } else {
+        // this is complex. its because we dont want the callback to get
+        // invoked twice on load, if the state changes on load as well.
+        //
+        // basically, we only invoke it here if we know it wont already get
+        // invoked as part of sessionChange.
+        Mu._callbacks.sessionLoad.push(function(response) {
+          if (!opts.change || !response.change) {
+            cb(response);
+          }
+        });
+      }
+    }
+
+    // if we've already loaded or are loading the status, and a force refresh
+    // was not requested, we're done at this point
+    if (typeof Mu.status._loadState != 'undefined' && !opts.force) {
       return;
     }
 
+    // if we get here, we need to fetch the status from the server
+    Mu.status._loadState = false;
 
+    // invoke the queued sessionLoad callbacks
+    var lsCb = function(response) {
+      Mu.status._loadState = true;
+      for (var i=0, l=Mu._callbacks.sessionLoad.length; i<l; i++) {
+        Mu._callbacks.sessionLoad[i](response);
+      }
+      Mu._callbacks.sessionLoad = [];
+    };
+
+    // finally make the call to login status
     var
-      g     = Mu.guid(),
-      url   = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
+      g   = Mu.guid(),
+      url = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
         api_key    : Mu._apiKey,
-        no_session : Mu.XD.session(cb, g, 'parent', g,     'disconnected'),
-        no_user    : Mu.XD.session(cb, g, 'parent', g+'1', 'unknown'),
-        ok_session : Mu.XD.session(cb, g, 'parent', g+'2', 'connected')
+        no_session : Mu.XD.session(lsCb, g, 'parent', g,     'disconnected'),
+        no_user    : Mu.XD.session(lsCb, g, 'parent', g+'1', 'unknown'),
+        ok_session : Mu.XD.session(lsCb, g, 'parent', g+'2', 'connected')
       });
 
     Mu.Content.hiddenIframe(url, g);
@@ -1088,7 +1156,7 @@ var Mu = {
   login: function(cb, perms) {
     var
       g      = Mu.guid(),
-      cancel = Mu.XD.session(cb, g, 'opener', g, Mu._userState, Mu._session),
+      cancel = Mu.XD.session(cb, g, 'opener', g, Mu._userStatus, Mu._session),
       next   = Mu.XD.session(cb, g, 'opener', g+'1', 'connected', Mu._session),
       url    = Mu._domain.www + 'login.php?' + Mu.QS.encode({
         api_key        : Mu._apiKey,
@@ -1181,16 +1249,16 @@ var Mu = {
    *
    * A post may contain the following properties:
    *
-   * ===================   ======   =====================================
+   * ===================   ======   ======================================
    * Property              Type     Description
-   * ===================   ======   =====================================
-   * message               String   this allows prepopulating the message
-   * attachment            Array    an attachment_ object
-   * action_links          Array    an array of `action links`_
-   * actor_id              String   a actor profile/page id
-   * target_id             String   a target profile id
-   * user_message_prompt   String   custom prompt message
-   * ===================   ======   =====================================
+   * ===================   ======   ======================================
+   * message               String   This allows prepopulating the message.
+   * attachment            Array    An attachment_ object.
+   * action_links          Array    An array of `action links`_.
+   * actor_id              String   A actor profile/page id.
+   * target_id             String   A target profile id.
+   * user_message_prompt   String   Custom prompt message.
+   * ===================   ======   ======================================
    *
    * The post and all the parameters are optional, so use what is best
    * for your specific case.
@@ -1444,23 +1512,25 @@ var Mu = {
    *
    * @access private
    * @param session {Object}  the new Session
-   * @param state   {String}  the new state
-   * @param forceCb {Boolean} force invoke the callbacks
+   * @param status  {String}  the new status
+   * @param skipCb  {Boolean} skip invoke the callbacks
    */
-  setSession: function(session, state, forceCb) {
-    var
-      response = { session: session, state: state },
-      changed  = (forceCb ||                   // force callbacks
-                  (session && !Mu._session) || // new session
+  setSession: function(session, status, skipCb) {
+    var response = {
+      changed : (!skipCb &&                    // force callbacks
+                 ((session && !Mu._session) || // new session
                   (!session && Mu._session) || // lost session
                   (session && Mu._session &&   // updated session
-                   (session.session_key != Mu._session.session_key)));
+                   (session.session_key != Mu._session.session_key)))),
+      session : session,
+      status  : status
+    };
 
     Mu._session = session;
-    Mu._userState = state;
-    if (changed) {
-      for (var i=0, l=Mu._sessionCallbacks.length; i<l; i++) {
-        Mu._sessionCallbacks[i](response);
+    Mu._userStatus = status;
+    if (response.changed) {
+      for (var i=0, l=Mu._callbacks.sessionChange.length; i<l; i++) {
+        Mu._callbacks.sessionChange[i](response);
       }
     }
     return response;
