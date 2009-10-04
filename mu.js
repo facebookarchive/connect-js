@@ -370,7 +370,7 @@ var Mu = {
               Mu.Content._winCount--;
               Mu.XD.recv({ cb: id, frame: id });
             }
-          } catch(x) {
+          } catch(y) {
             // probably a permission error
           }
         }
@@ -453,6 +453,8 @@ var Mu = {
       if (typeof Mu.Flash._hasMinVersion === 'undefined') {
         var
           versionString,
+          i,
+          l,
           version = [];
         try {
           versionString = new ActiveXObject('ShockwaveFlash.ShockwaveFlash')
@@ -474,7 +476,7 @@ var Mu = {
                         .replace(/\D+/g, ',')
                         .match(/^,?(.+),?$/)[1]
                         .split(',');
-          for (var i=0, l=parts.length; i<l; i++) {
+          for (i=0, l=parts.length; i<l; i++) {
             version.push(parseInt(parts[i], 10));
           }
         }
@@ -484,7 +486,7 @@ var Mu = {
 
         // look through all the allowed version definitions.
         majorVersion:
-        for (var i=0, l=Mu._registry.flashVersions.length; i<l; i++) {
+        for (i=0, l=Mu._registry.flashVersions.length; i<l; i++) {
           var acceptable = Mu._registry.flashVersions[i];
 
           // we only accept known major versions, and every supported major
@@ -495,7 +497,7 @@ var Mu = {
           }
 
           // the rest of the version components must be equal or higher
-          for (var m=1, n=acceptable.length, o=version.length; m<n, m<o; m++) {
+          for (var m=1, n=acceptable.length, o=version.length; (m<n && m<o); m++) {
             if (version[m] < acceptable[m]) {
               // less means this major version is no good
               Mu.Flash._hasMinVersion = false;
@@ -719,7 +721,7 @@ var Mu = {
         if (frame.close) {
           frame.close();
         }
-      } catch (x) {
+      } catch (y) {
         // do nothing, permission error
       }
 

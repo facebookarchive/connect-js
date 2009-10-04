@@ -1,5 +1,8 @@
-/docs/out/
-/docs/parser/
+/TODO
+/build/
+/docs/
+/index.html
 /jscoverage-report/
 /m.js
+/nginx.conf
 /u.js
