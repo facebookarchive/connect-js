@@ -1,3 +1,9 @@
+/**
+ * @module Mu
+ * @provides Mu.md5sum
+ * @requires Mu.Prelude
+ */
+
 // thanks http://pajhome.org.uk/crypt/md5/md5.html
 Mu.md5sum = function(input) {
   // FLOW: input -> utf8 input -> bin input -> bin md5 -> utf8 md5 -> hex md5

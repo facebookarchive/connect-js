@@ -1,0 +1,282 @@
+/**
+ * @module Mu
+ * @provides Mu.Auth
+ *
+ * @requires Mu.Prelude
+ *           Mu.QS
+ *           Mu.Frames
+ */
+
+/**
+ * Authentication, Authorization & Sessions.
+ *
+ * @class Mu
+ * @static
+ * @access private
+ */
+Mu.copy('', {
+  /**
+   * Find out the current status from the server, and get a session if the user
+   * is connected.
+   *
+   * The User's Status or the question of "who is the current user" is
+   * the first thing you will typically start with. For the answer, we
+   * ask facebook.com. Facebook will answer this question in one of
+   * two ways:
+   *
+   *     #. Someone you don't know.
+   *     #. Someone you know and have interacted with. Here's a
+   *        session for them.
+   *
+   * Here's how you find out::
+   *
+   *     Mu.status(function(response) {
+   *       if (response.session) {
+   *         // logged in and connected user, someone you know
+   *       } else {
+   *         // no user session available, someone you dont know
+   *       }
+   *     });
+   *
+   * The example above will result in the callback being invoked once
+   * on load based on the session from www.facebook.com. For more
+   * advanced use, you may with to monitor the status on
+   * change. Potentially just get notified of a change across page
+   * loads. The status call will also also optimize away the request
+   * to www.facebook.com when possible (by doing it only once per page
+   * load), but you may need to force a refresh of the session.
+   *
+   * Options:
+   *
+   * =========  =============================================  =========
+   * Property   Description                                    Default
+   * =========  =============================================  =========
+   * change     Invoke the callback on every change.           ``false``
+   * cookie     Allow using the Cookie session. **Advanced!**  ``false``
+   * force      Force fetching the status from the server.     ``false``
+   * load       Invoke the callback once on load.              ``true``
+   * =========  =============================================  =========
+   *
+   * Note, ``change`` and ``load`` can be specified at the same time,
+   * which will ensure that your callback is invoked at least once on
+   * load, and then again for every change in session. For example::
+   *
+   *   Mu.status(
+   *     function(response) {
+   *       // will get invoked at least once on load, and then again
+   *       // on every change in session.
+   *     },
+   *     {
+   *       change: true,
+   *       load: true
+   *     }
+   *   );
+   *
+   * @access public
+   * @param cb   {Function} the callback function
+   * @param opts {Object}   options as described above
+   * @for Mu
+   */
+  status: function(cb, opts) {
+    // copy options supplying defaults as necessary
+    opts = Mu.copy(opts || {}, {
+      change : false,
+      cookie : false,
+      force  : false,
+      load   : true
+    });
+
+    // notify on change?
+    if (opts.change) {
+      Mu._callbacks.sessionChange.push(cb);
+    }
+
+    // invoking on load means we either setup a timeout to invoke the callback
+    // if the status has already been loaded, or queuing up the callback for
+    // when the load is done
+    if (cb && opts.load) {
+      if (!opts.force &&
+          (Mu.status._loadState ||
+           (opts.cookie && Mu._session))) {
+        window.setTimeout(function() {
+          cb({ status: Mu._userStatus, session: Mu._session });
+        }, 0);
+      } else {
+        // this is complex. its because we dont want the callback to get
+        // invoked twice on load, if the state changes on load as well.
+        //
+        // basically, we only invoke it here if we know it wont already get
+        // invoked as part of sessionChange.
+        Mu._callbacks.sessionLoad.push(function(response) {
+          if (!opts.change || !response.change) {
+            cb(response);
+          }
+        });
+      }
+    }
+
+    // if we've already loaded or are loading the status, and a force refresh
+    // was not requested, we're done at this point
+    if (typeof Mu.status._loadState != 'undefined' && !opts.force) {
+      return;
+    }
+
+    // if we get here, we need to fetch the status from the server
+    Mu.status._loadState = false;
+
+    // invoke the queued sessionLoad callbacks
+    var lsCb = function(response) {
+      Mu.status._loadState = true;
+      for (var i=0, l=Mu._callbacks.sessionLoad.length; i<l; i++) {
+        Mu._callbacks.sessionLoad[i](response);
+      }
+      Mu._callbacks.sessionLoad = [];
+    };
+
+    // finally make the call to login status
+    var
+      g   = Mu.guid(),
+      url = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
+        api_key    : Mu._apiKey,
+        no_session : Mu.Frames.session(lsCb, g, 'parent', false, 'disconnected'),
+        no_user    : Mu.Frames.session(lsCb, g, 'parent', false, 'unknown'),
+        ok_session : Mu.Frames.session(lsCb, g, 'parent', false, 'connected')
+      });
+
+    Mu.Frames.hidden(url, g);
+  },
+
+  /**
+   * Accessor for the current Session.
+   *
+   * @access public
+   * @returns {Object}  the current Session if available, null otherwise
+   */
+  session: function() {
+    return Mu._session;
+  },
+
+  /**
+   * Login/Authorize/Permissions.
+   *
+   * Once you have determined the user's status, you may need to
+   * prompt the user to login. It is best to delay this action to
+   * reduce user friction when they first arrive at your site. You can
+   * then prompt and show them the "Connect with Facebook" button
+   * bound to an event handler which does the following::
+   *
+   *    Mu.login(function(response) {
+   *      if (response.session) {
+   *        // user successfully logged in
+   *      } else {
+   *        // user cancelled login
+   *      }
+   *    });
+   *
+   * You should **only** call this on a user event as it opens a
+   * popup. Most browsers block popups, *unless* they were initiated
+   * from a user event, such as a click on a button or a link.
+   *
+   *
+   * Depending on your application's needs, you may need additional
+   * permissions from the user. A large number of calls do not require
+   * any additional permissions, so you should first make sure you
+   * need a permission. This is a good idea because this step
+   * potentially adds friction to the user's process. Another point to
+   * remember is that this call can be made even *after* the user has
+   * first connected. So you may want to delay asking for permissions
+   * until as late as possible::
+   *
+   *     Mu.login(function(response) {
+   *       if (response.session) {
+   *         if (response.perms) {
+   *           // user is logged in and granted some permissions.
+   *           // perms is a comma separated list of granted permissions
+   *         } else {
+   *           // user is logged in, but did not grant any permissions
+   *         }
+   *       } else {
+   *         // user is not logged in
+   *       }
+   *     }, 'read_stream,publish_stream,offline_access');
+   *
+   * @access public
+   * @param cb    {Function} the callback function
+   * @param perms {String}   (optional) comma separated list of permissions
+   */
+  login: function(cb, perms) {
+    var
+      g      = Mu.guid(),
+      cancel = Mu.Frames.session(cb, g, 'opener', true,  Mu._userStatus, Mu._session),
+      next   = Mu.Frames.session(cb, g, 'opener', false, 'connected', Mu._session),
+      url    = Mu._domain.www + 'login.php?' + Mu.QS.encode({
+        api_key        : Mu._apiKey,
+        cancel_url     : cancel,
+        channel_url    : window.location.toString(),
+        display        : 'popup',
+        fbconnect      : 1,
+        next           : next,
+        req_perms      : perms,
+        return_session : 1,
+        v              : '1.0'
+      });
+
+    Mu.Frames.popup(url, 450, 415, g);
+  },
+
+  /**
+   * Logout the user in the background.
+   *
+   * Just like logging in is tied to facebook.com, so is logging out.
+   * The status shared between your site and Facebook, and logging out
+   * affects both sites. This is a simple call::
+   *
+   *     Mu.logout(function(response) {
+   *       // user is now logged out
+   *     });
+   *
+   * @access public
+   * @param cb    {Function} the callback function
+   */
+  logout: function(cb) {
+    var
+      g   = Mu.guid(),
+      url = Mu._domain.www + 'logout.php?' + Mu.QS.encode({
+        api_key     : Mu._apiKey,
+        next        : Mu.Frames.session(cb, g, 'parent', false, 'unknown'),
+        session_key : Mu._session.session_key
+      });
+
+    Mu.Frames.hidden(url, g);
+  },
+
+  /**
+   * Set a new session value. Invokes all the registered subscribers
+   * if needed.
+   *
+   * @access private
+   * @param session {Object}  the new Session
+   * @param status  {String}  the new status
+   * @param skipCb  {Boolean} skip invoke the callbacks
+   */
+  setSession: function(session, status, skipCb) {
+    var response = {
+      changed : (!skipCb &&                    // force callbacks
+                 ((session && !Mu._session) || // new session
+                  (!session && Mu._session) || // lost session
+                  (session && Mu._session &&   // updated session
+                   (session.session_key != Mu._session.session_key)))),
+      session : session,
+      status  : status
+    };
+
+    Mu._session = session;
+    Mu._userStatus = status;
+    if (response.changed) {
+      for (var i=0, l=Mu._callbacks.sessionChange.length; i<l; i++) {
+        Mu._callbacks.sessionChange[i](response);
+      }
+    }
+    return response;
+  }
+});
