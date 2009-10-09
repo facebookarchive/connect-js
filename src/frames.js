@@ -210,7 +210,7 @@ Mu.copy('Frames', {
    * @param isDefault {Boolean}  is this the default callback for the frame
    * @returns         {String}   the xd url bound to the callback
    */
-  result: function(cb, frame, target, isDefault) {
+  xdResult: function(cb, frame, target, isDefault) {
     return (
       Mu.Frames.handler(function(params) {
         cb && cb(params.result &&

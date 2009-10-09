@@ -149,7 +149,7 @@ Mu.copy('', {
         actor_id            : post.actor_id,
         api_key             : Mu._apiKey,
         attachment          : JSON.stringify(post.attachment || {}),
-        callback            : g && Mu.Frames.result(cb, g, 'opener', true),
+        callback            : g && Mu.Frames.xdResult(cb, g, 'opener', true),
         message             : post.message,
         preview             : 1,
         session_key         : Mu._session && Mu._session.session_key,
@@ -174,7 +174,7 @@ Mu.copy('', {
         api_key     : Mu._apiKey,
         display     : 'dialog',
         id          : id,
-        next        : Mu.Frames.result(cb, g, 'opener', true),
+        next        : Mu.Frames.xdResult(cb, g, 'opener', true),
         session_key : Mu._session.session_key
       });
 
