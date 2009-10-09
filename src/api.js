@@ -56,12 +56,13 @@ Mu.copy('', {
    * @param cb     {Function} the callback function to handle the response
    */
   api: function(params, cb) {
+    // this is an optional dependency on Mu.Auth
     // Auth.revokeAuthorization affects the session
-    if (params.method == 'Auth.revokeAuthorization') {
+    if (Mu.Auth && params.method == 'Auth.revokeAuthorization') {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {
-          Mu.setSession(null, 'disconnected');
+          Mu.Auth.setSession(null, 'disconnected');
         }
         old_cb && old_cb(response);
       };
@@ -87,6 +88,8 @@ Mu.copy('', {
  * @access private
  */
 Mu.copy('RestServer', {
+  _callbacks: {},
+
   /**
    * Sign the given params and prepare them for an API call using the current
    * session if possible.
@@ -144,7 +147,7 @@ Mu.copy('RestServer', {
 
     // shallow clone of params, add callback and sign
     params = Mu.RestServer.sign(
-      Mu.copy({ callback: 'Mu._callbacks.' + g }, params));
+      Mu.copy({ callback: 'Mu.RestServer._callbacks.' + g }, params));
 
     url = Mu._domain.api + 'restserver.php?' + Mu.QS.encode(params);
     if (url.length > 2000) {
@@ -152,9 +155,9 @@ Mu.copy('RestServer', {
     }
 
     // this is the JSONP callback invoked by the response from restserver.php
-    Mu._callbacks[g] = function(response) {
+    Mu.RestServer._callbacks[g] = function(response) {
       cb(response);
-      delete Mu._callbacks[g];
+      delete Mu.RestServer._callbacks[g];
       script.parentNode.removeChild(script);
     };
 
@@ -170,6 +173,16 @@ Mu.copy('RestServer', {
    * @param cb     {Function} the callback function to handle the response
    */
   flash: function(params, cb) {
+    // only need to do this once
+    if (!Mu.RestServer.flash._init) {
+      // the SWF calls this global function when a HTTP response is available
+      // FIXME: remove global
+      window.FB_OnXdHttpResult = function(reqId, data) {
+        Mu.RestServer._callbacks[reqId](Mu.Flash.decode(data));
+      };
+      Mu.RestServer.flash._init = true;
+    }
+
     Mu.Flash.onReady(function() {
       var method, url, body, reqId;
 
@@ -190,9 +203,9 @@ Mu.copy('RestServer', {
       reqId = document.XdComm.sendXdHttpRequest(method, url, body, null);
 
       // callback
-      Mu._callbacks[reqId] = function(response) {
+      Mu.RestServer._callbacks[reqId] = function(response) {
         cb(JSON.parse(Mu.Flash.decode(response)));
-        delete Mu._callbacks[reqId];
+        delete Mu.RestServer._callbacks[reqId];
       };
     });
   }

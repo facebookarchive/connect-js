@@ -1,4 +1,6 @@
 /**
+ * TODO move Mu.Frames.session to Mu.Auth.xdSessionHandler
+ *
  * @module Mu
  * @provides Mu.Frames
  *
@@ -252,9 +254,9 @@ Mu.copy('Frames', {
       // try to extract a session
       var response;
       try {
-        response = Mu.setSession(JSON.parse(params.session), status);
+        response = Mu.Auth.setSession(JSON.parse(params.session), status);
       } catch(x) {
-        response = Mu.setSession(session || null, status);
+        response = Mu.Auth.setSession(session || null, status);
       }
 
       // incase we were granted some new permissions

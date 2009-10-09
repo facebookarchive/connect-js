@@ -39,6 +39,11 @@ function showUserInfo() {
     };
 
     Mu.api(params, function(info) {
+      if (info.error_code) {
+        // bail
+        return;
+      }
+
       info = info[0];
 
       $('user-name').innerHTML = info.name;

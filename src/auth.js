@@ -88,7 +88,7 @@ Mu.copy('', {
 
     // notify on change?
     if (opts.change) {
-      Mu._callbacks.sessionChange.push(cb);
+      Mu.Auth._callbacks.change.push(cb);
     }
 
     // invoking on load means we either setup a timeout to invoke the callback
@@ -107,7 +107,7 @@ Mu.copy('', {
         //
         // basically, we only invoke it here if we know it wont already get
         // invoked as part of sessionChange.
-        Mu._callbacks.sessionLoad.push(function(response) {
+        Mu.Auth._callbacks.load.push(function(response) {
           if (!opts.change || !response.change) {
             cb(response);
           }
@@ -127,10 +127,10 @@ Mu.copy('', {
     // invoke the queued sessionLoad callbacks
     var lsCb = function(response) {
       Mu.status._loadState = true;
-      for (var i=0, l=Mu._callbacks.sessionLoad.length; i<l; i++) {
-        Mu._callbacks.sessionLoad[i](response);
+      for (var i=0, l=Mu.Auth._callbacks.load.length; i<l; i++) {
+        Mu.Auth._callbacks.load[i](response);
       }
-      Mu._callbacks.sessionLoad = [];
+      Mu.Auth._callbacks.load = [];
     };
 
     // finally make the call to login status
@@ -248,6 +248,21 @@ Mu.copy('', {
       });
 
     Mu.Frames.hidden(url, g);
+  }
+});
+
+/**
+ * Internal Authentication implementation.
+ *
+ * @class Mu.Auth
+ * @static
+ * @access private
+ */
+Mu.copy('Auth', {
+  // status callbacks
+  _callbacks: {
+    change: [],
+    load: []
   },
 
   /**
@@ -273,8 +288,8 @@ Mu.copy('', {
     Mu._session = session;
     Mu._userStatus = status;
     if (response.changed) {
-      for (var i=0, l=Mu._callbacks.sessionChange.length; i<l; i++) {
-        Mu._callbacks.sessionChange[i](response);
+      for (var i=0, l=Mu.Auth._callbacks.change.length; i<l; i++) {
+        Mu.Auth._callbacks.change[i](response);
       }
     }
     return response;

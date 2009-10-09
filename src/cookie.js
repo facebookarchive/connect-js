@@ -4,6 +4,7 @@
  *
  * @requires Mu.Prelude
  *           Mu.QS
+ *           Mu.Auth
  */
 
 /**
@@ -22,11 +23,11 @@ Mu.copy('Cookie', {
    * @returns {Object} the session object from the cookie if one is found
    */
   init: function() {
-    // directly place the cookie subscriber at index 0 in
-    // Mu._callbacks.sessionChange
-    Mu._callbacks.sessionChange.splice(0, 0, function(response) {
+    // insert it directly at the begining and do nothing else
+    Mu.Auth._callbacks.change.splice(0, 0, function(response) {
       Mu.Cookie.set(response.session);
     });
+
     return Mu.Cookie.load();
   },
 

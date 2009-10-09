@@ -56,16 +56,16 @@ Mu.copy('', {
   init: function(opts) {
     Mu._apiKey = opts.apiKey;
 
+    // initialize the XD layer
+    Mu.XD.init();
+
     // enable cookie support and use cookie session if possible
     if (opts.cookie) {
       opts.session = opts.session || Mu.Cookie.init();
     }
 
     // set the given or cookie session
-    Mu.setSession(opts.session, opts.session ? 'connected' : 'unknown', true);
-
-    // initialize the XD layer
-    Mu.XD.init();
+    Mu.Auth.setSession(opts.session, opts.session ? 'connected' : 'unknown', true);
 
     // fetch a fresh status from facebook.com if requested
     opts.status && Mu.status();

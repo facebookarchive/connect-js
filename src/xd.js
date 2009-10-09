@@ -17,6 +17,7 @@
 Mu.copy('XD', {
   _origin    : null,
   _transport : null,
+  _callbacks : {},
 
   /**
    * Initialize the XD layer. Native postMessage or Flash is required.
@@ -69,7 +70,7 @@ Mu.copy('XD', {
     var
       xdProxy = Mu._domain.cdn + 'connect/xd_proxy.php#?=&',
       id      = Mu.guid();
-    Mu._callbacks[id] = cb;
+    Mu.XD._callbacks[id] = cb;
     return xdProxy + Mu.QS.encode({
       cb        : id,
       origin    : Mu.XD._origin,
@@ -90,8 +91,8 @@ Mu.copy('XD', {
       data = Mu.QS.decode(data);
     }
 
-    var cb = Mu._callbacks[data.cb];
-    delete Mu._callbacks[data.cb];
+    var cb = Mu.XD._callbacks[data.cb];
+    delete Mu.XD._callbacks[data.cb];
     cb(data);
   },
 

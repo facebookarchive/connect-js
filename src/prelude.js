@@ -28,12 +28,6 @@ if (!window.Mu) {
       www : window.location.protocol + '//www.facebook.com/'
     },
 
-    // various uses of callbacks
-    _callbacks: {
-      sessionChange: [],
-      sessionLoad: []
-    },
-
     // "dynamic constants"
     _registry: {
       // minimum required flash versions

@@ -502,12 +502,12 @@ test(
               Mu.login(function() {
                 // should not trigger subscriber
                 Mu.login(function() {
-                  // reset the _sessionCallbacks once we're done with the test.
+                  // reset the callbacks once we're done with the test.
                   // otherwise, future tests will also trigger the subscriber
                   // causing tests to fail.
                   // 6
                   ok(expected == 0, 'got all expected callbacks');
-                  Mu._callbacks.sessionChange = [];
+                  Mu.Auth._callbacks.change = [];
                   start();
                 }, 'email');
               }, 'offline_access');
