@@ -1,6 +1,6 @@
 /**
  * @module Mu
- * @provides Mu.API
+ * @provides Mu.UI
  *
  * @requires Mu.Prelude
  *           Mu.QS
