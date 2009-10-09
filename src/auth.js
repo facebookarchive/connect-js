@@ -138,9 +138,9 @@ Mu.copy('', {
       g   = Mu.guid(),
       url = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
         api_key    : Mu._apiKey,
-        no_session : Mu.Frames.session(lsCb, g, 'parent', false, 'disconnected'),
-        no_user    : Mu.Frames.session(lsCb, g, 'parent', false, 'unknown'),
-        ok_session : Mu.Frames.session(lsCb, g, 'parent', false, 'connected')
+        no_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'disconnected'),
+        no_user    : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'unknown'),
+        ok_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'connected')
       });
 
     Mu.Frames.hidden(url, g);
@@ -207,8 +207,8 @@ Mu.copy('', {
   login: function(cb, perms) {
     var
       g      = Mu.guid(),
-      cancel = Mu.Frames.session(cb, g, 'opener', true,  Mu._userStatus, Mu._session),
-      next   = Mu.Frames.session(cb, g, 'opener', false, 'connected', Mu._session),
+      cancel = Mu.Auth.xdHandler(cb, g, 'opener', true,  Mu._userStatus, Mu._session),
+      next   = Mu.Auth.xdHandler(cb, g, 'opener', false, 'connected', Mu._session),
       url    = Mu._domain.www + 'login.php?' + Mu.QS.encode({
         api_key        : Mu._apiKey,
         cancel_url     : cancel,
@@ -243,7 +243,7 @@ Mu.copy('', {
       g   = Mu.guid(),
       url = Mu._domain.www + 'logout.php?' + Mu.QS.encode({
         api_key     : Mu._apiKey,
-        next        : Mu.Frames.session(cb, g, 'parent', false, 'unknown'),
+        next        : Mu.Auth.xdHandler(cb, g, 'parent', false, 'unknown'),
         session_key : Mu._session.session_key
       });
 
@@ -293,5 +293,50 @@ Mu.copy('Auth', {
       }
     }
     return response;
+  },
+
+  /**
+   * This handles receiving a session from:
+   *  - login_status.php
+   *  - login.php
+   *  - tos.php
+   *
+   * It also (optionally) handles the ``xxRESULTTOKENxx`` response from:
+   *  - prompt_permissions.php
+   *
+   * And calls the given callback with::
+   *
+   *   {
+   *     session: session or null,
+   *     status: 'unknown' or 'disconnected' or 'connected',
+   *     perms: comma separated string of perm names
+   *   }
+   *
+   * @access private
+   * @param cb        {Function} the callback function
+   * @param frame     {String}   the frame id for the callback is tied to
+   * @param target    {String}   parent or opener to indicate window relation
+   * @param isDefault {Boolean}  is this the default callback for the frame
+   * @param status    {String}   the connect status this handler will trigger
+   * @param session   {Object}   backup session, if none is found in response
+   * @returns         {String}   the xd url bound to the callback
+   */
+  xdHandler: function(cb, frame, target, isDefault, status, session) {
+    return Mu.Frames.handler(function(params) {
+      // try to extract a session
+      var response;
+      try {
+        response = Mu.Auth.setSession(JSON.parse(params.session), status);
+      } catch(x) {
+        response = Mu.Auth.setSession(session || null, status);
+      }
+
+      // incase we were granted some new permissions
+      response.perms = (
+        params.result != 'xxRESULTTOKENxx' && params.result || '');
+
+      // user defined callback
+      cb && cb(response);
+    }, frame, target, isDefault) + '&result=xxRESULTTOKENxx';
   }
 });

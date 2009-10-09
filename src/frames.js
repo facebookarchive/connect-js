@@ -1,6 +1,4 @@
 /**
- * TODO move Mu.Frames.session to Mu.Auth.xdSessionHandler
- *
  * @module Mu
  * @provides Mu.Frames
  *
@@ -221,50 +219,5 @@ Mu.copy('Frames', {
       }, frame, target, isDefault) +
       '&result=' + encodeURIComponent(Mu.Frames._resultToken)
     );
-  },
-
-  /**
-   * This handles receiving a session from:
-   *  - login_status.php
-   *  - login.php
-   *  - tos.php
-   *
-   * It also (optionally) handles the ``xxRESULTTOKENxx`` response from:
-   *  - prompt_permissions.php
-   *
-   * And calls the given callback with::
-   *
-   *   {
-   *     session: session or null,
-   *     status: 'unknown' or 'disconnected' or 'connected',
-   *     perms: comma separated string of perm names
-   *   }
-   *
-   * @access private
-   * @param cb        {Function} the callback function
-   * @param frame     {String}   the frame id for the callback is tied to
-   * @param target    {String}   parent or opener to indicate window relation
-   * @param isDefault {Boolean}  is this the default callback for the frame
-   * @param status    {String}   the connect status this handler will trigger
-   * @param session   {Object}   backup session, if none is found in response
-   * @returns         {String}   the xd url bound to the callback
-   */
-  session: function(cb, frame, target, isDefault, status, session) {
-    return Mu.Frames.handler(function(params) {
-      // try to extract a session
-      var response;
-      try {
-        response = Mu.Auth.setSession(JSON.parse(params.session), status);
-      } catch(x) {
-        response = Mu.Auth.setSession(session || null, status);
-      }
-
-      // incase we were granted some new permissions
-      response.perms = (
-        params.result != 'xxRESULTTOKENxx' && params.result || '');
-
-      // user defined callback
-      cb && cb(response);
-    }, frame, target, isDefault) + '&result=xxRESULTTOKENxx';
   }
 });
