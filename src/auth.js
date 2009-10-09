@@ -30,7 +30,7 @@ Mu.copy('', {
    *
    * Here's how you find out::
    *
-   *     Mu.status(function(response) {
+   *     Mu.watchStatus(function(response) {
    *       if (response.session) {
    *         // logged in and connected user, someone you know
    *       } else {
@@ -61,7 +61,7 @@ Mu.copy('', {
    * which will ensure that your callback is invoked at least once on
    * load, and then again for every change in session. For example::
    *
-   *   Mu.status(
+   *   Mu.watchStatus(
    *     function(response) {
    *       // will get invoked at least once on load, and then again
    *       // on every change in session.
@@ -77,7 +77,7 @@ Mu.copy('', {
    * @param opts {Object}   options as described above
    * @for Mu
    */
-  status: function(cb, opts) {
+  watchStatus: function(cb, opts) {
     // copy options supplying defaults as necessary
     opts = Mu.copy(opts || {}, {
       change : false,
@@ -96,7 +96,7 @@ Mu.copy('', {
     // when the load is done
     if (cb && opts.load) {
       if (!opts.force &&
-          (Mu.status._loadState ||
+          (Mu.watchStatus._loadState ||
            (opts.cookie && Mu._session))) {
         window.setTimeout(function() {
           cb({ status: Mu._userStatus, session: Mu._session });
@@ -117,16 +117,16 @@ Mu.copy('', {
 
     // if we've already loaded or are loading the status, and a force refresh
     // was not requested, we're done at this point
-    if (typeof Mu.status._loadState != 'undefined' && !opts.force) {
+    if (typeof Mu.watchStatus._loadState != 'undefined' && !opts.force) {
       return;
     }
 
     // if we get here, we need to fetch the status from the server
-    Mu.status._loadState = false;
+    Mu.watchStatus._loadState = false;
 
     // invoke the queued sessionLoad callbacks
     var lsCb = function(response) {
-      Mu.status._loadState = true;
+      Mu.watchStatus._loadState = true;
       for (var i=0, l=Mu.Auth._callbacks.load.length; i<l; i++) {
         Mu.Auth._callbacks.load[i](response);
       }

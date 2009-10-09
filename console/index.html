@@ -34,7 +34,7 @@
 
         <input type="button"
                value="Status"
-               onclick="Mu.status()">
+               onclick="Mu.watchStatus()">
         <input type="button"
                value="Login"
                onclick="Mu.login()"
@@ -133,7 +133,7 @@
         apiKey: '48f06bc570aaf9ed454699ec4fe416df',
         cookie: true
       });
-      Mu.status(gotStatus, { change: true, load: true, cookie: true });
+      Mu.watchStatus(gotStatus, { change: true, load: true, cookie: true });
     </script>
 
 

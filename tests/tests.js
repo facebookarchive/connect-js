@@ -43,7 +43,7 @@ test(
   'get some status',
 
   function() {
-    Mu.status(function(response) {
+    Mu.watchStatus(function(response) {
       ok(true, 'status callback got invoked');
       start();
     });
@@ -61,7 +61,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.status(function(response) {
+      Mu.watchStatus(function(response) {
                   if (response.session) {
                     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
                                     ok(!Mu.session(), 'disconnected user');
@@ -93,7 +93,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.status(function(response) {
+      Mu.watchStatus(function(response) {
                   ok(!response.session, 'should not get a session');
                   action.innerHTML = '';
                   action.className = '';
@@ -173,7 +173,7 @@ test(
   'status should now return a session',
 
   function() {
-    Mu.status(function(response) {
+    Mu.watchStatus(function(response) {
                 ok(response.session, 'should get a session');
                 ok(response.status == 'connected', 'should be connected');
                 start();
@@ -484,7 +484,7 @@ test(
   function() {
     var expected = 5;
 
-    Mu.status(function(response) {
+    Mu.watchStatus(function(response) {
       ok(true, 'subscriber got called');
       expected -= 1;
     }, { change: true, load: false });

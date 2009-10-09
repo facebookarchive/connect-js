@@ -68,6 +68,6 @@ Mu.copy('', {
     Mu.Auth.setSession(opts.session, opts.session ? 'connected' : 'unknown', true);
 
     // fetch a fresh status from facebook.com if requested
-    opts.status && Mu.status();
+    opts.status && Mu.watchStatus();
   }
 });

@@ -22,7 +22,7 @@
       Mu.init({ apiKey: '48f06bc570aaf9ed454699ec4fe416df' });
 
       // fetch the status on load
-      Mu.status(handleSessionResponse);
+      Mu.watchStatus(handleSessionResponse);
 
       YAHOO.util.Event.addListener('login', 'click', function() {
         Mu.login(handleSessionResponse);
