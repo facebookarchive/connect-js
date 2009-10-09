@@ -128,7 +128,7 @@ Mu.copy('Frames', {
           // found a closed window
           if (win.closed) {
             Mu.Frames._count--;
-            Mu.Frames.recv({ cb: id, frame: id }, Mu.Frames._defaultCb[id]);
+            Mu.Frames.xdRecv({ cb: id, frame: id }, Mu.Frames._defaultCb[id]);
           }
         } catch(y) {
           // probably a permission error
@@ -155,7 +155,7 @@ Mu.copy('Frames', {
     }
 
     return Mu.XD.handler(function(data) {
-      Mu.Frames.recv(data, cb);
+      Mu.Frames.xdRecv(data, cb);
     }, relation) + '&frame=' + frame;
   },
 
@@ -166,7 +166,7 @@ Mu.copy('Frames', {
    * @access private
    * @param data {Object} the message parameters
    */
-  recv: function(data, cb) {
+  xdRecv: function(data, cb) {
     var frame = Mu.Frames._active[data.frame];
 
     // iframe
