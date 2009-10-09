@@ -1,20 +1,14 @@
 /**
+ * Mu is a JavaScript library that provides Facebook Connect integration.
+ *
  * @module Mu
- * Mu is a JavaScript library that provides Facebook Connect
- * integration.
- *
  * @provides Mu.Core
- *
  * @requires Mu.Prelude
  *           Mu.API
  *           Mu.Auth
- *           Mu.Content
  *           Mu.Cookie
- *           Mu.Flash
- *           Mu.QS
  *           Mu.UI
  *           Mu.XD
- *           Mu.md5sum
  */
 
 /**

@@ -1,65 +1,23 @@
 /**
+ * Contains the public method ``Mu.api`` and the internal implementation
+ * ``Mu.RestServer``.
+ *
  * @module Mu
  * @provides Mu.API
- *
  * @requires Mu.Prelude
  *           Mu.QS
- *           Mu.XD
- *           Mu.Content
+ *           Mu.Flash
+ *           Mu.md5sum
  */
 
 /**
- * Authentication, Authorization & Sessions.
+ * API calls.
  *
  * @class Mu
  * @static
  * @access private
  */
 Mu.copy('', {
-  /**
-   * Sign the given params and prepare them for an API call, either using an
-   * explicit secret or using the current session. It updates the given params
-   * object *in place* with the necessary parameters.
-   *
-   * @access private
-   * @param params {Object} the parameters to sign
-   * @param secret {String} secret to sign the call (defaults to the current
-   * session secret)
-   * @returns {Object} the *same* params object back
-   */
-  sign: function(params, secret) {
-    // general api call parameters
-    Mu.copy(params, {
-      api_key : Mu._apiKey,
-      call_id : (new Date()).getTime(),
-      format  : 'json',
-      v       : '1.0'
-    });
-
-    // if an explicit secret was not given, and we have a session, we will
-    // automatically sign using the session. if a explicit secret is given, we
-    // do not nclude these session specific parameters.
-    if (!secret && Mu._session) {
-      Mu.copy(params, {
-        session_key : Mu._session.session_key,
-        ss          : 1
-      });
-    }
-
-    // optionally generate the signature. we do this for both the automatic and
-    // explicit case.
-    if (secret || Mu._session) {
-      // the signature is described at:
-      // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
-      params.sig = Mu.md5sum(
-        Mu.QS.encode(params, '', false) +
-        (secret || Mu._session.secret)
-      );
-    }
-
-    return params;
-  },
-
   /**
    * Once you have a session for the current user, you will want to
    * access data about that user, such as getting their name & profile
@@ -96,10 +54,8 @@ Mu.copy('', {
    * @access public
    * @param params {Object}   the parameters for the query
    * @param cb     {Function} the callback function to handle the response
-   * @param secret {String}   secret to sign the call (defaults to the current
-   * session secret)
    */
-  api: function(params, cb, secret) {
+  api: function(params, cb) {
     // Auth.revokeAuthorization affects the session
     if (params.method == 'Auth.revokeAuthorization') {
       var old_cb = cb;
@@ -112,15 +68,63 @@ Mu.copy('', {
     }
 
     try {
-      Mu.jsonp(params, cb, secret);
+      Mu.RestServer.jsonp(params, cb);
     } catch (x) {
       if (Mu.Flash.hasMinVersion()) {
-        Mu.Flash.api(params, cb, secret);
+        Mu.RestServer.flash(params, cb);
       } else {
         throw new Error('Flash is required for this API call.');
       }
     }
+  }
+});
+
+/**
+ * API call implementations.
+ *
+ * @class Mu.RestServer
+ * @static
+ * @access private
+ */
+Mu.copy('RestServer', {
+  /**
+   * Sign the given params and prepare them for an API call using the current
+   * session if possible.
+   *
+   * @access private
+   * @param params {Object} the parameters to sign
+   * @returns {Object} the *same* params object back
+   */
+  sign: function(params) {
+    // general api call parameters
+    Mu.copy(params, {
+      api_key : Mu._apiKey,
+      call_id : (new Date()).getTime(),
+      format  : 'json',
+      v       : '1.0'
+    });
+
+    // indicate session signing if session is available
+    if (Mu._session) {
+      Mu.copy(params, {
+        session_key : Mu._session.session_key,
+        ss          : 1
+      });
+    }
+
+    // optionally generate the signature. we do this for both the automatic and
+    // explicit case.
+    if (Mu._session) {
+      // the signature is described at:
+      // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
+      params.sig = Mu.md5sum(
+        Mu.QS.encode(params, '', false) + Mu._session.secret
+      );
+    }
+
+    return params;
   },
+
 
   /**
    * Make a API call to restserver.php. This call will be automatically signed
@@ -131,17 +135,16 @@ Mu.copy('', {
    * @access private
    * @param params {Object}   the parameters for the query
    * @param cb     {Function} the callback function to handle the response
-   * @param secret {String}   secret to sign the call (defaults to the current
-   * session secret)
    */
-  jsonp: function(params, cb, secret) {
+  jsonp: function(params, cb) {
     var
       g      = Mu.guid(),
       script = document.createElement('script'),
       url;
 
     // shallow clone of params, add callback and sign
-    params = Mu.sign(Mu.copy({callback: 'Mu._callbacks.' + g}, params), secret);
+    params = Mu.RestServer.sign(
+      Mu.copy({ callback: 'Mu._callbacks.' + g }, params));
 
     url = Mu._domain.api + 'restserver.php?' + Mu.QS.encode(params);
     if (url.length > 2000) {
@@ -157,5 +160,40 @@ Mu.copy('', {
 
     script.src = url;
     document.getElementsByTagName('head')[0].appendChild(script);
+  },
+
+  /**
+   * Make a API call to restserver.php using Flash.
+   *
+   * @access private
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   */
+  flash: function(params, cb) {
+    Mu.Flash.onReady(function() {
+      var method, url, body, reqId;
+
+      // shallow clone of params, sign, and encode as query string
+      body = Mu.QS.encode(Mu.RestServer.sign(Mu.copy({}, params)));
+      url = Mu._domain.api + 'restserver.php';
+
+      // GET or POST
+      if (url.length + body.length > 2000) {
+        method = 'POST';
+      } else {
+        method = 'GET';
+        url += '?' + body;
+        body = '';
+      }
+
+      // fire the request
+      reqId = document.XdComm.sendXdHttpRequest(method, url, body, null);
+
+      // callback
+      Mu._callbacks[reqId] = function(response) {
+        cb(JSON.parse(Mu.Flash.decode(response)));
+        delete Mu._callbacks[reqId];
+      };
+    });
   }
 });

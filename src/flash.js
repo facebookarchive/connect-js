@@ -1,11 +1,9 @@
 /**
  * @module Mu
  * @provides Mu.Flash
- *
  * @requires Mu.Prelude
  *           Mu.QS
  *           Mu.Content
- *           Mu.md5sum
  */
 
 /**
@@ -196,42 +194,5 @@ Mu.copy('Flash', {
     // needed for IE; \0 is the NULL character
     data = data.replace(/\\0/g, "\0");
     return data;
-  },
-
-  /**
-   * Make a API call to restserver.php using Flash.
-   *
-   * @access private
-   * @param params {Object}   the parameters for the query
-   * @param cb     {Function} the callback function to handle the response
-   * @param secret {String}   secret to sign the call (defaults to the current
-   * session secret)
-   */
-  api: function(params, cb, secret) {
-    Mu.Flash.onReady(function() {
-      var method, url, body, reqId;
-
-      // shallow clone of params, sign, and encode as query string
-      body = Mu.QS.encode(Mu.sign(Mu.copy({}, params), secret));
-      url = Mu._domain.api + 'restserver.php';
-
-      // GET or POST
-      if (url.length + body.length > 2000) {
-        method = 'POST';
-      } else {
-        method = 'GET';
-        url += '?' + body;
-        body = '';
-      }
-
-      // fire the request
-      reqId = document.XdComm.sendXdHttpRequest(method, url, body, null);
-
-      // callback
-      Mu._callbacks[reqId] = function(response) {
-        cb(JSON.parse(Mu.Flash.decode(response)));
-        delete Mu._callbacks[reqId];
-      };
-    });
   }
 });
