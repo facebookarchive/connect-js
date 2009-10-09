@@ -29,7 +29,7 @@ Mu.copy('', {
    *     Mu.api(
    *       {
    *         method: 'fql.query',
-   *         query: 'SELECT name FROM profile WHERE id=' + Mu.session().uid
+   *         query: 'SELECT name FROM profile WHERE id=' + Mu.getSession().uid
    *       },
    *       function(response) {
    *         alert(response[0].name);

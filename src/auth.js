@@ -152,7 +152,7 @@ Mu.copy('', {
    * @access public
    * @returns {Object}  the current Session if available, null otherwise
    */
-  session: function() {
+  getSession: function() {
     return Mu._session;
   },
 

@@ -64,7 +64,7 @@ test(
       Mu.watchStatus(function(response) {
                   if (response.session) {
                     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-                                    ok(!Mu.session(), 'disconnected user');
+                                    ok(!Mu.getSession(), 'disconnected user');
                                     action.innerHTML = '';
                                     action.className = '';
                                     start();
@@ -269,7 +269,7 @@ test(
 
   function() {
     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-                    ok(!Mu.session(), 'should not get a session');
+                    ok(!Mu.getSession(), 'should not get a session');
                     ok(Mu._userStatus == 'disconnected', 'should be disconnected');
                     start();
                   });
@@ -306,7 +306,7 @@ test(
 
   function() {
     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-                    ok(!Mu.session(), 'should not get a session');
+                    ok(!Mu.getSession(), 'should not get a session');
                     start();
                   });
 
@@ -466,7 +466,7 @@ test(
 
   function() {
     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-                    ok(!Mu.session(), 'should not get a session');
+                    ok(!Mu.getSession(), 'should not get a session');
                     start();
                   });
 
@@ -556,7 +556,7 @@ test(
 
   function() {
     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-                    ok(!Mu.session(), 'should not get a session');
+                    ok(!Mu.getSession(), 'should not get a session');
                     start();
                   });
 

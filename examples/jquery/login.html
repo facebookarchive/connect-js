@@ -55,7 +55,7 @@
         Mu.api(
           {
             method: 'fql.query',
-            query: 'SELECT name, pic FROM profile WHERE id=' + Mu.session().uid
+            query: 'SELECT name, pic FROM profile WHERE id=' + Mu.getSession().uid
           },
           function(response) {
             var user = response[0];
