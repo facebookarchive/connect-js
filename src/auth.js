@@ -322,7 +322,7 @@ Mu.copy('Auth', {
    * @returns         {String}   the xd url bound to the callback
    */
   xdHandler: function(cb, frame, target, isDefault, status, session) {
-    return Mu.Frames.handler(function(params) {
+    return Mu.Frames.xdHandler(function(params) {
       // try to extract a session
       var response;
       try {
