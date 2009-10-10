@@ -56,3 +56,11 @@ test(
     delete Mu.TestModule;
   }
 );
+
+test(
+  'guids are not equal',
+
+  function() {
+    ok(Mu.guid() != Mu.guid(), 'wonder what the odds of this failing are');
+  }
+);
