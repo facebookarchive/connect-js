@@ -197,4 +197,4 @@ Mu.md5sum = function(input) {
 
 
   return hex_md5;
-}
+};

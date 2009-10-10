@@ -65,7 +65,11 @@ Mu.copy('', {
     }
 
     // set the given or cookie session
-    Mu.Auth.setSession(opts.session, opts.session ? 'connected' : 'unknown', true);
+    Mu.Auth.setSession(
+      opts.session,
+      opts.session ? 'connected' : 'unknown',
+      true
+    );
 
     // fetch a fresh status from facebook.com if requested
     opts.status && Mu.watchStatus();

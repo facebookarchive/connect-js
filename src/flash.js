@@ -106,24 +106,24 @@ Mu.copy('Flash', {
       // look through all the allowed version definitions.
       majorVersion:
       for (i=0, l=Mu._registry.flashVersions.length; i<l; i++) {
-        var acceptable = Mu._registry.flashVersions[i];
+        var spec = Mu._registry.flashVersions[i];
 
         // we only accept known major versions, and every supported major
         // version has at least one entry in flashVersions. only if the major
         // version matches, does the rest of the check make sense.
-        if (acceptable[0] != version[0]) {
+        if (spec[0] != version[0]) {
           continue;
         }
 
         // the rest of the version components must be equal or higher
-        for (var m=1, n=acceptable.length, o=version.length; (m<n && m<o); m++) {
-          if (version[m] < acceptable[m]) {
+        for (var m=1, n=spec.length, o=version.length; (m<n && m<o); m++) {
+          if (version[m] < spec[m]) {
             // less means this major version is no good
             Mu.Flash._hasMinVersion = false;
             continue majorVersion;
           } else {
             Mu.Flash._hasMinVersion = true;
-            if (version[m] > acceptable[m]) {
+            if (version[m] > spec[m]) {
               // better than needed
               break majorVersion;
             }

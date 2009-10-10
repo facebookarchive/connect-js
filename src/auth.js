@@ -135,12 +135,13 @@ Mu.copy('', {
 
     // finally make the call to login status
     var
-      g   = Mu.guid(),
+      xdHandler = Mu.Auth.xdHandler,
+      g = Mu.guid(),
       url = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
         api_key    : Mu._apiKey,
-        no_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'notConnected'),
-        no_user    : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'unknown'),
-        ok_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'connected')
+        no_session : xdHandler(lsCb, g, 'parent', false, 'notConnected'),
+        no_user    : xdHandler(lsCb, g, 'parent', false, 'unknown'),
+        ok_session : xdHandler(lsCb, g, 'parent', false, 'connected')
       });
 
     Mu.Frames.hidden(url, g);
@@ -206,10 +207,11 @@ Mu.copy('', {
    */
   login: function(cb, perms) {
     var
-      g      = Mu.guid(),
-      cancel = Mu.Auth.xdHandler(cb, g, 'opener', true,  Mu._userStatus, Mu._session),
-      next   = Mu.Auth.xdHandler(cb, g, 'opener', false, 'connected', Mu._session),
-      url    = Mu._domain.www + 'login.php?' + Mu.QS.encode({
+      xdHandler = Mu.Auth.xdHandler,
+      g = Mu.guid(),
+      cancel = xdHandler(cb, g, 'opener', true,  Mu._userStatus, Mu._session),
+      next = xdHandler(cb, g, 'opener', false, 'connected', Mu._session),
+      url = Mu._domain.www + 'login.php?' + Mu.QS.encode({
         api_key        : Mu._apiKey,
         cancel_url     : cancel,
         channel_url    : window.location.toString(),
