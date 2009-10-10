@@ -3,7 +3,7 @@
   <head>
     <title>Mu Tests</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link type="text/css" rel="stylesheet" href="http://static.daaku.org/qunit.css">
+    <link type="text/css" rel="stylesheet" href="http://static.daaku.org/qunit/qunit/qunit.css">
   </head>
   <body>
     <h1 id="qunit-header">
@@ -23,9 +23,11 @@
 
     <button id="action"></button>
 
-    <script src="http://static.daaku.org/qunit.js"></script>
+    <script src="http://static.daaku.org/qunit/qunit/qunit.js"></script>
 
     <script src="http://www.json.org/json2.js"></script>
+
+    <!-- Mu Code -->
     <script src="../src/prelude.js"></script>
     <script src="../src/api.js"></script>
     <script src="../src/auth.js"></script>
@@ -38,6 +40,22 @@
     <script src="../src/qs.js"></script>
     <script src="../src/ui.js"></script>
     <script src="../src/xd.js"></script>
-    <script src="tests.js"></script>
+
+    <!-- Tests Expect This -->
+    <script>
+      var action = document.getElementById('action');
+    </script>
+
+    <!-- Tests -->
+    <script src="js/share.js"></script>
+    <script src="js/initialize.js"></script>
+    <script src="js/clear.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/add_friend.js"></script>
+    <script src="js/publish.js"></script>
+    <script src="js/revoke.js"></script>
+    <script src="js/watch_status.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/cleanup.js"></script>
   </body>
 </html>
