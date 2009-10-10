@@ -19,7 +19,7 @@ if (!window.Mu) {
     // use the init method to set these values correctly
     _apiKey     : null,
     _session    : null,
-    _userStatus : 'unknown', // or 'disconnected' or 'connected'
+    _userStatus : 'unknown', // or 'notConnected' or 'connected'
 
     // the various domains needed for using Connect
     _domain: {

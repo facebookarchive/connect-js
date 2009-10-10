@@ -64,7 +64,7 @@ test(
       Mu.watchStatus(function(response) {
                   if (response.session) {
                     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-                                    ok(!Mu.getSession(), 'disconnected user');
+                                    ok(!Mu.getSession(), 'notConnected user');
                                     action.innerHTML = '';
                                     action.className = '';
                                     start();
@@ -270,7 +270,7 @@ test(
   function() {
     Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
                     ok(!Mu.getSession(), 'should not get a session');
-                    ok(Mu._userStatus == 'disconnected', 'should be disconnected');
+                    ok(Mu._userStatus == 'notConnected', 'should be notConnected');
                     start();
                   });
 

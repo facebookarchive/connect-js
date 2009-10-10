@@ -62,7 +62,7 @@ a:hover {
   font-size: 15px;
   padding: 3px 6px;
 }
-#status.disconnected {
+#status.notConnected {
   background-color: #cc3f85;
   color: #fff;
 }

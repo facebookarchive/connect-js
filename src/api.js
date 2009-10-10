@@ -62,7 +62,7 @@ Mu.copy('', {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {
-          Mu.Auth.setSession(null, 'disconnected');
+          Mu.Auth.setSession(null, 'notConnected');
         }
         old_cb && old_cb(response);
       };

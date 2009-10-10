@@ -138,7 +138,7 @@ Mu.copy('', {
       g   = Mu.guid(),
       url = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
         api_key    : Mu._apiKey,
-        no_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'disconnected'),
+        no_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'notConnected'),
         no_user    : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'unknown'),
         ok_session : Mu.Auth.xdHandler(lsCb, g, 'parent', false, 'connected')
       });
@@ -308,7 +308,7 @@ Mu.copy('Auth', {
    *
    *   {
    *     session: session or null,
-   *     status: 'unknown' or 'disconnected' or 'connected',
+   *     status: 'unknown' or 'notConnected' or 'connected',
    *     perms: comma separated string of perm names
    *   }
    *
