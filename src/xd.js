@@ -46,7 +46,7 @@ Mu.copy('XD', {
       Mu.XD.Flash.init();
       Mu.XD._transport = 'flash';
     } else {
-      throw new Error('Could not find postMessage or Flash.');
+      Mu.XD._transport = 'fragment';
     }
   },
 
@@ -69,7 +69,23 @@ Mu.copy('XD', {
     // FIXME
     var
       xdProxy = Mu._domain.cdn + 'connect/xd_proxy.php#?=&',
-      id      = Mu.guid();
+      id = Mu.guid();
+
+    // in fragment mode, the url is the current page and a fragment with a
+    // magic token
+    if (Mu.XD._transport == 'fragment') {
+      var
+        xdProxy = window.location.toString(),
+        poundIndex = xdProxy.indexOf('#');
+      if (poundIndex > 0) {
+        xdProxy = xdProxy.substr(0, poundIndex);
+      }
+      // mu_xd_bust changes the url to prevent firefox from refusing to load
+      // because it thinks its smarter than the developer and believes it to be
+      // a recusive load. the rest are explanined in the note above.
+      xdProxy += '?&mu_xd_bust#?=&' + Mu.XD.Fragment._magic;
+    }
+
     Mu.XD._callbacks[id] = cb;
     return xdProxy + Mu.QS.encode({
       cb        : id,
@@ -158,5 +174,52 @@ Mu.copy('XD', {
     onMessage: function(message) {
       Mu.XD.recv(decodeURIComponent(message));
     }
+  },
+
+  /**
+   * Provides XD support via a fragment by reusing the current page.
+   *
+   * @class Mu.XD.Fragment
+   * @static
+   * @for Mu.XD
+   * @access private
+   */
+  Fragment: {
+    _magic: 'mu_xd_fragment;',
+
+    /**
+     * Check if the fragment looks like a message, and dispatch if it does.
+     */
+    checkAndDispatch: function() {
+      var
+        loc = window.location.toString(),
+        fragment = loc.substr(loc.indexOf('#') + 1),
+        magicIndex = fragment.indexOf(Mu.XD.Fragment._magic);
+
+      if (magicIndex > 0) {
+        // make these no-op to help with performance
+        //
+        // this works independent of the module being present or not, or being
+        // loaded before or after
+        Mu.watchStatus = Mu.api = function() {};
+
+        // display none helps prevent loading of some stuff
+        document.body.style.display = 'none';
+
+        fragment = fragment.substr(magicIndex + Mu.XD.Fragment._magic.length);
+        var params = Mu.QS.decode(fragment);
+        // NOTE: only supporting opener, parent or top here. if needed, the
+        // resolveRelation function from xd_proxy can be used to provide more
+        // complete support.
+        window[params.relation].Mu.XD.recv(fragment);
+      }
+    }
   }
 });
+
+// NOTE: self executing code.
+//
+// if the page is being used for fragment based XD messaging, we need to
+// dispatch on load without needing any API calls. it only does stuff if the
+// magic token is found in the fragment.
+Mu.XD.Fragment.checkAndDispatch();
