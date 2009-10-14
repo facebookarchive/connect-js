@@ -3,11 +3,12 @@
   <head>
     <title>Mu Tests</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <style type="text/css">body { margin: 0; }</style>
     <link type="text/css" rel="stylesheet" href="http://static.daaku.org/qunit/qunit/qunit.css">
   </head>
   <body>
     <h1 id="qunit-header">
-      <input style="float: right; margin: 0.5em;"
+      <input style="float: right; margin: 0.2em 0.5em;"
              type="button"
              onclick="window.open('/jscoverage.html')"
              value="JSCoverage">
@@ -16,30 +17,17 @@
 
     <h2 id="qunit-banner"></h2>
     <h2 id="qunit-userAgent"></h2>
-
     <ol id="qunit-tests"></ol>
-
     <div id="main"></div>
 
     <button id="action"></button>
+    <div id="xfbml"></div>
 
+    <!-- qunit -->
     <script src="http://static.daaku.org/qunit/qunit/qunit.js"></script>
 
-    <script src="http://www.json.org/json2.js"></script>
-
-    <!-- Mu Code -->
-    <script src="../src/prelude.js"></script>
-    <script src="../src/api.js"></script>
-    <script src="../src/auth.js"></script>
-    <script src="../src/content.js"></script>
-    <script src="../src/cookie.js"></script>
-    <script src="../src/core.js"></script>
-    <script src="../src/flash.js"></script>
-    <script src="../src/frames.js"></script>
-    <script src="../src/md5sum.js"></script>
-    <script src="../src/qs.js"></script>
-    <script src="../src/ui.js"></script>
-    <script src="../src/xd.js"></script>
+    <!-- include everything -->
+    <script src="../pkg/all.js"></script>
 
     <!-- Tests Expect This -->
     <script>
@@ -47,21 +35,6 @@
     </script>
 
     <!-- Tests -->
-    <script src="js/prelude.js"></script>
-    <script src="js/content.js"></script>
-    <script src="js/qs.js"></script>
-    <script src="js/md5sum.js"></script>
-    <script src="js/flash.js"></script>
-    <script src="js/xd.js"></script>
-    <script src="js/share.js"></script>
-    <script src="js/initialize.js"></script>
-    <script src="js/clear.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/add_friend.js"></script>
-    <script src="js/publish.js"></script>
-    <script src="js/revoke.js"></script>
-    <script src="js/watch_status.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/cleanup.js"></script>
+    <script src="../pkg/tests.js"></script>
   </body>
 </html>

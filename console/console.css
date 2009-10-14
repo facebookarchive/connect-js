@@ -100,3 +100,25 @@ a:hover {
   margin: 0;
   list-style-type: circle;
 }
+
+
+
+/**
+ * Tag Browser
+ */
+.tag-configurer {
+  margin-bottom: 1em;
+  width: 700px;
+}
+.tag-configurer textarea,
+.tag-configurer .preview {
+  float: right;
+  width: 400px;
+}
+.tag-configurer .attr {
+  margin-top: 0.25em;
+}
+.tag-configurer .attr label {
+  display: inline-block;
+  width: 100px;
+}

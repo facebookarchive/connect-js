@@ -117,7 +117,7 @@ Mu.copy('Frames', {
           // found a closed window
           if (win.closed) {
             Mu.Frames._count--;
-            Mu.Frames.xdRecv({ cb: id, frame: id }, Mu.Frames._defaultCb[id]);
+            Mu.Frames.xdRecv({ frame: id }, Mu.Frames._defaultCb[id]);
           }
         } catch(y) {
           // probably a permission error

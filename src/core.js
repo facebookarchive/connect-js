@@ -23,7 +23,7 @@ Mu.copy('', {
    * Initialize the library::
    *
    *    <div id="mu-root"></div>
-   *    <script src="http://mu.daaku.org/m.js"></script>
+   *    <script src="http://mu.daaku.org/pkg/all.js"></script>
    *    <script>
    *      Mu.init({ apiKey: 'YOUR API KEY' });
    *    </script>
