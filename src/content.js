@@ -67,5 +67,43 @@ Mu.copy('Content', {
     }
 
     return Mu.Content.append(content, Mu.Content._hiddenRoot);
+  },
+
+  /**
+   * Insert a new iframe. Unfortunately, its tricker than you imagine.
+   *
+   * @access private
+   * @param content {String|Node} a DOM Node or HTML string
+   * @param root    {Node}        node to insert the iframe into
+   * @param onload  {Function}    optional onload callback
+   * @returns {Node} the node that was just appended
+   */
+  iframe: function(url, root, onload) {
+    var node = document.createElement('iframe');
+
+    // general goodness
+    node.frameborder = '0';
+    node.allowtransparency = 'true';
+    node.style.border = 'none';
+
+    // setup onload notification if needed
+    if (onload) {
+      node.onload = onload;
+    }
+
+    // In IE, we must set the iframe src _before_ injecting the node into the
+    // document to prevent the click noise.
+    if (document.attachEvent) {
+      node.setAttribute('src', url);
+    }
+    node = root.appendChild(node);
+    // For Firefox, we must set the iframe src _after_ injecting the node into
+    // the document to prevent caching issues. This also works fine in other
+    // browsers.
+    if (!document.attachEvent) {
+      node.setAttribute('src', url);
+    }
+
+    return node;
   }
 });

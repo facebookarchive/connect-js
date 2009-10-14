@@ -23,26 +23,15 @@ Mu.copy('Frames', {
   _resultToken : '"xxRESULTTOKENxx"',
 
   /**
-   * Builds and inserts a hidden iframe.
+   * Builds and inserts a hidden iframe with the reference stored against the
+   * given id.
    *
    * @access private
    * @param url {String} the URL for the iframe
    * @param id  {String} the id to store the node against in _active
    */
   hidden: function(url, id) {
-    var node = document.createElement('iframe');
-    // In IE, we must set the iframe src _before_ injecting the node into the
-    // document to prevent the click noise.
-    if (document.attachEvent) {
-      node.setAttribute('src', url);
-    }
-    Mu.Frames._active[id] = Mu.Content.hidden(node);
-    // For Firefox, we must set the iframe src _after_ injecting the node into
-    // the document to prevent caching issues. This also works fine in other
-    // browsers.
-    if (!document.attachEvent) {
-      node.setAttribute('src', url);
-    }
+    Mu.Frames._active[id] = Mu.Content.iframe(url, Mu.Content.hidden(''));
   },
 
   /**

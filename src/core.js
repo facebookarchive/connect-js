@@ -41,6 +41,7 @@ Mu.copy('', {
    * cookie   Boolean ``true`` to enable cookie support. *Optional*   ``false``
    * session  Object  Use specified session object.      *Optional*   ``null``
    * status   Boolean ``true`` to fetch fresh status.    *Optional*   ``false``
+   * debug    Boolean ``true`` to enable debug messages. *Optional*   ``false``
    * ======== ======= ================================== ============ =========
    *
    * *Note*: `Mu.publish()`_ and `Mu.share()`_ can be used without
@@ -55,6 +56,10 @@ Mu.copy('', {
    */
   init: function(opts) {
     Mu._apiKey = opts.apiKey;
+
+    if (opts.debug) {
+      Mu._debug = true;
+    }
 
     // initialize the XD layer
     Mu.XD.init();

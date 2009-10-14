@@ -21,6 +21,10 @@ if (!window.Mu) {
     _session    : null,
     _userStatus : 'unknown', // or 'notConnected' or 'connected'
 
+    // enable debug logging. this can be turned on via a URL parameter or when
+    // calling Mu.init
+    _debug : window.location.toString().indexOf('mu_debug=1') > -1,
+
     // the various domains needed for using Connect
     _domain: {
       api : window.location.protocol + '//api.facebook.com/',
@@ -89,6 +93,18 @@ if (!window.Mu) {
      */
     guid: function() {
       return 'f' + (Math.random() * (1<<30)).toString(16).replace('.', '');
+    },
+
+    /**
+     * Logs a message for the developer if debug is on.
+     *
+     * @access private
+     * @param args {Object} the thing to log
+     */
+    log: function(args) {
+      if (Mu._debug && window.console) {
+        console.log(args);
+      }
     }
   };
 }
