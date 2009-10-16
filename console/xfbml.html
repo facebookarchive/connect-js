@@ -66,22 +66,9 @@
       Mu.init({
         apiKey: '48f06bc570aaf9ed454699ec4fe416df',
         cookie: true,
-        status: true
+        status: true,
+        xfbml: true
       });
-
-      // setup XFBML rendering to happen on status load or change.
-      // in order to speed up initia rendering, we also allow using the session
-      // from the cookie.
-      Mu.watchStatus(
-        function() {
-          Mu.processXFBML();
-        },
-        {
-          change: true,
-          cookie: true,
-          load: true
-        }
-      );
 
       renderTagBrowser();
     </script>

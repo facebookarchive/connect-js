@@ -40,6 +40,7 @@ Mu.copy('', {
    * apiKey   String  Your application API key.          **Required**
    * cookie   Boolean ``true`` to enable cookie support. *Optional*   ``false``
    * session  Object  Use specified session object.      *Optional*   ``null``
+   * xfbml    Boolean ``true`` to enable xfbml.          *Optional*   ``false``
    * status   Boolean ``true`` to fetch fresh status.    *Optional*   ``false``
    * debug    Boolean ``true`` to enable debug messages. *Optional*   ``false``
    * ======== ======= ================================== ============ =========
@@ -76,7 +77,24 @@ Mu.copy('', {
       true
     );
 
-    // fetch a fresh status from facebook.com if requested
-    opts.status && Mu.watchStatus();
+    // xfbml also implies a status check
+    if (opts.xfbml) {
+      if (Mu.processXFBML) {
+        Mu.watchStatus(
+          function() {
+            Mu.processXFBML();
+          },
+          {
+            load: true,
+            change: true,
+            cookie: true
+          }
+        );
+      } else {
+        Mu.log('XFBML was requested in Mu.init() but has not been loaded.');
+      }
+    } else if (opts.status) {
+      Mu.watchStatus();
+    }
   }
 });
