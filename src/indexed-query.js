@@ -4,6 +4,7 @@
  * @requires Mu.Prelude
  *           Mu.Lang
  *           Mu.API
+ *           Mu.Cache
  */
 
 /**
