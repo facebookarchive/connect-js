@@ -4,6 +4,7 @@
  *
  * @requires Mu.Prelude
  *           Mu.Lang
+ *           Mu.IndexedQuery
  *           Mu.XFBML.Core
  *           Mu.API
  */
