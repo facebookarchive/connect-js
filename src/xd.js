@@ -109,7 +109,7 @@ Mu.copy('XD', {
 
     var cb = Mu.XD._callbacks[data.cb];
     delete Mu.XD._callbacks[data.cb];
-    cb(data);
+    cb && cb(data);
   },
 
   /**
