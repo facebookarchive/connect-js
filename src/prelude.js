@@ -1,5 +1,6 @@
 /**
  * @module Mu
+ * @prelude
  * @provides Mu.Prelude
  */
 
