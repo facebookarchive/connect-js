@@ -34,16 +34,16 @@ Mu.copy('', {
    *
    * Options:
    *
-   * ======== ======= ================================== ============ =========
-   * Property Type    Description                        Argument     Default
-   * ======== ======= ================================== ============ =========
-   * apiKey   String  Your application API key.          **Required**
-   * cookie   Boolean ``true`` to enable cookie support. *Optional*   ``false``
-   * session  Object  Use specified session object.      *Optional*   ``null``
-   * xfbml    Boolean ``true`` to enable xfbml.          *Optional*   ``false``
-   * status   Boolean ``true`` to fetch fresh status.    *Optional*   ``false``
-   * debug    Boolean ``true`` to enable debug messages. *Optional*   ``false``
-   * ======== ======= ================================== ============ =========
+   * ======== ======= =================================== ============ =========
+   * Property Type    Description                         Argument     Default
+   * ======== ======= =================================== ============ =========
+   * apiKey   String  Your application API key.           **Required**
+   * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
+   * session  Object  Use specified session object.       *Optional*   ``null``
+   * xfbml    Boolean ``true`` for one time processXFBML. *Optional*   ``false``
+   * status   Boolean ``true`` to fetch fresh status.     *Optional*   ``false``
+   * debug    Boolean ``true`` to enable debug messages.  *Optional*   ``false``
+   * ======== ======= =================================== ============ =========
    *
    * *Note*: `Mu.publish()`_ and `Mu.share()`_ can be used without
    * registering an application or calling this method. If you are
