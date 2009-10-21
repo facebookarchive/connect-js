@@ -91,16 +91,13 @@ Mu.copy('', {
       Mu.Auth._callbacks.change.push(cb);
     }
 
-    // invoking on load means we either setup a timeout to invoke the callback
-    // if the status has already been loaded, or queuing up the callback for
-    // when the load is done
+    // invoking on load means we either invoke the callback right away if the
+    // status has already been loaded, or queue it up for when the load is done
     if (cb && opts.load) {
       if (!opts.force &&
           (Mu.watchStatus._loadState ||
            (opts.cookie && Mu._session))) {
-        window.setTimeout(function() {
-          cb({ status: Mu._userStatus, session: Mu._session });
-        }, 0);
+        cb({ status: Mu._userStatus, session: Mu._session });
       } else {
         // this is complex. its because we dont want the callback to get
         // invoked twice on load, if the state changes on load as well.

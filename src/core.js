@@ -41,7 +41,6 @@ Mu.copy('', {
    * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
    * session  Object  Use specified session object.       *Optional*   ``null``
    * xfbml    Boolean ``true`` for one time processXFBML. *Optional*   ``false``
-   * status   Boolean ``true`` to fetch fresh status.     *Optional*   ``false``
    * debug    Boolean ``true`` to enable debug messages.  *Optional*   ``false``
    * ======== ======= =================================== ============ =========
    *
@@ -93,8 +92,6 @@ Mu.copy('', {
       } else {
         Mu.log('XFBML was requested in Mu.init() but has not been loaded.');
       }
-    } else if (opts.status) {
-      Mu.watchStatus();
     }
   }
 });
