@@ -39,34 +39,20 @@ Mu.copy('Cookie', {
    */
   load: function() {
     var
-      prefix  = 'fbs_' + Mu._apiKey + '=',
-      cookies = document.cookie.split(';'),
-      cookie,
-      session;
+      cookie = document.cookie.match('\\b' +'fbs_' + Mu._apiKey+ '=([^;]*)\\b'),
+      session,
+      expires;
 
-    // look through all the cookies
-    for (var i=0, l=cookies.length; i<l; i++) {
-      cookie = cookies[i];
+    if (cookie) {
+      // url encoded session
+      session = Mu.QS.decode(cookie[1]);
+      // decodes as a string, convert to a number
+      expires = session.expires = parseInt(session.expires, 10);
 
-      // bad browser bad
-      while (cookie.charAt(0) === ' ') {
-        cookie = cookie.substring(1, cookie.length);
-      }
-
-      // is it the cookie we want?
-      if (cookie.indexOf(prefix) === 0) {
-        // url encoded session
-        session = Mu.QS.decode(
-          cookie.substring(prefix.length, cookie.length));
-        // decodes as a string, convert to a number
-        session.expires = parseInt(session.expires, 10);
-
-        // dont use expired cookies, not that they should be around in the
-        // first place.
-        if (new Date(session.expires * 1000) < new Date()) {
-          session = null;
-        }
-        break;
+      // dont use expired cookies, not that they should be around in the
+      // first place. expires is 0 when offline_access has been granted.
+      if (expires != 0 && new Date(expires * 1000) < new Date()) {
+        session = null;
       }
     }
 
