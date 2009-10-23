@@ -28,11 +28,10 @@ FB.copy('Content', {
     // setup the root node, creating it if necessary
     if (!root) {
       if (!FB.Content._root) {
-        root = document.getElementById('mu-root');
+        root = document.getElementById('fb-root');
         if (!root) {
-          root = document.createElement('div');
-          root.id = 'mu-root';
-          FB.Content._root = document.body.appendChild(root);
+          FB.log('The "fb-root" div has not been created.');
+          return;
         }
       } else {
         root = FB.Content._root;
