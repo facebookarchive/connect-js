@@ -45,6 +45,8 @@ test(
   'no subscribers',
 
   function() {
+    expect(1);
+
     FB.Event.fire('fake.event3', 41, 42);
     ok(true, 'no errors in firing an event with no subscribers');
   }
@@ -66,4 +68,3 @@ test(
     FB.Event.fire('fake.event2', 41, 42);
   }
 );
-
