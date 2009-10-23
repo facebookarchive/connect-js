@@ -106,6 +106,12 @@ if (!window.FB) {
       if (FB._debug && window.console) {
         console.log(args);
       }
+
+      // fire an event
+      if (Mu.Event) {
+        args.unshift('fb.log');
+        Mu.Event.fire.apply(window, args);
+      }
     }
   };
 }
