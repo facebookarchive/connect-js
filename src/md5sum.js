@@ -1,7 +1,7 @@
 /**
  * @module Mu
- * @provides Mu.md5sum
- * @requires Mu.Prelude
+ * @provides mu.md5sum
+ * @requires mu.prelude
  */
 
 // thanks http://pajhome.org.uk/crypt/md5/md5.html

@@ -3,11 +3,11 @@
  * ``Mu.RestServer``.
  *
  * @module Mu
- * @provides Mu.API
- * @requires Mu.Prelude
- *           Mu.QS
- *           Mu.Flash
- *           Mu.md5sum
+ * @provides mu.api
+ * @requires mu.prelude
+ *           mu.qs
+ *           mu.flash
+ *           mu.md5sum
  */
 
 /**

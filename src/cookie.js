@@ -1,10 +1,9 @@
 /**
  * @module Mu
- * @provides Mu.Cookie
- *
- * @requires Mu.Prelude
- *           Mu.QS
- *           Mu.Auth
+ * @provides mu.cookie
+ * @requires mu.prelude
+ *           mu.qs
+ *           mu.auth
  */
 
 /**
@@ -16,6 +15,14 @@
  */
 Mu.copy('Cookie', {
   /**
+   * Holds the base_domain property to match the Cookie domain.
+   *
+   * @access private
+   * @type String
+   */
+  _domain: null,
+
+  /**
    * Initialize the Cookie support. Sets up the handler to update the cookie
    * as the session changes.
    *
@@ -23,12 +30,12 @@ Mu.copy('Cookie', {
    * @returns {Object} the session object from the cookie if one is found
    */
   init: function() {
-    // insert it directly at the begining and do nothing else
-    Mu.Auth._callbacks.change.splice(0, 0, function(response) {
-      Mu.Cookie.set(response.session);
-    });
-
-    return Mu.Cookie.load();
+    if (!Mu.Cookie._initDone) {
+      Mu.Event.on('auth.sessionChange', function(response) {
+        Mu.Cookie.set(response.session);
+      });
+      Mu.Cookie._initDone = true;
+    }
   },
 
   /**
@@ -48,6 +55,8 @@ Mu.copy('Cookie', {
       session = Mu.QS.decode(cookie[1]);
       // decodes as a string, convert to a number
       expires = session.expires = parseInt(session.expires, 10);
+      // capture base_domain for use when we need to clear
+      Mu.Cookie._domain = session.base_domain;
 
       // dont use expired cookies, not that they should be around in the
       // first place. expires is 0 when offline_access has been granted.
@@ -65,12 +74,17 @@ Mu.copy('Cookie', {
    * @access private
    * @param val       {String} the string value (should already be encoded)
    * @param timestamp {Number} a unix timestamp denoting expiry
+   * @param domain    {String} optional domain for cookie
    */
-  setRaw: function(val, timestamp) {
+  setRaw: function(val, timestamp, domain) {
     document.cookie =
       'fbs_' + Mu._apiKey + '=' + val +
       '; expires=' + new Date(timestamp * 1000).toGMTString() +
-      '; path=/';
+      '; path=/' +
+      (domain ? '; domain=.' + domain : '');
+
+    // capture domain for use when we need to clear
+    Mu.Cookie._domain = domain;
   },
 
   /**
@@ -81,7 +95,10 @@ Mu.copy('Cookie', {
    */
   set: function(session) {
     session
-      ? Mu.Cookie.setRaw(Mu.QS.encode(session), session.expires)
+      ? Mu.Cookie.setRaw(
+          Mu.QS.encode(session),
+          session.expires,
+          session.base_domain)
       : Mu.Cookie.clear();
   },
 
@@ -91,6 +108,6 @@ Mu.copy('Cookie', {
    * @access private
    */
   clear: function() {
-    Mu.Cookie.setRaw('', 0);
+    Mu.Cookie.setRaw('', 0, Mu.Cookie._domain);
   }
 });

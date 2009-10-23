@@ -6,7 +6,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.watchStatus(function(response) {
+      Mu.loginStatus(function(response) {
         ok(!response.session, 'should not get a session');
         action.innerHTML = '';
         action.className = '';
@@ -86,7 +86,7 @@ test(
   'status should now return a session',
 
   function() {
-    Mu.watchStatus(function(response) {
+    Mu.loginStatus(function(response) {
       ok(response.session, 'should get a session');
       ok(response.status == 'connected', 'should be connected');
       start();

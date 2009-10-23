@@ -1,11 +1,10 @@
 /**
  * @module Mu
- * @provides Mu.Frames
- *
- * @requires Mu.Prelude
- *           Mu.Content
- *           Mu.QS
- *           Mu.XD
+ * @provides mu.frames
+ * @requires mu.prelude
+ *           mu.content
+ *           mu.qs
+ *           mu.xd
  */
 
 /**

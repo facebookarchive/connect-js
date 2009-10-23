@@ -1,10 +1,9 @@
 /**
  * @module Mu
- * @provides Mu.XD
- *
- * @requires Mu.Prelude
- *           Mu.QS
- *           Mu.Flash
+ * @provides mu.xd
+ * @requires mu.prelude
+ *           mu.qs
+ *           mu.flash
  */
 
 /**
@@ -25,6 +24,11 @@ Mu.copy('XD', {
    * @access private
    */
   init: function() {
+    // only do init once, if this is set, we're already done
+    if (Mu.XD._origin) {
+      return;
+    }
+
     // The origin is used for:
     // 1) postMessage origin, provides security
     // 2) Flash Local Connection name
@@ -64,6 +68,8 @@ Mu.copy('XD', {
    * @returns        {String}   the xd url bound to the callback
    */
   handler: function(cb, relation) {
+    Mu.XD.init();
+
     // the ?=& tricks login.php into appending at the end instead
     // of before the fragment as a query string
     // FIXME
@@ -201,7 +207,7 @@ Mu.copy('XD', {
         //
         // this works independent of the module being present or not, or being
         // loaded before or after
-        Mu.watchStatus = Mu.api = function() {};
+        Mu.loginStatus = Mu.api = function() {};
 
         // display none helps prevent loading of some stuff
         document.body.style.display = 'none';

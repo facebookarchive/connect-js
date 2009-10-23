@@ -19,7 +19,7 @@ test(
   'get some status',
 
   function() {
-    Mu.watchStatus(function(response) {
+    Mu.loginStatus(function(response) {
       ok(true, 'status callback got invoked');
       start();
     });
@@ -37,7 +37,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.watchStatus(function(response) {
+      Mu.loginStatus(function(response) {
         if (response.session) {
           Mu.api(
             { method: 'Auth.revokeAuthorization' },

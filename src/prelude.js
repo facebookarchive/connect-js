@@ -1,7 +1,7 @@
 /**
  * @module Mu
  * @prelude
- * @provides Mu.Prelude
+ * @provides mu.prelude
  */
 
 /**

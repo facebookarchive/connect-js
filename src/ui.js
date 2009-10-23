@@ -1,10 +1,9 @@
 /**
  * @module Mu
- * @provides Mu.UI
- *
- * @requires Mu.Prelude
- *           Mu.QS
- *           Mu.Frames
+ * @provides mu.ui
+ * @requires mu.prelude
+ *           mu.qs
+ *           mu.frames
  */
 
 /**

@@ -1,10 +1,9 @@
 /**
  * @module Mu
- * @provides Mu.Auth
- *
- * @requires Mu.Prelude
- *           Mu.QS
- *           Mu.Frames
+ * @provides mu.auth
+ * @requires mu.prelude
+ *           mu.qs
+ *           mu.frames
  */
 
 /**
@@ -30,7 +29,7 @@ Mu.copy('', {
    *
    * Here's how you find out::
    *
-   *     Mu.watchStatus(function(response) {
+   *     Mu.loginStatus(function(response) {
    *       if (response.session) {
    *         // logged in and connected user, someone you know
    *       } else {
@@ -40,94 +39,52 @@ Mu.copy('', {
    *
    * The example above will result in the callback being invoked once
    * on load based on the session from www.facebook.com. For more
-   * advanced use, you may with to monitor the status on
-   * change. Potentially just get notified of a change across page
-   * loads. The status call will also also optimize away the request
-   * to www.facebook.com when possible (by doing it only once per page
-   * load), but you may need to force a refresh of the session.
+   * advanced use, you may with to monitor for various events.
    *
-   * Options:
+   * Events:
+   *  - auth.login
+   *  - auth.logout
+   *  - auth.sessionChange
+   *  - auth.statusChange
    *
-   * =========  =============================================  =========
-   * Property   Description                                    Default
-   * =========  =============================================  =========
-   * change     Invoke the callback on every change.           ``false``
-   * cookie     Allow using the Cookie session. **Advanced!**  ``false``
-   * force      Force fetching the status from the server.     ``false``
-   * load       Invoke the callback once on load.              ``true``
-   * =========  =============================================  =========
-   *
-   * Note, ``change`` and ``load`` can be specified at the same time,
-   * which will ensure that your callback is invoked at least once on
-   * load, and then again for every change in session. For example::
-   *
-   *   Mu.watchStatus(
-   *     function(response) {
-   *       // will get invoked at least once on load, and then again
-   *       // on every change in session.
-   *     },
-   *     {
-   *       change: true,
-   *       load: true
-   *     }
-   *   );
+   * FIXME interlink documentation to events.
    *
    * @access public
-   * @param cb   {Function} the callback function
-   * @param opts {Object}   options as described above
+   * @param cb     {Function} the callback function
+   * @param force  {Boolean}  force reloading the login status (default false)
    * @for Mu
    */
-  watchStatus: function(cb, opts) {
-    // copy options supplying defaults as necessary
-    opts = Mu.copy(opts || {}, {
-      change : false,
-      cookie : false,
-      force  : false,
-      load   : true
-    });
-
-    // notify on change?
-    if (opts.change) {
-      Mu.Auth._callbacks.change.push(cb);
-    }
-
-    // invoking on load means we either invoke the callback right away if the
-    // status has already been loaded, or queue it up for when the load is done
-    if (cb && opts.load) {
-      if (!opts.force &&
-          (Mu.watchStatus._loadState ||
-           (opts.cookie && Mu._session))) {
-        cb({ status: Mu._userStatus, session: Mu._session });
-      } else {
-        // this is complex. its because we dont want the callback to get
-        // invoked twice on load, if the state changes on load as well.
-        //
-        // basically, we only invoke it here if we know it wont already get
-        // invoked as part of sessionChange.
-        Mu.Auth._callbacks.load.push(function(response) {
-          if (!opts.change || !response.change) {
-            cb(response);
-          }
-        });
-      }
-    }
-
-    // if we've already loaded or are loading the status, and a force refresh
-    // was not requested, we're done at this point
-    if (typeof Mu.watchStatus._loadState != 'undefined' && !opts.force) {
+  loginStatus: function(cb, force) {
+    if (!Mu._apiKey) {
+      Mu.log('Mu.loginStatus() called before calling Mu.init()');
       return;
     }
 
-    // if we get here, we need to fetch the status from the server
-    Mu.watchStatus._loadState = false;
+    // we either invoke the callback right away if the status has already been
+    // loaded, or queue it up for when the load is done.
+    if (cb) {
+      if (!force && Mu.Auth._loadState == 'loaded') {
+        cb({ status: Mu._userStatus, session: Mu._session });
+        return;
+      } else {
+        Mu.Auth._callbacks.load.push(cb);
+      }
+    }
+
+    Mu.Auth._loadState = 'loading';
 
     // invoke the queued sessionLoad callbacks
     var lsCb = function(response) {
-      Mu.watchStatus._loadState = true;
-      for (var i=0, l=Mu.Auth._callbacks.load.length; i<l; i++) {
-        Mu.Auth._callbacks.load[i](response);
-      }
+      // done
+      Mu.Auth._loadState = 'loaded';
+
+      // consume the current load queue and reset
+      var waitingCb = Mu.Auth._callbacks.load;
       Mu.Auth._callbacks.load = [];
+
+      for (var i=0, l=waitingCb.length; i<l; i++) {
+        waitingCb[i](response);
+      }
     };
 
     // finally make the call to login status
@@ -203,6 +160,11 @@ Mu.copy('', {
    * @param perms {String}   (optional) comma separated list of permissions
    */
   login: function(cb, perms) {
+    if (!Mu._apiKey) {
+      Mu.log('Mu.login() called before calling Mu.init()');
+      return;
+    }
+
     var
       xdHandler = Mu.Auth.xdHandler,
       g = Mu.guid(),
@@ -238,6 +200,11 @@ Mu.copy('', {
    * @param cb    {Function} the callback function
    */
   logout: function(cb) {
+    if (!Mu._apiKey) {
+      Mu.log('Mu.logout() called before calling Mu.init()');
+      return;
+    }
+
     var
       g   = Mu.guid(),
       url = Mu._domain.www + 'logout.php?' + Mu.QS.encode({
@@ -274,23 +241,58 @@ Mu.copy('Auth', {
    * @param skipCb  {Boolean} skip invoke the callbacks
    */
   setSession: function(session, status, skipCb) {
+    // detect special changes before changing the internal session
+    var
+      login         = !Mu._session && session,
+      logout        = Mu._session && !session,
+      both          = Mu._session && session && Mu._session.uid != session.uid,
+      sessionChange = (Mu._session && session &&
+                         Mu._session.session_key != session.session_key),
+      statusChange  = status != Mu._status;
+
     var response = {
-      changed : (!skipCb &&                    // force callbacks
-                 ((session && !Mu._session) || // new session
-                  (!session && Mu._session) || // lost session
-                  (session && Mu._session &&   // updated session
-                   (session.session_key != Mu._session.session_key)))),
       session : session,
       status  : status
     };
 
     Mu._session = session;
     Mu._userStatus = status;
-    if (response.changed) {
-      for (var i=0, l=Mu.Auth._callbacks.change.length; i<l; i++) {
-        Mu.Auth._callbacks.change[i](response);
-      }
+
+    // events
+    if (statusChange) {
+      /**
+       * Fired when the status changes.
+       *
+       * @event auth.statusChange
+       */
+      Mu.Event.fire('auth.statusChange', response);
     }
+    if (logout || both) {
+      /**
+       * Fired when a logout action is performed.
+       *
+       * @event auth.logout
+       */
+      Mu.Event.fire('auth.logout', response);
+    }
+    if (login || both) {
+      /**
+       * Fired when a login action is performed.
+       *
+       * @event auth.login
+       */
+      Mu.Event.fire('auth.login', response);
+    }
+    if (login || logout || sessionChange) {
+      /**
+       * Fired when the session changes. This includes a session being
+       * refreshed, or a login or logout action.
+       *
+       * @event auth.sessionChange
+       */
+      Mu.Event.fire('auth.sessionChange', response);
+    }
+
     return response;
   },
 

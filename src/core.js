@@ -2,13 +2,13 @@
  * Mu is a JavaScript library that provides Facebook Connect integration.
  *
  * @module Mu
- * @provides Mu.Core
- * @requires Mu.Prelude
- *           Mu.API
- *           Mu.Auth
- *           Mu.Cookie
- *           Mu.UI
- *           Mu.XD
+ * @provides mu.core
+ * @requires mu.prelude
+ *           mu.api
+ *           mu.auth
+ *           mu.cookie
+ *           mu.ui
+ *           mu.xd
  */
 
 /**
@@ -23,7 +23,7 @@ Mu.copy('', {
    * Initialize the library::
    *
    *    <div id="mu-root"></div>
-   *    <script src="http://mu.daaku.org/pkg/all.js"></script>
+   *    <script src="http://mu.daaku.org/pkg/core.js"></script>
    *    <script>
    *      Mu.init({ apiKey: 'YOUR API KEY' });
    *    </script>
@@ -40,7 +40,6 @@ Mu.copy('', {
    * apiKey   String  Your application API key.           **Required**
    * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
    * session  Object  Use specified session object.       *Optional*   ``null``
-   * xfbml    Boolean ``true`` for one time processXFBML. *Optional*   ``false``
    * debug    Boolean ``true`` to enable debug messages.  *Optional*   ``false``
    * ======== ======= =================================== ============ =========
    *
@@ -55,43 +54,31 @@ Mu.copy('', {
    * @param opts    {Object} options
    */
   init: function(opts) {
+    if (!opts.apiKey) {
+      Mu.log('Mu.init() called without an apiKey.');
+      return;
+    }
+
     Mu._apiKey = opts.apiKey;
 
     if (opts.debug) {
       Mu._debug = true;
     }
 
-    // initialize the XD layer
-    Mu.XD.init();
-
     // enable cookie support and use cookie session if possible
     if (opts.cookie) {
-      opts.session = opts.session || Mu.Cookie.init();
+      Mu.Cookie.init();
     }
 
-    // set the given or cookie session
+    // if an explicit session was not given, try to _read_ an existing cookie.
+    // we dont enable writing automatically, but we do read automatically.
+    opts.session = opts.session || Mu.Cookie.load();
+
+    // set the session
     Mu.Auth.setSession(
       opts.session,
       opts.session ? 'connected' : 'unknown',
       true
     );
-
-    // xfbml also implies a status check
-    if (opts.xfbml) {
-      if (Mu.processXFBML) {
-        Mu.watchStatus(
-          function() {
-            Mu.processXFBML();
-          },
-          {
-            load: true,
-            change: true,
-            cookie: true
-          }
-        );
-      } else {
-        Mu.log('XFBML was requested in Mu.init() but has not been loaded.');
-      }
-    }
   }
 });

@@ -1,7 +1,7 @@
 /**
  * @module Mu
- * @provides Mu.QS
- * @requires Mu.Prelude
+ * @provides mu.qs
+ * @requires mu.prelude
  */
 
 /**

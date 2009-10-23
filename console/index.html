@@ -34,7 +34,7 @@
 
         <input type="button"
                value="Status"
-               onclick="Mu.watchStatus()">
+               onclick="Mu.loginStatus(null, true)">
         <input type="button"
                value="Login"
                onclick="Mu.login()"
@@ -117,11 +117,17 @@
 
     <div id="mu-root"></div>
     <script>
+      // monitor for any change
+      Mu.Event.on('auth.sessionChange', gotStatus);
+
+      // init
       Mu.init({
         apiKey: '48f06bc570aaf9ed454699ec4fe416df',
         cookie: true
       });
-      Mu.watchStatus(gotStatus, { change: true, load: true, cookie: true });
+
+      // fetch status from facebook
+      Mu.loginStatus();
     </script>
 
 

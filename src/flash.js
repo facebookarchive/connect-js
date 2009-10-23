@@ -1,9 +1,9 @@
 /**
  * @module Mu
- * @provides Mu.Flash
- * @requires Mu.Prelude
- *           Mu.QS
- *           Mu.Content
+ * @provides mu.flash
+ * @requires mu.prelude
+ *           mu.qs
+ *           mu.content
  */
 
 /**
