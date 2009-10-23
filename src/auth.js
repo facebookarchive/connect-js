@@ -66,7 +66,7 @@ FB.copy('', {
         cb({ status: FB._userStatus, session: FB._session });
         return;
       } else {
-        FB.Auth._callbacks.load.push(cb);
+        FB.Auth._callbacks.push(cb);
       }
     }
 
@@ -78,8 +78,8 @@ FB.copy('', {
       FB.Auth._loadState = 'loaded';
 
       // consume the current load queue and reset
-      var waitingCb = FB.Auth._callbacks.load;
-      FB.Auth._callbacks.load = [];
+      var waitingCb = FB.Auth._callbacks;
+      FB.Auth._callbacks = [];
 
       for (var i=0, l=waitingCb.length; i<l; i++) {
         waitingCb[i](response);
@@ -224,11 +224,8 @@ FB.copy('', {
  * @access private
  */
 FB.copy('Auth', {
-  // status callbacks
-  _callbacks: {
-    change: [],
-    load: []
-  },
+  // pending callbacks for FB.loginStatus() calls
+  _callbacks: [],
 
   /**
    * Set a new session value. Invokes all the registered subscribers
