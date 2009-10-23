@@ -107,10 +107,9 @@ if (!window.FB) {
         console.log(args);
       }
 
-      // fire an event
-      if (Mu.Event) {
-        args.unshift('fb.log');
-        Mu.Event.fire.apply(window, args);
+      // fire an event if the event system is available
+      if (FB.Event) {
+        FB.Event.fire('fb.log', args);
       }
     }
   };

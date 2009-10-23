@@ -3,6 +3,29 @@ module('content');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
+  'error if fb-root is missing',
+
+  function() {
+    expect(3);
+
+    var fbRoot = document.getElementById('fb-root');
+    fbRoot.id = 'not-fb-root';
+    var logCb = function(msg) {
+      ok(msg == 'The "fb-root" div has not been created.',
+         'got a log message that the root was not found.');
+    };
+    FB.Event.on('fb.log', logCb);
+    var html = '<div id="test-div">test div</div>';
+    var div = FB.Content.append(html);
+    ok(!div, 'div was not inserted');
+    ok(!document.getElementById('test-div'), 'expect it to not be in the DOM');
+    FB.Event.unsubscribe('fb.log', logCb);
+    // put it back
+    fbRoot.id = 'fb-root';
+  }
+);
+
+test(
   'append some HTML markup',
 
   function() {
@@ -57,5 +80,25 @@ test(
     ok(document.getElementById('test-div').innerHTML == 'test div',
        'expect the correct inner html');
     div.parentNode.removeChild(div);
+  }
+);
+
+test(
+  'iframe onload handler',
+
+  function() {
+    expect(1);
+    stop();
+
+    // doesnt really matter as long as the host will respond
+    var
+      url = 'http://static.ak.fbcdn.net/connect/xd_proxy.php',
+      root = document.getElementById('fb-root'),
+      onload = function() {
+        ok(true, 'onload callback was invoked');
+        iframe.parentNode.removeChild(iframe);
+        start();
+      },
+      iframe = FB.Content.iframe(url, root, onload);
   }
 );
