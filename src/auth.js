@@ -237,9 +237,9 @@ FB.copy('Auth', {
    * @access private
    * @param session {Object}  the new Session
    * @param status  {String}  the new status
-   * @param skipCb  {Boolean} skip invoke the callbacks
+   * @returns       {Object}  the "response" object
    */
-  setSession: function(session, status, skipCb) {
+  setSession: function(session, status) {
     // detect special changes before changing the internal session
     var
       login         = !FB._session && session,

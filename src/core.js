@@ -75,10 +75,6 @@ FB.copy('', {
     opts.session = opts.session || FB.Cookie.load();
 
     // set the session
-    FB.Auth.setSession(
-      opts.session,
-      opts.session ? 'connected' : 'unknown',
-      true
-    );
+    FB.Auth.setSession(opts.session, opts.session ? 'connected' : 'unknown');
   }
 });
