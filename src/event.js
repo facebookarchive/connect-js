@@ -81,7 +81,7 @@ FB.copy('Event', {
       // this is because we null out unsubscribed rather than jiggle the array
       if (sub) {
         if (sub.apply(window, args) === false) {
-          // return false means "unsubscribe me"
+          // returning false means "unsubscribe me"
           subscribers[i] = null;
         }
       }
