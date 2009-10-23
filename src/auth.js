@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.auth
  * @requires mu.prelude
  *           mu.qs
@@ -9,11 +9,11 @@
 /**
  * Authentication, Authorization & Sessions.
  *
- * @class Mu
+ * @class FB
  * @static
  * @access private
  */
-Mu.copy('', {
+FB.copy('', {
   /**
    * Find out the current status from the server, and get a session if the user
    * is connected.
@@ -29,7 +29,7 @@ Mu.copy('', {
    *
    * Here's how you find out::
    *
-   *     Mu.loginStatus(function(response) {
+   *     FB.loginStatus(function(response) {
    *       if (response.session) {
    *         // logged in and connected user, someone you know
    *       } else {
@@ -52,35 +52,34 @@ Mu.copy('', {
    * @access public
    * @param cb     {Function} the callback function
    * @param force  {Boolean}  force reloading the login status (default false)
-   * @for Mu
    */
   loginStatus: function(cb, force) {
-    if (!Mu._apiKey) {
-      Mu.log('Mu.loginStatus() called before calling Mu.init()');
+    if (!FB._apiKey) {
+      FB.log('FB.loginStatus() called before calling FB.init()');
       return;
     }
 
     // we either invoke the callback right away if the status has already been
     // loaded, or queue it up for when the load is done.
     if (cb) {
-      if (!force && Mu.Auth._loadState == 'loaded') {
-        cb({ status: Mu._userStatus, session: Mu._session });
+      if (!force && FB.Auth._loadState == 'loaded') {
+        cb({ status: FB._userStatus, session: FB._session });
         return;
       } else {
-        Mu.Auth._callbacks.load.push(cb);
+        FB.Auth._callbacks.load.push(cb);
       }
     }
 
-    Mu.Auth._loadState = 'loading';
+    FB.Auth._loadState = 'loading';
 
     // invoke the queued sessionLoad callbacks
     var lsCb = function(response) {
       // done
-      Mu.Auth._loadState = 'loaded';
+      FB.Auth._loadState = 'loaded';
 
       // consume the current load queue and reset
-      var waitingCb = Mu.Auth._callbacks.load;
-      Mu.Auth._callbacks.load = [];
+      var waitingCb = FB.Auth._callbacks.load;
+      FB.Auth._callbacks.load = [];
 
       for (var i=0, l=waitingCb.length; i<l; i++) {
         waitingCb[i](response);
@@ -89,16 +88,16 @@ Mu.copy('', {
 
     // finally make the call to login status
     var
-      xdHandler = Mu.Auth.xdHandler,
-      g = Mu.guid(),
-      url = Mu._domain.www + 'extern/login_status.php?' + Mu.QS.encode({
-        api_key    : Mu._apiKey,
+      xdHandler = FB.Auth.xdHandler,
+      g = FB.guid(),
+      url = FB._domain.www + 'extern/login_status.php?' + FB.QS.encode({
+        api_key    : FB._apiKey,
         no_session : xdHandler(lsCb, g, 'parent', false, 'notConnected'),
         no_user    : xdHandler(lsCb, g, 'parent', false, 'unknown'),
         ok_session : xdHandler(lsCb, g, 'parent', false, 'connected')
       });
 
-    Mu.Frames.hidden(url, g);
+    FB.Frames.hidden(url, g);
   },
 
   /**
@@ -108,7 +107,7 @@ Mu.copy('', {
    * @returns {Object}  the current Session if available, null otherwise
    */
   getSession: function() {
-    return Mu._session;
+    return FB._session;
   },
 
   /**
@@ -120,7 +119,7 @@ Mu.copy('', {
    * then prompt and show them the "Connect with Facebook" button
    * bound to an event handler which does the following::
    *
-   *    Mu.login(function(response) {
+   *    FB.login(function(response) {
    *      if (response.session) {
    *        // user successfully logged in
    *      } else {
@@ -142,7 +141,7 @@ Mu.copy('', {
    * first connected. So you may want to delay asking for permissions
    * until as late as possible::
    *
-   *     Mu.login(function(response) {
+   *     FB.login(function(response) {
    *       if (response.session) {
    *         if (response.perms) {
    *           // user is logged in and granted some permissions.
@@ -160,18 +159,18 @@ Mu.copy('', {
    * @param perms {String}   (optional) comma separated list of permissions
    */
   login: function(cb, perms) {
-    if (!Mu._apiKey) {
-      Mu.log('Mu.login() called before calling Mu.init()');
+    if (!FB._apiKey) {
+      FB.log('FB.login() called before calling FB.init()');
       return;
     }
 
     var
-      xdHandler = Mu.Auth.xdHandler,
-      g = Mu.guid(),
-      cancel = xdHandler(cb, g, 'opener', true,  Mu._userStatus, Mu._session),
-      next = xdHandler(cb, g, 'opener', false, 'connected', Mu._session),
-      url = Mu._domain.www + 'login.php?' + Mu.QS.encode({
-        api_key        : Mu._apiKey,
+      xdHandler = FB.Auth.xdHandler,
+      g = FB.guid(),
+      cancel = xdHandler(cb, g, 'opener', true,  FB._userStatus, FB._session),
+      next = xdHandler(cb, g, 'opener', false, 'connected', FB._session),
+      url = FB._domain.www + 'login.php?' + FB.QS.encode({
+        api_key        : FB._apiKey,
         cancel_url     : cancel,
         channel_url    : window.location.toString(),
         display        : 'popup',
@@ -182,7 +181,7 @@ Mu.copy('', {
         v              : '1.0'
       });
 
-    Mu.Frames.popup(url, 450, 415, g);
+    FB.Frames.popup(url, 450, 415, g);
   },
 
   /**
@@ -192,7 +191,7 @@ Mu.copy('', {
    * The status shared between your site and Facebook, and logging out
    * affects both sites. This is a simple call::
    *
-   *     Mu.logout(function(response) {
+   *     FB.logout(function(response) {
    *       // user is now logged out
    *     });
    *
@@ -200,31 +199,31 @@ Mu.copy('', {
    * @param cb    {Function} the callback function
    */
   logout: function(cb) {
-    if (!Mu._apiKey) {
-      Mu.log('Mu.logout() called before calling Mu.init()');
+    if (!FB._apiKey) {
+      FB.log('FB.logout() called before calling FB.init()');
       return;
     }
 
     var
-      g   = Mu.guid(),
-      url = Mu._domain.www + 'logout.php?' + Mu.QS.encode({
-        api_key     : Mu._apiKey,
-        next        : Mu.Auth.xdHandler(cb, g, 'parent', false, 'unknown'),
-        session_key : Mu._session.session_key
+      g   = FB.guid(),
+      url = FB._domain.www + 'logout.php?' + FB.QS.encode({
+        api_key     : FB._apiKey,
+        next        : FB.Auth.xdHandler(cb, g, 'parent', false, 'unknown'),
+        session_key : FB._session.session_key
       });
 
-    Mu.Frames.hidden(url, g);
+    FB.Frames.hidden(url, g);
   }
 });
 
 /**
  * Internal Authentication implementation.
  *
- * @class Mu.Auth
+ * @class FB.Auth
  * @static
  * @access private
  */
-Mu.copy('Auth', {
+FB.copy('Auth', {
   // status callbacks
   _callbacks: {
     change: [],
@@ -243,20 +242,20 @@ Mu.copy('Auth', {
   setSession: function(session, status, skipCb) {
     // detect special changes before changing the internal session
     var
-      login         = !Mu._session && session,
-      logout        = Mu._session && !session,
-      both          = Mu._session && session && Mu._session.uid != session.uid,
-      sessionChange = (Mu._session && session &&
-                         Mu._session.session_key != session.session_key),
-      statusChange  = status != Mu._status;
+      login         = !FB._session && session,
+      logout        = FB._session && !session,
+      both          = FB._session && session && FB._session.uid != session.uid,
+      sessionChange = (FB._session && session &&
+                         FB._session.session_key != session.session_key),
+      statusChange  = status != FB._status;
 
     var response = {
       session : session,
       status  : status
     };
 
-    Mu._session = session;
-    Mu._userStatus = status;
+    FB._session = session;
+    FB._userStatus = status;
 
     // events
     if (statusChange) {
@@ -265,7 +264,7 @@ Mu.copy('Auth', {
        *
        * @event auth.statusChange
        */
-      Mu.Event.fire('auth.statusChange', response);
+      FB.Event.fire('auth.statusChange', response);
     }
     if (logout || both) {
       /**
@@ -273,7 +272,7 @@ Mu.copy('Auth', {
        *
        * @event auth.logout
        */
-      Mu.Event.fire('auth.logout', response);
+      FB.Event.fire('auth.logout', response);
     }
     if (login || both) {
       /**
@@ -281,7 +280,7 @@ Mu.copy('Auth', {
        *
        * @event auth.login
        */
-      Mu.Event.fire('auth.login', response);
+      FB.Event.fire('auth.login', response);
     }
     if (login || logout || sessionChange) {
       /**
@@ -290,7 +289,7 @@ Mu.copy('Auth', {
        *
        * @event auth.sessionChange
        */
-      Mu.Event.fire('auth.sessionChange', response);
+      FB.Event.fire('auth.sessionChange', response);
     }
 
     return response;
@@ -323,13 +322,13 @@ Mu.copy('Auth', {
    * @returns         {String}   the xd url bound to the callback
    */
   xdHandler: function(cb, frame, target, isDefault, status, session) {
-    return Mu.Frames.xdHandler(function(params) {
+    return FB.Frames.xdHandler(function(params) {
       // try to extract a session
       var response;
       try {
-        response = Mu.Auth.setSession(JSON.parse(params.session), status);
+        response = FB.Auth.setSession(JSON.parse(params.session), status);
       } catch(x) {
-        response = Mu.Auth.setSession(session || null, status);
+        response = FB.Auth.setSession(session || null, status);
       }
 
       // incase we were granted some new permissions

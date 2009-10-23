@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.flash
  * @requires mu.prelude
  *           mu.qs
@@ -9,11 +9,11 @@
 /**
  * Flash Support.
  *
- * @class Mu.Flash
+ * @class FB.Flash
  * @static
  * @access private
  */
-Mu.copy('Flash', {
+FB.copy('Flash', {
   _callbacks: [],
 
   /**
@@ -23,26 +23,26 @@ Mu.copy('Flash', {
    */
   init: function() {
     // only initialize once
-    if (Mu.Flash._init) {
+    if (FB.Flash._init) {
       return;
     }
-    Mu.Flash._init = true;
+    FB.Flash._init = true;
 
     // the SWF calls this global function to notify that its ready
     // FIXME: should allow the SWF to take a flashvar that controls the name
-    // of this function. we should not have any globals other than Mu.
+    // of this function. we should not have any globals other than FB.
     window.FB_OnFlashXdCommReady = function() {
-      Mu.Flash._ready = true;
-      for (var i=0, l=Mu.Flash._callbacks.length; i<l; i++) {
-        Mu.Flash._callbacks[i]();
+      FB.Flash._ready = true;
+      for (var i=0, l=FB.Flash._callbacks.length; i<l; i++) {
+        FB.Flash._callbacks[i]();
       }
-      Mu.Flash._callbacks = [];
+      FB.Flash._callbacks = [];
     };
 
     // create the swf
     var
       IE   = !!document.attachEvent,
-      swf  = Mu._domain.cdn + 'swf/XdComm.swf',
+      swf  = FB._domain.cdn + 'swf/XdComm.swf',
       html = (
         '<object ' +
           'type="application/x-shockwave-flash" ' +
@@ -59,7 +59,7 @@ Mu.copy('Flash', {
         '</object>'
       );
 
-    Mu.Content.hidden(html);
+    FB.Content.hidden(html);
   },
 
   /**
@@ -69,7 +69,7 @@ Mu.copy('Flash', {
    * @returns {Boolean} true if the minimum version requirements are matched
    */
   hasMinVersion: function() {
-    if (typeof Mu.Flash._hasMinVersion === 'undefined') {
+    if (typeof FB.Flash._hasMinVersion === 'undefined') {
       var
         versionString,
         i,
@@ -101,12 +101,12 @@ Mu.copy('Flash', {
       }
 
       // start by assuming we dont have the min version.
-      Mu.Flash._hasMinVersion = false;
+      FB.Flash._hasMinVersion = false;
 
       // look through all the allowed version definitions.
       majorVersion:
-      for (i=0, l=Mu._registry.flashVersions.length; i<l; i++) {
-        var spec = Mu._registry.flashVersions[i];
+      for (i=0, l=FB._registry.flashVersions.length; i<l; i++) {
+        var spec = FB._registry.flashVersions[i];
 
         // we only accept known major versions, and every supported major
         // version has at least one entry in flashVersions. only if the major
@@ -119,10 +119,10 @@ Mu.copy('Flash', {
         for (var m=1, n=spec.length, o=version.length; (m<n && m<o); m++) {
           if (version[m] < spec[m]) {
             // less means this major version is no good
-            Mu.Flash._hasMinVersion = false;
+            FB.Flash._hasMinVersion = false;
             continue majorVersion;
           } else {
-            Mu.Flash._hasMinVersion = true;
+            FB.Flash._hasMinVersion = true;
             if (version[m] > spec[m]) {
               // better than needed
               break majorVersion;
@@ -132,7 +132,7 @@ Mu.copy('Flash', {
       }
     }
 
-    return Mu.Flash._hasMinVersion;
+    return FB.Flash._hasMinVersion;
   },
 
   /**
@@ -142,13 +142,13 @@ Mu.copy('Flash', {
    * @param cb {Function} the function
    */
   onReady: function(cb) {
-    Mu.Flash.init();
-    if (Mu.Flash._ready) {
+    FB.Flash.init();
+    if (FB.Flash._ready) {
       // this forces the cb to be asynchronous to ensure no one relies on the
       // _potential_ synchronous nature.
       window.setTimeout(cb, 0);
     } else {
-      Mu.Flash._callbacks.push(cb);
+      FB.Flash._callbacks.push(cb);
     }
   },
 

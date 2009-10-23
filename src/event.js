@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.event
  * @requires mu.prelude
  */
@@ -7,11 +7,11 @@
 /**
  * Event.
  *
- * @class Mu.Event
+ * @class FB.Event
  * @static
  * @access private
  */
-Mu.copy('Event', {
+FB.copy('Event', {
   /**
    * Map of event name to subscribers.
    *
@@ -28,7 +28,7 @@ Mu.copy('Event', {
    * @param cb      {Function} the handler function
    */
   on: function(name, cb) {
-    var S = Mu.Event._subscribers;
+    var S = FB.Event._subscribers;
 
     if (!S[name]) {
       S[name] = [cb];
@@ -38,14 +38,14 @@ Mu.copy('Event', {
   },
 
   /**
-   * Removes subscribers, inverse of Mu.Event.on().
+   * Removes subscribers, inverse of FB.Event.on().
    *
    * @access public
    * @param name    {String}   name of the event
    * @param cb      {Function} the handler function
    */
   unsubscribe: function(name, cb) {
-    var S = Mu.Event._subscribers;
+    var S = FB.Event._subscribers;
 
     if (S[name]) {
       for (var i=0, l=S[name].length; i<l; i++) {
@@ -68,7 +68,7 @@ Mu.copy('Event', {
     var
       args        = Array.prototype.slice.call(arguments),
       name        = args.shift(),
-      subscribers = Mu.Event._subscribers[name],
+      subscribers = FB.Event._subscribers[name],
       sub;
 
     // no subscribers, boo

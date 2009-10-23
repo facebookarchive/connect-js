@@ -11,26 +11,26 @@ test(
       ok(true, 'subscriber got called');
       expected -= 1;
     };
-    Mu.Event.on('auth.sessionChange', cb);
+    FB.Event.on('auth.sessionChange', cb);
 
     action.onclick = function() {
       // 1
-      Mu.login(function() {
+      FB.login(function() {
         // 2
-        Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
+        FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
           // 3
-          Mu.login(function() {
+          FB.login(function() {
             // 4
-            Mu.logout(function() {
+            FB.logout(function() {
               // 5
-              Mu.login(function() {
+              FB.login(function() {
                 // should not trigger subscriber
-                Mu.login(function() {
+                FB.login(function() {
                   // 6
                   ok(expected == 0, 'got all expected callbacks');
 
                   // unsubscribe once we're done
-                  Mu.Event.unsubscribe('auth.sessionChange', cb);
+                  FB.Event.unsubscribe('auth.sessionChange', cb);
                   start();
                 }, 'email');
               }, 'offline_access');

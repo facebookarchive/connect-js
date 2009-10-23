@@ -6,7 +6,7 @@ test(
   'pre computed sums',
 
   function() {
-    ok(Mu.md5sum('06') == 'faeac4e1eef307c2ab7b0a3821e6c667', 'md5sum for 06');
-    ok(Mu.md5sum('42') == 'a1d0c6e83f027327d8461063f4ac58a6', 'md5sum for 42');
+    ok(FB.md5sum('06') == 'faeac4e1eef307c2ab7b0a3821e6c667', 'md5sum for 06');
+    ok(FB.md5sum('42') == 'a1d0c6e83f027327d8461063f4ac58a6', 'md5sum for 42');
   }
 );

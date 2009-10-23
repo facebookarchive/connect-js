@@ -7,7 +7,7 @@ test(
 
   function() {
     var target = {};
-    Mu.copy(target, {
+    FB.copy(target, {
       answer: 42
     });
     ok(target.answer == 42, 'expect the answer');
@@ -23,7 +23,7 @@ test(
     source.prototype.wrongAnswer = 0;
     var sourceInstance = new source();
     sourceInstance.answer = 42;
-    Mu.copy(target, sourceInstance);
+    FB.copy(target, sourceInstance);
     ok(target.answer == 42, 'expect the answer');
     ok(!target.wrongAnswer, 'expect no wrong answer');
   }
@@ -34,14 +34,14 @@ test(
 
   function() {
     var target = { the: 42 };
-    Mu.copy(target, {
+    FB.copy(target, {
       answer: 42,
       the: 0
     });
     ok(target.answer == 42, 'expect 42');
     ok(target.the == 42, 'expect old value 42');
 
-    Mu.copy(target, { the: 0 }, true);
+    FB.copy(target, { the: 0 }, true);
     ok(target.the == 0, 'expect new value 0');
   }
 );
@@ -50,10 +50,10 @@ test(
   'copy for modules',
 
   function() {
-    ok(!Mu.TestModule, 'module must not exist');
-    Mu.copy('TestModule', { answer: 42 });
-    ok(Mu.TestModule.answer == 42, 'expect the new named value');
-    delete Mu.TestModule;
+    ok(!FB.TestModule, 'module must not exist');
+    FB.copy('TestModule', { answer: 42 });
+    ok(FB.TestModule.answer == 42, 'expect the new named value');
+    delete FB.TestModule;
   }
 );
 
@@ -61,6 +61,6 @@ test(
   'guids are not equal',
 
   function() {
-    ok(Mu.guid() != Mu.guid(), 'wonder what the odds of this failing are');
+    ok(FB.guid() != FB.guid(), 'wonder what the odds of this failing are');
   }
 );

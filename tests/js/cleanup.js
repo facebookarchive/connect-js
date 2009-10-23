@@ -5,12 +5,12 @@ test(
   'revoke authorization',
 
   function() {
-    Mu.api(
+    FB.api(
       {
         method: 'Auth.revokeAuthorization'
       },
       function(response) {
-        ok(!Mu.getSession(), 'should not get a session');
+        ok(!FB.getSession(), 'should not get a session');
         start();
       }
     );

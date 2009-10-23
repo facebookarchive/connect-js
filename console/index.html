@@ -34,20 +34,20 @@
 
         <input type="button"
                value="Status"
-               onclick="Mu.loginStatus(null, true)">
+               onclick="FB.loginStatus(null, true)">
         <input type="button"
                value="Login"
-               onclick="Mu.login()"
+               onclick="FB.login()"
                id="bt-login"
                disabled="disabled">
         <input type="button"
                value="Disconnect"
-               onclick="Mu.api({ method: 'Auth.revokeAuthorization' })"
+               onclick="FB.api({ method: 'Auth.revokeAuthorization' })"
                id="bt-disconnect"
                disabled="disabled">
         <input type="button"
                value="Logout"
-               onclick="Mu.logout()"
+               onclick="FB.logout()"
                id="bt-logout"
                disabled="disabled">
       </div>
@@ -58,25 +58,25 @@
 
           <input type="button"
                  value="Read Stream"
-                 onclick="Mu.login(gotPerms, 'read_stream')">
+                 onclick="FB.login(gotPerms, 'read_stream')">
           <input type="button"
                  value="Publish Stream"
-                 onclick="Mu.login(gotPerms, 'publish_stream')">
+                 onclick="FB.login(gotPerms, 'publish_stream')">
           <input type="button"
                  value="Full Stream"
-                 onclick="Mu.login(gotPerms, 'read_stream,publish_stream')">
+                 onclick="FB.login(gotPerms, 'read_stream,publish_stream')">
           <input type="button"
                  value="Offline Access"
-                 onclick="Mu.login(gotPerms, 'offline_access')">
+                 onclick="FB.login(gotPerms, 'offline_access')">
           <input type="button"
                  value="Events"
-                 onclick="Mu.login(gotPerms, 'create_event,rsvp_event')">
+                 onclick="FB.login(gotPerms, 'create_event,rsvp_event')">
           <input type="button"
                  value="SMS"
-                 onclick="Mu.login(gotPerms, 'sms')">
+                 onclick="FB.login(gotPerms, 'sms')">
           <input type="button"
                  value="Bulk"
-                 onclick="Mu.login(gotPerms, 'read_stream,offline_access,sms,create_event,rsvp_event')">
+                 onclick="FB.login(gotPerms, 'read_stream,offline_access,sms,create_event,rsvp_event')">
         </div>
 
         <div id="integration">
@@ -85,7 +85,7 @@
           <input type="button"
                  disabled="disabled"
                  value="Add Friend"
-                 onclick="Mu.addFriend('499029861', friendAdded)">
+                 onclick="FB.addFriend('499029861', friendAdded)">
         </div>
       </div>
 
@@ -93,7 +93,7 @@
         <h2>Sans Session <span class="info" id="sans-session-info"></span></h2>
 
         <input type="button" value="Publish" onclick="publishExample()">
-        <input type="button" value="Share"   onclick="Mu.share()">
+        <input type="button" value="Share"   onclick="FB.share()">
       </div>
     </div>
 
@@ -118,16 +118,16 @@
     <div id="mu-root"></div>
     <script>
       // monitor for any change
-      Mu.Event.on('auth.sessionChange', gotStatus);
+      FB.Event.on('auth.sessionChange', gotStatus);
 
       // init
-      Mu.init({
+      FB.init({
         apiKey: '48f06bc570aaf9ed454699ec4fe416df',
         cookie: true
       });
 
       // fetch status from facebook
-      Mu.loginStatus();
+      FB.loginStatus();
     </script>
 
 

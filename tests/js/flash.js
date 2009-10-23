@@ -6,7 +6,7 @@ test(
   'flash has minimum version',
 
   function() {
-    ok(Mu.Flash.hasMinVersion(), 'should have minimum flash version');
+    ok(FB.Flash.hasMinVersion(), 'should have minimum flash version');
   }
 );
 
@@ -16,9 +16,9 @@ test(
   function() {
     ok(!document.XdComm, 'should not have already initialized flash');
 
-    Mu.Flash.onReady(function() {
+    FB.Flash.onReady(function() {
       ok(true, 'got the first onReady callback');
-      Mu.Flash.onReady(function() {
+      FB.Flash.onReady(function() {
         ok(true, 'got the second onReady callback');
         start();
       });

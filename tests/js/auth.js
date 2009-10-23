@@ -6,7 +6,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.loginStatus(function(response) {
+      FB.loginStatus(function(response) {
         ok(!response.session, 'should not get a session');
         action.innerHTML = '';
         action.className = '';
@@ -26,7 +26,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(!response.session, 'should not get a session');
         action.innerHTML = '';
         action.className = '';
@@ -46,7 +46,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(!response.session, 'should not get a session');
         action.innerHTML = '';
         action.className = '';
@@ -66,7 +66,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(response.session, 'should get a session');
         ok(response.status == 'connected', 'should be connected');
         action.innerHTML = '';
@@ -86,7 +86,7 @@ test(
   'status should now return a session',
 
   function() {
-    Mu.loginStatus(function(response) {
+    FB.loginStatus(function(response) {
       ok(response.session, 'should get a session');
       ok(response.status == 'connected', 'should be connected');
       start();
@@ -101,7 +101,7 @@ test(
   'logout',
 
   function() {
-    Mu.logout(function(response) {
+    FB.logout(function(response) {
       ok(!response.session, 'should not get a session');
       ok(response.status == 'unknown', 'should be unknown');
       start();
@@ -117,7 +117,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(response.session, 'should get a session');
         action.innerHTML = '';
         action.className = '';
@@ -137,7 +137,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(response.session, 'should still have the session');
         ok(response.perms == '', 'should get no perms');
         ok(response.session.expires != 0, 'session.expires should not be 0');
@@ -160,7 +160,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(response.session, 'should get a session');
         ok(response.perms == 'offline_access', 'should get offline_access perms');
         ok(response.session.expires == 0, 'session.expires should be 0');
@@ -181,9 +181,9 @@ test(
   'revoke authorization',
 
   function() {
-  Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-    ok(!Mu.getSession(), 'should not get a session');
-    ok(Mu._userStatus == 'notConnected', 'should be notConnected');
+  FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
+    ok(!FB.getSession(), 'should not get a session');
+    ok(FB._userStatus == 'notConnected', 'should be notConnected');
     start();
   });
 
@@ -197,7 +197,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(response.session, 'should get a session');
         ok(response.perms == '', 'should not get offline_access perms');
         ok(response.session.expires != 0, 'session.expires should not be 0');
@@ -218,8 +218,8 @@ test(
   'revoke authorization',
 
   function() {
-  Mu.api({method: 'Auth.revokeAuthorization'}, function(response) {
-    ok(!Mu.getSession(), 'should not get a session');
+  FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
+    ok(!FB.getSession(), 'should not get a session');
     start();
   });
 
@@ -233,7 +233,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.login(function(response) {
+      FB.login(function(response) {
         ok(response.session, 'should get a session');
         ok(response.perms == 'offline_access', 'should get offline_access perms');
         ok(response.session.expires == 0, 'session.expires should be 0');

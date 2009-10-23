@@ -3,12 +3,12 @@ module('share');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
-  'share without calling Mu.init',
+  'share without calling FB.init',
 
   function() {
     action.onclick = function() {
       ok(true, 'clicked on button');
-      Mu.share('http://www.friendfeed.com/');
+      FB.share('http://www.friendfeed.com/');
       action.innerHTML = '';
       action.className = '';
       start();

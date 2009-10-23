@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.xd
  * @requires mu.prelude
  *           mu.qs
@@ -9,11 +9,11 @@
 /**
  * The cross domain communication layer.
  *
- * @class Mu.XD
+ * @class FB.XD
  * @static
  * @access private
  */
-Mu.copy('XD', {
+FB.copy('XD', {
   _origin    : null,
   _transport : null,
   _callbacks : {},
@@ -25,7 +25,7 @@ Mu.copy('XD', {
    */
   init: function() {
     // only do init once, if this is set, we're already done
-    if (Mu.XD._origin) {
+    if (FB.XD._origin) {
       return;
     }
 
@@ -33,24 +33,24 @@ Mu.copy('XD', {
     // 1) postMessage origin, provides security
     // 2) Flash Local Connection name
     // It is required and validated by Facebook as part of the xd_proxy.php.
-    Mu.XD._origin = (
+    FB.XD._origin = (
       window.location.protocol +
       '//' +
       window.location.host +
       '/' +
-      Mu.guid()
+      FB.guid()
     );
 
     // We currently disable postMessage in IE8 because it does not work with
     // window.opener. We can probably be smarter about it.
     if (window.addEventListener && window.postMessage) {
-      Mu.XD.PostMessage.init();
-      Mu.XD._transport = 'postmessage';
-    } else if (Mu.Flash.hasMinVersion()) {
-      Mu.XD.Flash.init();
-      Mu.XD._transport = 'flash';
+      FB.XD.PostMessage.init();
+      FB.XD._transport = 'postmessage';
+    } else if (FB.Flash.hasMinVersion()) {
+      FB.XD.Flash.init();
+      FB.XD._transport = 'flash';
     } else {
-      Mu.XD._transport = 'fragment';
+      FB.XD._transport = 'fragment';
     }
   },
 
@@ -68,18 +68,18 @@ Mu.copy('XD', {
    * @returns        {String}   the xd url bound to the callback
    */
   handler: function(cb, relation) {
-    Mu.XD.init();
+    FB.XD.init();
 
     // the ?=& tricks login.php into appending at the end instead
     // of before the fragment as a query string
     // FIXME
     var
-      xdProxy = Mu._domain.cdn + 'connect/xd_proxy.php#?=&',
-      id = Mu.guid();
+      xdProxy = FB._domain.cdn + 'connect/xd_proxy.php#?=&',
+      id = FB.guid();
 
     // in fragment mode, the url is the current page and a fragment with a
     // magic token
-    if (Mu.XD._transport == 'fragment') {
+    if (FB.XD._transport == 'fragment') {
       var
         xdProxy = window.location.toString(),
         poundIndex = xdProxy.indexOf('#');
@@ -89,15 +89,15 @@ Mu.copy('XD', {
       // mu_xd_bust changes the url to prevent firefox from refusing to load
       // because it thinks its smarter than the developer and believes it to be
       // a recusive load. the rest are explanined in the note above.
-      xdProxy += '?&mu_xd_bust#?=&' + Mu.XD.Fragment._magic;
+      xdProxy += '?&mu_xd_bust#?=&' + FB.XD.Fragment._magic;
     }
 
-    Mu.XD._callbacks[id] = cb;
-    return xdProxy + Mu.QS.encode({
+    FB.XD._callbacks[id] = cb;
+    return xdProxy + FB.QS.encode({
       cb        : id,
-      origin    : Mu.XD._origin,
+      origin    : FB.XD._origin,
       relation  : relation || 'opener',
-      transport : Mu.XD._transport
+      transport : FB.XD._transport
     });
   },
 
@@ -110,20 +110,20 @@ Mu.copy('XD', {
    */
   recv: function(data) {
     if (typeof data == 'string') {
-      data = Mu.QS.decode(data);
+      data = FB.QS.decode(data);
     }
 
-    var cb = Mu.XD._callbacks[data.cb];
-    delete Mu.XD._callbacks[data.cb];
+    var cb = FB.XD._callbacks[data.cb];
+    delete FB.XD._callbacks[data.cb];
     cb && cb(data);
   },
 
   /**
    * Provides Native ``window.postMessage`` based XD support.
    *
-   * @class Mu.XD.PostMessage
+   * @class FB.XD.PostMessage
    * @static
-   * @for Mu.XD
+   * @for FB.XD
    * @access private
    */
   PostMessage: {
@@ -133,7 +133,7 @@ Mu.copy('XD', {
      * @access private
      */
     init: function() {
-      var H = Mu.XD.PostMessage.onMessage;
+      var H = FB.XD.PostMessage.onMessage;
       window.addEventListener
         ? window.addEventListener('message', H, false)
         : window.attachEvent('onmessage', H);
@@ -146,16 +146,16 @@ Mu.copy('XD', {
      * @param event {Event} the event object
      */
     onMessage: function(event) {
-      Mu.XD.recv(event.data);
+      FB.XD.recv(event.data);
     }
   },
 
   /**
    * Provides Flash Local Connection based XD support.
    *
-   * @class Mu.XD.Flash
+   * @class FB.XD.Flash
    * @static
-   * @for Mu.XD
+   * @for FB.XD
    * @access private
    */
   Flash: {
@@ -165,9 +165,9 @@ Mu.copy('XD', {
      * @access private
      */
     init: function() {
-      Mu.Flash.onReady(function() {
-        document.XdComm.postMessage_init('Mu.XD.Flash.onMessage',
-                                         Mu.XD._origin);
+      FB.Flash.onReady(function() {
+        document.XdComm.postMessage_init('FB.XD.Flash.onMessage',
+                                         FB.XD._origin);
       });
     },
 
@@ -178,16 +178,16 @@ Mu.copy('XD', {
      * @param message {String} the URI encoded string sent by the SWF
      */
     onMessage: function(message) {
-      Mu.XD.recv(decodeURIComponent(message));
+      FB.XD.recv(decodeURIComponent(message));
     }
   },
 
   /**
    * Provides XD support via a fragment by reusing the current page.
    *
-   * @class Mu.XD.Fragment
+   * @class FB.XD.Fragment
    * @static
-   * @for Mu.XD
+   * @for FB.XD
    * @access private
    */
   Fragment: {
@@ -200,24 +200,24 @@ Mu.copy('XD', {
       var
         loc = window.location.toString(),
         fragment = loc.substr(loc.indexOf('#') + 1),
-        magicIndex = fragment.indexOf(Mu.XD.Fragment._magic);
+        magicIndex = fragment.indexOf(FB.XD.Fragment._magic);
 
       if (magicIndex > 0) {
         // make these no-op to help with performance
         //
         // this works independent of the module being present or not, or being
         // loaded before or after
-        Mu.loginStatus = Mu.api = function() {};
+        FB.loginStatus = FB.api = function() {};
 
         // display none helps prevent loading of some stuff
         document.body.style.display = 'none';
 
-        fragment = fragment.substr(magicIndex + Mu.XD.Fragment._magic.length);
-        var params = Mu.QS.decode(fragment);
+        fragment = fragment.substr(magicIndex + FB.XD.Fragment._magic.length);
+        var params = FB.QS.decode(fragment);
         // NOTE: only supporting opener, parent or top here. if needed, the
         // resolveRelation function from xd_proxy can be used to provide more
         // complete support.
-        window[params.relation].Mu.XD.recv(fragment);
+        window[params.relation].FB.XD.recv(fragment);
       }
     }
   }
@@ -228,4 +228,4 @@ Mu.copy('XD', {
 // if the page is being used for fragment based XD messaging, we need to
 // dispatch on load without needing any API calls. it only does stuff if the
 // magic token is found in the fragment.
-Mu.XD.Fragment.checkAndDispatch();
+FB.XD.Fragment.checkAndDispatch();

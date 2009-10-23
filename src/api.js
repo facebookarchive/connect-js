@@ -1,8 +1,8 @@
 /**
- * Contains the public method ``Mu.api`` and the internal implementation
- * ``Mu.RestServer``.
+ * Contains the public method ``FB.api`` and the internal implementation
+ * ``FB.RestServer``.
  *
- * @module Mu
+ * @module FB
  * @provides mu.api
  * @requires mu.prelude
  *           mu.qs
@@ -13,11 +13,11 @@
 /**
  * API calls.
  *
- * @class Mu
+ * @class FB
  * @static
  * @access private
  */
-Mu.copy('', {
+FB.copy('', {
   /**
    * Once you have a session for the current user, you will want to
    * access data about that user, such as getting their name & profile
@@ -26,10 +26,10 @@ Mu.copy('', {
    * calls to Facebook using their session. Suppose we want to alert
    * the current user's name::
    *
-   *     Mu.api(
+   *     FB.api(
    *       {
    *         method: 'fql.query',
-   *         query: 'SELECT name FROM profile WHERE id=' + Mu.getSession().uid
+   *         query: 'SELECT name FROM profile WHERE id=' + FB.getSession().uid
    *       },
    *       function(response) {
    *         alert(response[0].name);
@@ -56,23 +56,23 @@ Mu.copy('', {
    * @param cb     {Function} the callback function to handle the response
    */
   api: function(params, cb) {
-    // this is an optional dependency on Mu.Auth
+    // this is an optional dependency on FB.Auth
     // Auth.revokeAuthorization affects the session
-    if (Mu.Auth && params.method == 'Auth.revokeAuthorization') {
+    if (FB.Auth && params.method == 'Auth.revokeAuthorization') {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {
-          Mu.Auth.setSession(null, 'notConnected');
+          FB.Auth.setSession(null, 'notConnected');
         }
         old_cb && old_cb(response);
       };
     }
 
     try {
-      Mu.RestServer.jsonp(params, cb);
+      FB.RestServer.jsonp(params, cb);
     } catch (x) {
-      if (Mu.Flash.hasMinVersion()) {
-        Mu.RestServer.flash(params, cb);
+      if (FB.Flash.hasMinVersion()) {
+        FB.RestServer.flash(params, cb);
       } else {
         throw new Error('Flash is required for this API call.');
       }
@@ -83,11 +83,11 @@ Mu.copy('', {
 /**
  * API call implementations.
  *
- * @class Mu.RestServer
+ * @class FB.RestServer
  * @static
  * @access private
  */
-Mu.copy('RestServer', {
+FB.copy('RestServer', {
   _callbacks: {},
 
   /**
@@ -100,28 +100,28 @@ Mu.copy('RestServer', {
    */
   sign: function(params) {
     // general api call parameters
-    Mu.copy(params, {
-      api_key : Mu._apiKey,
+    FB.copy(params, {
+      api_key : FB._apiKey,
       call_id : (new Date()).getTime(),
       format  : 'json',
       v       : '1.0'
     });
 
     // indicate session signing if session is available
-    if (Mu._session) {
-      Mu.copy(params, {
-        session_key : Mu._session.session_key,
+    if (FB._session) {
+      FB.copy(params, {
+        session_key : FB._session.session_key,
         ss          : 1
       });
     }
 
     // optionally generate the signature. we do this for both the automatic and
     // explicit case.
-    if (Mu._session) {
+    if (FB._session) {
       // the signature is described at:
       // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
-      params.sig = Mu.md5sum(
-        Mu.QS.encode(params, '', false) + Mu._session.secret
+      params.sig = FB.md5sum(
+        FB.QS.encode(params, '', false) + FB._session.secret
       );
     }
 
@@ -141,23 +141,23 @@ Mu.copy('RestServer', {
    */
   jsonp: function(params, cb) {
     var
-      g      = Mu.guid(),
+      g      = FB.guid(),
       script = document.createElement('script'),
       url;
 
     // shallow clone of params, add callback and sign
-    params = Mu.RestServer.sign(
-      Mu.copy({ callback: 'Mu.RestServer._callbacks.' + g }, params));
+    params = FB.RestServer.sign(
+      FB.copy({ callback: 'FB.RestServer._callbacks.' + g }, params));
 
-    url = Mu._domain.api + 'restserver.php?' + Mu.QS.encode(params);
+    url = FB._domain.api + 'restserver.php?' + FB.QS.encode(params);
     if (url.length > 2000) {
       throw new Error('JSONP only support a maximum of 2000 bytes of input.');
     }
 
     // this is the JSONP callback invoked by the response from restserver.php
-    Mu.RestServer._callbacks[g] = function(response) {
+    FB.RestServer._callbacks[g] = function(response) {
       cb(response);
-      delete Mu.RestServer._callbacks[g];
+      delete FB.RestServer._callbacks[g];
       script.parentNode.removeChild(script);
     };
 
@@ -174,21 +174,21 @@ Mu.copy('RestServer', {
    */
   flash: function(params, cb) {
     // only need to do this once
-    if (!Mu.RestServer.flash._init) {
+    if (!FB.RestServer.flash._init) {
       // the SWF calls this global function when a HTTP response is available
       // FIXME: remove global
       window.FB_OnXdHttpResult = function(reqId, data) {
-        Mu.RestServer._callbacks[reqId](Mu.Flash.decode(data));
+        FB.RestServer._callbacks[reqId](FB.Flash.decode(data));
       };
-      Mu.RestServer.flash._init = true;
+      FB.RestServer.flash._init = true;
     }
 
-    Mu.Flash.onReady(function() {
+    FB.Flash.onReady(function() {
       var method, url, body, reqId;
 
       // shallow clone of params, sign, and encode as query string
-      body = Mu.QS.encode(Mu.RestServer.sign(Mu.copy({}, params)));
-      url = Mu._domain.api + 'restserver.php';
+      body = FB.QS.encode(FB.RestServer.sign(FB.copy({}, params)));
+      url = FB._domain.api + 'restserver.php';
 
       // GET or POST
       if (url.length + body.length > 2000) {
@@ -203,9 +203,9 @@ Mu.copy('RestServer', {
       reqId = document.XdComm.sendXdHttpRequest(method, url, body, null);
 
       // callback
-      Mu.RestServer._callbacks[reqId] = function(response) {
-        cb(JSON.parse(Mu.Flash.decode(response)));
-        delete Mu.RestServer._callbacks[reqId];
+      FB.RestServer._callbacks[reqId] = function(response) {
+        cb(JSON.parse(FB.Flash.decode(response)));
+        delete FB.RestServer._callbacks[reqId];
       };
     });
   }

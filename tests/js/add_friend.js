@@ -7,7 +7,7 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.addFriend(addFriendId, function(result) {
+      FB.addFriend(addFriendId, function(result) {
         ok(!result, 'should not get result');
         action.innerHTML = '';
         action.className = '';

@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.qs
  * @requires mu.prelude
  */
@@ -7,11 +7,11 @@
 /**
  * Query String encoding & decoding.
  *
- * @class Mu.QS
+ * @class FB.QS
  * @static
  * @access private
  */
-Mu.copy('QS', {
+FB.copy('QS', {
   /**
    * Encode parameters to a query string.
    *

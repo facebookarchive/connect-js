@@ -10,7 +10,7 @@ function publishExample() {
     ],
     user_message_prompt: 'Tell the world about Popups?'
   };
-  Mu.publish(post, function(published_post) {
+  FB.publish(post, function(published_post) {
     statusUpdate(
       'sans-session-info',
       'post was ' + (published_post ? '' : 'not ') + 'published.',
@@ -21,7 +21,7 @@ function publishExample() {
 
 function showUserInfo() {
   var userInfo = $('user-info');
-  if (!Mu.getSession()) {
+  if (!FB.getSession()) {
     userInfo.style.visibility = 'hidden';
   } else {
     var params = {
@@ -34,11 +34,11 @@ function showUserInfo() {
         'FROM ' +
           'user ' +
         'WHERE ' +
-          'uid=' + Mu.getSession().uid
+          'uid=' + FB.getSession().uid
       )
     };
 
-    Mu.api(params, function(info) {
+    FB.api(params, function(info) {
       if (info.error_code) {
         // bail
         return;
@@ -56,7 +56,7 @@ function showUserInfo() {
 
 function showSessionInfo() {
   var
-    session     = Mu.getSession(),
+    session     = FB.getSession(),
     sessionInfo = $('info');
 
   if (!session) {

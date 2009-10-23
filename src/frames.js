@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.frames
  * @requires mu.prelude
  *           mu.content
@@ -10,11 +10,11 @@
 /**
  * Browser Frames: Popup Windows, Iframe Dialogs and Hidden Iframes.
  *
- * @class Mu.Frames
+ * @class FB.Frames
  * @static
  * @access private
  */
-Mu.copy('Frames', {
+FB.copy('Frames', {
   _monitor     : null,
   _count       : 0,
   _active      : {},
@@ -30,7 +30,7 @@ Mu.copy('Frames', {
    * @param id  {String} the id to store the node against in _active
    */
   hidden: function(url, id) {
-    Mu.Frames._active[id] = Mu.Content.iframe(url, Mu.Content.hidden(''));
+    FB.Frames._active[id] = FB.Content.iframe(url, FB.Content.hidden(''));
   },
 
   /**
@@ -67,12 +67,12 @@ Mu.copy('Frames', {
         ',top=' + top
       );
 
-    Mu.Frames._active[id] = window.open(url, '_blank', features);
+    FB.Frames._active[id] = window.open(url, '_blank', features);
 
     // if there's a default close action, setup the monitor for it
-    if (id in Mu.Frames._defaultCb) {
-      Mu.Frames._count++;
-      Mu.Frames.winMonitor();
+    if (id in FB.Frames._defaultCb) {
+      FB.Frames._count++;
+      FB.Frames.winMonitor();
     }
   },
 
@@ -85,22 +85,22 @@ Mu.copy('Frames', {
    */
   winMonitor: function() {
     // shutdown if we have nothing to monitor
-    if (Mu.Frames._count < 1) {
-      window.clearInterval(Mu.Frames._monitor);
-      Mu.Frames._monitor = null;
+    if (FB.Frames._count < 1) {
+      window.clearInterval(FB.Frames._monitor);
+      FB.Frames._monitor = null;
       return;
     }
 
     // start the monitor if its not already running
-    if (!Mu.Frames._monitor) {
-      Mu.Frames._monitor = window.setInterval(Mu.Frames.winMonitor, 100);
+    if (!FB.Frames._monitor) {
+      FB.Frames._monitor = window.setInterval(FB.Frames.winMonitor, 100);
     }
 
     // check all open windows
-    for (var id in Mu.Frames._active) {
+    for (var id in FB.Frames._active) {
       // ignore prototype properties, and ones without a default callback
-      if (Mu.Frames._active.hasOwnProperty(id) && id in Mu.Frames._defaultCb) {
-        var win = Mu.Frames._active[id];
+      if (FB.Frames._active.hasOwnProperty(id) && id in FB.Frames._defaultCb) {
+        var win = FB.Frames._active[id];
 
         // ignore iframes
         try {
@@ -115,8 +115,8 @@ Mu.copy('Frames', {
         try {
           // found a closed window
           if (win.closed) {
-            Mu.Frames._count--;
-            Mu.Frames.xdRecv({ frame: id }, Mu.Frames._defaultCb[id]);
+            FB.Frames._count--;
+            FB.Frames.xdRecv({ frame: id }, FB.Frames._defaultCb[id]);
           }
         } catch(y) {
           // probably a permission error
@@ -139,11 +139,11 @@ Mu.copy('Frames', {
    */
   xdHandler: function(cb, frame, relation, isDefault) {
     if (isDefault) {
-      Mu.Frames._defaultCb[frame] = cb;
+      FB.Frames._defaultCb[frame] = cb;
     }
 
-    return Mu.XD.handler(function(data) {
-      Mu.Frames.xdRecv(data, cb);
+    return FB.XD.handler(function(data) {
+      FB.Frames.xdRecv(data, cb);
     }, relation) + '&frame=' + frame;
   },
 
@@ -155,7 +155,7 @@ Mu.copy('Frames', {
    * @param data {Object} the message parameters
    */
   xdRecv: function(data, cb) {
-    var frame = Mu.Frames._active[data.frame];
+    var frame = FB.Frames._active[data.frame];
 
     // iframe
     try {
@@ -181,8 +181,8 @@ Mu.copy('Frames', {
     }
 
     // cleanup and fire
-    delete Mu.Frames._active[data.frame];
-    delete Mu.Frames._defaultCb[data.frame];
+    delete FB.Frames._active[data.frame];
+    delete FB.Frames._defaultCb[data.frame];
     cb(data);
   },
 
@@ -200,12 +200,12 @@ Mu.copy('Frames', {
    */
   xdResult: function(cb, frame, target, isDefault) {
     return (
-      Mu.Frames.xdHandler(function(params) {
+      FB.Frames.xdHandler(function(params) {
         cb && cb(params.result &&
-                 params.result != Mu.Frames._resultToken &&
+                 params.result != FB.Frames._resultToken &&
                  JSON.parse(params.result));
       }, frame, target, isDefault) +
-      '&result=' + encodeURIComponent(Mu.Frames._resultToken)
+      '&result=' + encodeURIComponent(FB.Frames._resultToken)
     );
   }
 });

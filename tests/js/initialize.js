@@ -10,8 +10,8 @@ test(
   'api key',
 
   function() {
-    Mu.init({ apiKey: API_KEY, cookie: false });
-    ok(Mu._apiKey == API_KEY, 'should have the api key');
+    FB.init({ apiKey: API_KEY, cookie: false });
+    ok(FB._apiKey == API_KEY, 'should have the api key');
   }
 );
 
@@ -19,7 +19,7 @@ test(
   'get some status',
 
   function() {
-    Mu.loginStatus(function(response) {
+    FB.loginStatus(function(response) {
       ok(true, 'status callback got invoked');
       start();
     });
@@ -37,12 +37,12 @@ test(
 
   function() {
     action.onclick = function() {
-      Mu.loginStatus(function(response) {
+      FB.loginStatus(function(response) {
         if (response.session) {
-          Mu.api(
+          FB.api(
             { method: 'Auth.revokeAuthorization' },
             function(response) {
-              ok(!Mu.getSession(), 'notConnected user');
+              ok(!FB.getSession(), 'notConnected user');
               action.innerHTML = '';
               action.className = '';
               start();

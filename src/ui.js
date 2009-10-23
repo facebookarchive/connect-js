@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.ui
  * @requires mu.prelude
  *           mu.qs
@@ -9,19 +9,19 @@
 /**
  * UI Calls.
  *
- * @class Mu
+ * @class FB
  * @static
  * @access private
  */
-Mu.copy('', {
+FB.copy('', {
   /**
    * Sharing is the light weight way of distributing your content. As opposed
    * to the structured data explicitly given in the publish call, with share
    * you simply provide the URL and optionally a title::
    *
-   *    Mu.share('http://mu.daaku.org/', 'Mu Connect');
+   *    FB.share('http://mu.daaku.org/', 'Mu Connect');
    *
-   * Both arguments are optional, and just calling ``Mu.share()`` will share the
+   * Both arguments are optional, and just calling ``FB.share()`` will share the
    * current page.
    *
    * This call can be used without requiring the user to sign in.
@@ -32,12 +32,12 @@ Mu.copy('', {
    */
   share: function(u, title) {
     var
-      url = Mu._domain.www + 'sharer.php?' + Mu.QS.encode({
+      url = FB._domain.www + 'sharer.php?' + FB.QS.encode({
         title : title,
         u     : u || window.location.toString()
       });
 
-    Mu.Frames.popup(url, 575, 380);
+    FB.Frames.popup(url, 575, 380);
   },
 
   /**
@@ -102,7 +102,7 @@ Mu.copy('', {
    *       user_prompt_message: 'Share your thoughts about Mu Connect'
    *     };
    *
-   *     Mu.publish(
+   *     FB.publish(
    *       post,
    *       function(published_post) {
    *         if (published_post) {
@@ -142,21 +142,21 @@ Mu.copy('', {
 
     post = post || {};
     var
-      g   = Mu._apiKey && Mu.guid(),
-      url = Mu._domain.www + 'connect/prompt_feed.php?' + Mu.QS.encode({
+      g   = FB._apiKey && FB.guid(),
+      url = FB._domain.www + 'connect/prompt_feed.php?' + FB.QS.encode({
         action_links        : JSON.stringify(post.action_links || {}),
         actor_id            : post.actor_id,
-        api_key             : Mu._apiKey,
+        api_key             : FB._apiKey,
         attachment          : JSON.stringify(post.attachment || {}),
-        callback            : g && Mu.Frames.xdResult(cb, g, 'opener', true),
+        callback            : g && FB.Frames.xdResult(cb, g, 'opener', true),
         message             : post.message,
         preview             : 1,
-        session_key         : Mu._session && Mu._session.session_key,
+        session_key         : FB._session && FB._session.session_key,
         target_id           : post.target_id,
         user_message_prompt : post.user_message_prompt
       });
 
-    Mu.Frames.popup(url, 550, 242, g);
+    FB.Frames.popup(url, 550, 242, g);
   },
 
   /**
@@ -168,15 +168,15 @@ Mu.copy('', {
    */
   addFriend: function(id, cb) {
     var
-      g   = Mu.guid(),
-      url = Mu._domain.www + 'addfriend.php?' + Mu.QS.encode({
-        api_key     : Mu._apiKey,
+      g   = FB.guid(),
+      url = FB._domain.www + 'addfriend.php?' + FB.QS.encode({
+        api_key     : FB._apiKey,
         display     : 'dialog',
         id          : id,
-        next        : Mu.Frames.xdResult(cb, g, 'opener', true),
-        session_key : Mu._session.session_key
+        next        : FB.Frames.xdResult(cb, g, 'opener', true),
+        session_key : FB._session.session_key
       });
 
-    Mu.Frames.popup(url, 565, 240, g);
+    FB.Frames.popup(url, 565, 240, g);
   }
 });

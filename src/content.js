@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.content
  * @requires mu.prelude
  */
@@ -8,11 +8,11 @@
  * "Content" is a very flexible term. Helpers for things like hidden
  * DOM content, iframes and popups.
  *
- * @class Mu.Content
+ * @class FB.Content
  * @static
  * @access private
  */
-Mu.copy('Content', {
+FB.copy('Content', {
   _root       : null,
   _hiddenRoot : null,
 
@@ -27,15 +27,15 @@ Mu.copy('Content', {
   append: function(content, root) {
     // setup the root node, creating it if necessary
     if (!root) {
-      if (!Mu.Content._root) {
+      if (!FB.Content._root) {
         root = document.getElementById('mu-root');
         if (!root) {
           root = document.createElement('div');
           root.id = 'mu-root';
-          Mu.Content._root = document.body.appendChild(root);
+          FB.Content._root = document.body.appendChild(root);
         }
       } else {
-        root = Mu.Content._root;
+        root = FB.Content._root;
       }
     }
 
@@ -56,17 +56,17 @@ Mu.copy('Content', {
    * @returns {Node} the node that was just appended
    */
   hidden: function(content) {
-    if (!Mu.Content._hiddenRoot) {
+    if (!FB.Content._hiddenRoot) {
       var
         hiddenRoot = document.createElement('div'),
         style      = hiddenRoot.style;
       style.position = 'absolute';
       style.top      = '-10000px';
       style.width    = style.height = 0;
-      Mu.Content._hiddenRoot = Mu.Content.append(hiddenRoot);
+      FB.Content._hiddenRoot = FB.Content.append(hiddenRoot);
     }
 
-    return Mu.Content.append(content, Mu.Content._hiddenRoot);
+    return FB.Content.append(content, FB.Content._hiddenRoot);
   },
 
   /**

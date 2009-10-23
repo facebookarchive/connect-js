@@ -19,21 +19,21 @@
     <script src="http://mu.daaku.org/pkg/core.js"></script>
     <script>
       // initialize the library with the API key
-      Mu.init({ apiKey: '48f06bc570aaf9ed454699ec4fe416df' });
+      FB.init({ apiKey: '48f06bc570aaf9ed454699ec4fe416df' });
 
       // fetch the status on load
-      Mu.loginStatus(handleSessionResponse);
+      FB.loginStatus(handleSessionResponse);
 
       YAHOO.util.Event.addListener('login', 'click', function() {
-        Mu.login(handleSessionResponse);
+        FB.login(handleSessionResponse);
       });
 
       YAHOO.util.Event.addListener('logout', 'click', function() {
-        Mu.logout(handleSessionResponse);
+        FB.logout(handleSessionResponse);
       });
 
       YAHOO.util.Event.addListener('disconnect', 'click', function() {
-        Mu.api({ method: 'Auth.revokeAuthorization' }, function(response) {
+        FB.api({ method: 'Auth.revokeAuthorization' }, function(response) {
           clearDisplay();
         });
       });
@@ -52,10 +52,10 @@
         }
 
         // if we have a session, query for the user's profile picture and name
-        Mu.api(
+        FB.api(
           {
             method: 'fql.query',
-            query: 'SELECT name, pic FROM profile WHERE id=' + Mu.getSession().uid
+            query: 'SELECT name, pic FROM profile WHERE id=' + FB.getSession().uid
           },
           function(response) {
             var user = response[0];

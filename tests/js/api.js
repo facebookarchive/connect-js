@@ -5,7 +5,7 @@ test(
   'check for zuck\'s name',
 
   function() {
-    Mu.RestServer.flash(
+    FB.RestServer.flash(
       {
         method: 'fql.query',
         query: 'SELECT name FROM user WHERE uid=4'

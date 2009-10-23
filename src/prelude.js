@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @prelude
  * @provides mu.prelude
  */
@@ -11,19 +11,19 @@
  *                                                            -- Tim Peters
  *
  *
- * @class Mu
+ * @class FB
  * @static
  * @access private
  */
-if (!window.Mu) {
-  Mu = {
+if (!window.FB) {
+  FB = {
     // use the init method to set these values correctly
     _apiKey     : null,
     _session    : null,
     _userStatus : 'unknown', // or 'notConnected' or 'connected'
 
     // enable debug logging. this can be turned on via a URL parameter or when
-    // calling Mu.init
+    // calling FB.init
     _debug : window.location.toString().indexOf('mu_debug=1') > -1,
 
     // the various domains needed for using Connect
@@ -45,7 +45,7 @@ if (!window.Mu) {
     /**
      * Copy stuff from one object to another.
      *
-     * If ``target`` is a ``String``, it will be resolved using the Mu object
+     * If ``target`` is a ``String``, it will be resolved using the FB object
      * as the root.
      *
      * @access private
@@ -58,7 +58,7 @@ if (!window.Mu) {
       // a string means a dot separated object that gets appended to, or created
       if (typeof target == 'string') {
         var
-          root = Mu,
+          root = FB,
           parts = target.split('.');
 
         for (var i=0, l=parts.length; i<l; i++) {
@@ -103,7 +103,7 @@ if (!window.Mu) {
      * @param args {Object} the thing to log
      */
     log: function(args) {
-      if (Mu._debug && window.console) {
+      if (FB._debug && window.console) {
         console.log(args);
       }
     }

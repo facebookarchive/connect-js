@@ -9,7 +9,7 @@ test(
       var post = {
         message: 'I am Test'
       };
-      Mu.publish(post, function(published_post) {
+      FB.publish(post, function(published_post) {
         ok(published_post, 'expect a post object back');
         ok(published_post.post_id, 'expect a post_id in object');
         ok(published_post.message == post.message, 'expect the message in object');
@@ -34,7 +34,7 @@ test(
       var post = {
         message: 'I am Test'
       };
-      Mu.publish(post, function(result) {
+      FB.publish(post, function(result) {
         ok(!result, 'expect falsy back');
         action.innerHTML = '';
         action.className = '';
@@ -57,7 +57,7 @@ test(
       var post = {
         message: 'I am Test'
       };
-      Mu.publish(post);
+      FB.publish(post);
       ok(true, 'should not get a error');
       action.innerHTML = '';
       action.className = '';
@@ -79,7 +79,7 @@ test(
       var post = {
         message: 'I am Test'
       };
-      Mu.publish(post, function(result) {
+      FB.publish(post, function(result) {
         ok(!result, 'expect falsy back');
         action.innerHTML = '';
         action.className = '';

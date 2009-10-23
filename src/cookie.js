@@ -1,5 +1,5 @@
 /**
- * @module Mu
+ * @module FB
  * @provides mu.cookie
  * @requires mu.prelude
  *           mu.qs
@@ -9,11 +9,11 @@
 /**
  * Cookie Support.
  *
- * @class Mu.Cookie
+ * @class FB.Cookie
  * @static
  * @access private
  */
-Mu.copy('Cookie', {
+FB.copy('Cookie', {
   /**
    * Holds the base_domain property to match the Cookie domain.
    *
@@ -30,11 +30,11 @@ Mu.copy('Cookie', {
    * @returns {Object} the session object from the cookie if one is found
    */
   init: function() {
-    if (!Mu.Cookie._initDone) {
-      Mu.Event.on('auth.sessionChange', function(response) {
-        Mu.Cookie.set(response.session);
+    if (!FB.Cookie._initDone) {
+      FB.Event.on('auth.sessionChange', function(response) {
+        FB.Cookie.set(response.session);
       });
-      Mu.Cookie._initDone = true;
+      FB.Cookie._initDone = true;
     }
   },
 
@@ -46,17 +46,17 @@ Mu.copy('Cookie', {
    */
   load: function() {
     var
-      cookie = document.cookie.match('\\b' +'fbs_' + Mu._apiKey+ '=([^;]*)\\b'),
+      cookie = document.cookie.match('\\b' +'fbs_' + FB._apiKey+ '=([^;]*)\\b'),
       session,
       expires;
 
     if (cookie) {
       // url encoded session
-      session = Mu.QS.decode(cookie[1]);
+      session = FB.QS.decode(cookie[1]);
       // decodes as a string, convert to a number
       expires = session.expires = parseInt(session.expires, 10);
       // capture base_domain for use when we need to clear
-      Mu.Cookie._domain = session.base_domain;
+      FB.Cookie._domain = session.base_domain;
 
       // dont use expired cookies, not that they should be around in the
       // first place. expires is 0 when offline_access has been granted.
@@ -78,13 +78,13 @@ Mu.copy('Cookie', {
    */
   setRaw: function(val, timestamp, domain) {
     document.cookie =
-      'fbs_' + Mu._apiKey + '=' + val +
+      'fbs_' + FB._apiKey + '=' + val +
       '; expires=' + new Date(timestamp * 1000).toGMTString() +
       '; path=/' +
       (domain ? '; domain=.' + domain : '');
 
     // capture domain for use when we need to clear
-    Mu.Cookie._domain = domain;
+    FB.Cookie._domain = domain;
   },
 
   /**
@@ -95,11 +95,11 @@ Mu.copy('Cookie', {
    */
   set: function(session) {
     session
-      ? Mu.Cookie.setRaw(
-          Mu.QS.encode(session),
+      ? FB.Cookie.setRaw(
+          FB.QS.encode(session),
           session.expires,
           session.base_domain)
-      : Mu.Cookie.clear();
+      : FB.Cookie.clear();
   },
 
   /**
@@ -108,6 +108,6 @@ Mu.copy('Cookie', {
    * @access private
    */
   clear: function() {
-    Mu.Cookie.setRaw('', 0, Mu.Cookie._domain);
+    FB.Cookie.setRaw('', 0, FB.Cookie._domain);
   }
 });
