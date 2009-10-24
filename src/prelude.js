@@ -102,8 +102,8 @@ if (!window.FB) {
      * @access private
      * @param args {Object} the thing to log
      */
-    log: function(args) {
-      if (FB._debug && window.console) {
+    log: function(args, debug) {
+      if ((!debug || FB._debug) && window.console) {
         console.log(args);
       }
 
