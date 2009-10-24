@@ -1,5 +1,5 @@
 /**
- * Mu is a JavaScript library that provides Facebook Connect integration.
+ * JavaScript library providing Facebook Connect integration.
  *
  * @module FB
  * @provides mu.core
@@ -41,6 +41,7 @@ FB.copy('', {
    * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
    * session  Object  Use specified session object.       *Optional*   ``null``
    * debug    Boolean ``true`` to enable debug messages.  *Optional*   ``false``
+   * status   Boolean ``true`` to fetch fresh status. .   *Optional*   ``false``
    * ======== ======= =================================== ============ =========
    *
    * *Note*: `FB.publish()`_ and `FB.share()`_ can be used without
@@ -76,5 +77,10 @@ FB.copy('', {
 
     // set the session
     FB.Auth.setSession(opts.session, opts.session ? 'connected' : 'unknown');
+
+    // load a fresh session if requested
+    if (opts.status) {
+      FB.loginStatus();
+    }
   }
 });
