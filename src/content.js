@@ -97,14 +97,14 @@ FB.copy('Content', {
 
     // In IE, we must set the iframe src _before_ injecting the node into the
     // document to prevent the click noise.
-    if (document.attachEvent) {
+    if (node.attachEvent) {
       node.setAttribute('src', url);
     }
     node = root.appendChild(node);
     // For Firefox, we must set the iframe src _after_ injecting the node into
     // the document to prevent caching issues. This also works fine in other
     // browsers.
-    if (!document.attachEvent) {
+    if (!node.attachEvent) {
       node.setAttribute('src', url);
     }
 
