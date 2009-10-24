@@ -11,7 +11,7 @@ test(
       ok(true, 'subscriber got called');
       expected -= 1;
     };
-    FB.Event.on('auth.sessionChange', cb);
+    FB.Event.subscribe('auth.sessionChange', cb);
 
     action.onclick = function() {
       // 1

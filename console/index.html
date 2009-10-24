@@ -118,7 +118,7 @@
     <div id="fb-root"></div>
     <script>
       // monitor for any change
-      FB.Event.on('auth.sessionChange', gotStatus);
+      FB.Event.subscribe('auth.sessionChange', gotStatus);
 
       // init
       FB.init({

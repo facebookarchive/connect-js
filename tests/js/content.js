@@ -14,7 +14,7 @@ test(
       ok(msg == 'The "fb-root" div has not been created.',
          'got a log message that the root was not found.');
     };
-    FB.Event.on('fb.log', logCb);
+    FB.Event.subscribe('fb.log', logCb);
     var html = '<div id="test-div">test div</div>';
     var div = FB.Content.append(html);
     ok(!div, 'div was not inserted');

@@ -38,7 +38,7 @@ FB.copy('Event', {
   },
 
   /**
-   * Removes subscribers, inverse of FB.Event.on().
+   * Removes subscribers, inverse of FB.Event.subscribe().
    *
    * @access public
    * @param name    {String}   name of the event

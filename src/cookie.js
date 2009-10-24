@@ -31,7 +31,7 @@ FB.copy('Cookie', {
    */
   init: function() {
     if (!FB.Cookie._initDone) {
-      FB.Event.on('auth.sessionChange', function(response) {
+      FB.Event.subscribe('auth.sessionChange', function(response) {
         FB.Cookie.set(response.session);
       });
       FB.Cookie._initDone = true;
