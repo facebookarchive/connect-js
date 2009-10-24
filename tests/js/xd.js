@@ -31,9 +31,10 @@ test(
       ok(response.answer == 42, 'expect the answer');
       start();
     }, 'parent') + '&answer=42';
-    FB.Frames.hidden(url, 'a');
 
     FB.XD._transport = oldTransport;
+
+    FB.Frames.hidden(url, 'a');
 
     expect(1);
     stop();
@@ -57,9 +58,10 @@ test(
       ok(response.answer == 42, 'expect the answer');
       start();
     }, 'parent') + '&answer=42';
-    FB.Frames.hidden(url, 'a');
 
     FB.XD._transport = oldTransport;
+
+    FB.Frames.hidden(url, 'a');
 
     expect(1);
     stop();
