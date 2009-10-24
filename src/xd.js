@@ -80,9 +80,8 @@ FB.copy('XD', {
     // in fragment mode, the url is the current page and a fragment with a
     // magic token
     if (FB.XD._transport == 'fragment') {
-      var
-        xdProxy = window.location.toString(),
-        poundIndex = xdProxy.indexOf('#');
+      xdProxy = window.location.toString();
+      var poundIndex = xdProxy.indexOf('#');
       if (poundIndex > 0) {
         xdProxy = xdProxy.substr(0, poundIndex);
       }
