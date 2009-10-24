@@ -79,13 +79,26 @@ test(
 module('signature flow using pre-baked session');
 ////////////////////////////////////////////////////////////////////////////////
 test(
-  'check for zuck\'s name using signed api request',
+  'check for invalid session message',
 
   function() {
+    // this is strange, in that we use an error to assert something is working
+    // correctly. basically, we expect a session invalid error as opposed to a
+    // signature invalid error.
     var oldStatus = FB._userStatus;
     var oldSession = FB._session;
-    FB.Auth.setSession(VALID_OFFLINE_SESSION, 'connected');
-    runAPI(FB.api);
+    FB.Auth.setSession(EXPIRED_SESSION, 'connected');
+    FB.api(
+      {
+        method: 'fql.query',
+        query: 'SELECT name FROM user WHERE uid=4'
+      },
+      function(r) {
+        ok(r.error_code == 102, 'should get a session invalid error');
+        start();
+      }
+    );
+
     expect(1);
     stop();
     FB.Auth.setSession(oldSession, oldStatus);

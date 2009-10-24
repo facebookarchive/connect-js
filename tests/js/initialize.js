@@ -1,5 +1,5 @@
 var API_KEY = '48f06bc570aaf9ed454699ec4fe416df';
-var VALID_OFFLINE_SESSION = {
+var EXPIRED_SESSION = {
   session_key : "5070653ddbe6a2efbfb23388-499433185",
   uid         : 499433185,
   expires     : 0,
