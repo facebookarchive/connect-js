@@ -207,7 +207,7 @@ FB.copy('XD', {
         //
         // this works independent of the module being present or not, or being
         // loaded before or after
-        FB.loginStatus = FB.api = function() {};
+        FB.init = FB.loginStatus = FB.api = function() {};
 
         // display none helps prevent loading of some stuff
         document.body.style.display = 'none';
