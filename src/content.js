@@ -87,7 +87,12 @@ FB.copy('Content', {
 
     // setup onload notification if needed
     if (onload) {
-      node.onload = onload;
+      if (node.attachEvent) {
+        // IE is special
+        node.attachEvent('onload', onload);
+      } else {
+        node.onload = onload;
+      }
     }
 
     // In IE, we must set the iframe src _before_ injecting the node into the
