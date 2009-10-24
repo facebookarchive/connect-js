@@ -30,7 +30,9 @@ FB.copy('Frames', {
    * @param id  {String} the id to store the node against in _active
    */
   hidden: function(url, id) {
-    FB.Frames._active[id] = FB.Content.iframe(url, FB.Content.hidden(''));
+    FB.Content.iframe(url, FB.Content.hidden(''), function(node) {
+      FB.Frames._active[id] = node;
+    });
   },
 
   /**

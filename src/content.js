@@ -15,6 +15,7 @@
 FB.copy('Content', {
   _root       : null,
   _hiddenRoot : null,
+  _callbacks  : {},
 
   /**
    * Append some content.
@@ -78,36 +79,41 @@ FB.copy('Content', {
    * @returns {Node} the node that was just appended
    */
   iframe: function(url, root, onload) {
-    var node = document.createElement('iframe');
+    var
+      guid = FB.guid(),
+      html = (
+        '<iframe' +
+          ' src="' + url + '"' +
+          ' frameborder="0"' +
+          ' allowtransparency="true"' +
+          ' style="border: none;"' +
+          ' onload="FB.Content._callbacks.' + guid + '()"' +
+        '></iframe>'
+      ),
+      div = FB.Content.append('', root);
 
-    // general goodness
-    node.frameborder = '0';
-    node.allowtransparency = 'true';
-    node.style.border = 'none';
+    FB.Content._callbacks[guid] = function() {
+      onload && onload(div.firstChild);
+      delete FB.Content._callbacks[guid];
+    };
 
-    // setup onload notification if needed
-    if (onload) {
-      if (node.attachEvent) {
-        // IE is special
-        node.attachEvent('onload', onload);
-      } else {
-        node.onload = onload;
-      }
+    // There is an IE bug with iframe caching that we have to work around: We
+    // need to load a dummy iframe to consume the initial cache stream.  The
+    // setTimeout the actually sets the content to the HTML we created above,
+    // and because its the second load, we no longer suffer from cache
+    // sickness. It must be javascript:false instead of about:blank, otherwise
+    // IE6 will complain in https.
+    if (document.attachEvent) {
+      div.innerHTML = '<iframe src="javascript:false"></iframe>';
     }
 
-    // In IE, we must set the iframe src _before_ injecting the node into the
-    // document to prevent the click noise.
-    if (node.attachEvent) {
-      node.setAttribute('src', url);
-    }
-    node = root.appendChild(node);
-    // For Firefox, we must set the iframe src _after_ injecting the node into
-    // the document to prevent caching issues. This also works fine in other
-    // browsers.
-    if (!node.attachEvent) {
-      node.setAttribute('src', url);
-    }
-
-    return node;
+    // you may wonder why this is a setTimeout. read the IE source if you can
+    // somehow get your hands on it, and tell me if you figure it out. this is
+    // a continuation of the above trick which apparently does not work if the
+    // innerHTML is changed right away. we need to break apart the two with
+    // this setTimeout 0 which seems to fix the issue.
+    window.setTimeout(function() {
+      div.innerHTML = html;
+    }, 0);
   }
 });

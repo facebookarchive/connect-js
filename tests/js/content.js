@@ -97,11 +97,11 @@ test(
     var
       url = 'http://static.ak.fbcdn.net/connect/xd_proxy.php',
       root = document.getElementById('fb-root'),
-      onload = function() {
+      onload = function(node) {
         ok(true, 'onload callback was invoked');
-        iframe.parentNode.removeChild(iframe);
+        node.parentNode.removeChild(node);
         start();
-      },
-      iframe = FB.Content.iframe(url, root, onload);
+      };
+    FB.Content.iframe(url, root, onload);
   }
 );
