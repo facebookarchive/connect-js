@@ -51,18 +51,12 @@ FB.copy('Cookie', {
       expires;
 
     if (cookie) {
-      // url encoded session
+      // url encoded session stored as "sub-cookies"
       session = FB.QS.decode(cookie[1]);
       // decodes as a string, convert to a number
       expires = session.expires = parseInt(session.expires, 10);
       // capture base_domain for use when we need to clear
       FB.Cookie._domain = session.base_domain;
-
-      // dont use expired cookies, not that they should be around in the
-      // first place. expires is 0 when offline_access has been granted.
-      if (expires != 0 && new Date(expires * 1000) < new Date()) {
-        session = null;
-      }
     }
 
     return session;
