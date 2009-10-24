@@ -55,7 +55,7 @@ FB.copy('', {
    * @param opts    {Object} options
    */
   init: function(opts) {
-    if (!opts.apiKey) {
+    if (!opts || !opts.apiKey) {
       FB.log('FB.init() called without an apiKey.');
       return;
     }
