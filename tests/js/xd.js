@@ -10,6 +10,7 @@ test(
 
     var url = FB.XD.handler(function(response) {
       ok(response.answer == 42, 'expect the answer');
+      FB.Frames.xdRecv({frame: 'a'}, function() {});
       start();
     }, 'parent') + '&answer=42';
     FB.Frames.hidden(url, 'a');
@@ -29,6 +30,7 @@ test(
 
     var url = FB.XD.handler(function(response) {
       ok(response.answer == 42, 'expect the answer');
+      FB.Frames.xdRecv({frame: 'a'}, function() {});
       start();
     }, 'parent') + '&answer=42';
 
@@ -56,6 +58,7 @@ test(
 
     var url = FB.XD.handler(function(response) {
       ok(response.answer == 42, 'expect the answer');
+      FB.Frames.xdRecv({frame: 'a'}, function() {});
       start();
     }, 'parent') + '&answer=42';
 
