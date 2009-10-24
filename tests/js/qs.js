@@ -17,10 +17,12 @@ test(
   'query string encoding with custom separator',
 
   function() {
-    ok(FB.QS.encode({}, ';') == '', 'empty object should give back empty string');
+    ok(FB.QS.encode({}, ';') == '',
+       'empty object should give back empty string');
     ok(FB.QS.encode({a: 1}, ';') == 'a=1', 'single key value');
     ok(FB.QS.encode({a: 1, b: 2}, ';') == 'a=1;b=2', 'multiple key value');
-    ok(FB.QS.encode({b: 2, a: 1}, ';') == 'a=1;b=2', 'sorted multiple key value');
+    ok(FB.QS.encode({b: 2, a: 1}, ';') == 'a=1;b=2',
+       'sorted multiple key value');
   }
 );
 
@@ -30,7 +32,8 @@ test(
   function() {
     var params = {'a b c': 'd e f'};
     ok(FB.QS.encode(params) == 'a%20b%20c=d%20e%20f', 'encoded query string');
-    ok(FB.QS.encode(params, '&', false) == 'a b c=d e f', 'unencoded query string');
+    ok(FB.QS.encode(params, '&', false) == 'a b c=d e f',
+       'unencoded query string');
   }
 );
 

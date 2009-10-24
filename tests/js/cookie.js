@@ -41,10 +41,12 @@ test(
       base_domain: document.domain,
       answer: 42
     });
-    ok(document.cookie.match('fbs_' + cookieApiKey), 'found in document.cookie');
+    ok(document.cookie.match('fbs_' + cookieApiKey),
+       'found in document.cookie');
     ok(FB.Cookie.load().answer == 42, 'found the answer');
     FB.Cookie.clear();
-    ok(!document.cookie.match('fbs_' + cookieApiKey), 'not found in document.cookie');
+    ok(!document.cookie.match('fbs_' + cookieApiKey),
+       'not found in document.cookie');
     ok(!FB.Cookie.load(), 'no cookie loaded');
 
     FB._apiKey = origApiKey;
@@ -63,7 +65,8 @@ test(
       base_domain: document.domain,
       answer: 42
     });
-    ok(!document.cookie.match('fbs_' + cookieApiKey), 'not found in document.cookie');
+    ok(!document.cookie.match('fbs_' + cookieApiKey),
+       'not found in document.cookie');
     ok(!FB.Cookie.load(), 'no cookie loaded');
 
     FB._apiKey = origApiKey;

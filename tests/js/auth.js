@@ -162,7 +162,8 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
-        ok(response.perms == 'offline_access', 'should get offline_access perms');
+        ok(response.perms == 'offline_access',
+           'should get offline_access perms');
         ok(response.session.expires == 0, 'session.expires should be 0');
         action.innerHTML = '';
         action.className = '';
@@ -235,7 +236,8 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
-        ok(response.perms == 'offline_access', 'should get offline_access perms');
+        ok(response.perms == 'offline_access',
+           'should get offline_access perms');
         ok(response.session.expires == 0, 'session.expires should be 0');
         action.innerHTML = '';
         action.className = '';

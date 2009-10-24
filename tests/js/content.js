@@ -31,7 +31,8 @@ test(
   function() {
     var html = '<div id="test-div">test div</div>';
     var div = FB.Content.append(html);
-    ok(div.firstChild.id == 'test-div', 'expect the correct id back in the first child');
+    ok(div.firstChild.id == 'test-div',
+       'expect the correct id back in the first child');
     ok(document.getElementById('test-div'), 'expect it to be in the DOM');
     ok(document.getElementById('test-div').innerHTML == 'test div',
        'expect the correct inner html');
@@ -65,7 +66,8 @@ test(
     div.innerHTML = 'test div';
     var returnedDiv = FB.Content.append(div, root);
     ok(returnedDiv.id == 'test-div', 'expect the correct id back');
-    ok(root.firstChild.id == 'test-div', 'expect the correct id back in the firstChild');
+    ok(root.firstChild.id == 'test-div',
+       'expect the correct id back in the firstChild');
   }
 );
 
@@ -75,7 +77,8 @@ test(
   function() {
     var html = '<div id="test-div">test div</div>';
     var div = FB.Content.hidden(html);
-    ok(div.firstChild.id == 'test-div', 'expect the correct id back in the first child');
+    ok(div.firstChild.id == 'test-div',
+       'expect the correct id back in the first child');
     ok(document.getElementById('test-div'), 'expect it to be in the DOM');
     ok(document.getElementById('test-div').innerHTML == 'test div',
        'expect the correct inner html');
