@@ -27,7 +27,7 @@ FB.copy('Event', {
    * @param name    {String}   name of the event
    * @param cb      {Function} the handler function
    */
-  on: function(name, cb) {
+  subscribe: function(name, cb) {
     var S = FB.Event._subscribers;
 
     if (!S[name]) {
