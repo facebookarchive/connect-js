@@ -23,7 +23,7 @@ FB.copy('', {
    * Initialize the library::
    *
    *    <div id="fb-root"></div>
-   *    <script src="http://mu.daaku.org/pkg/core.js"></script>
+   *    <script src="http://mu.daaku.org/m.js"></script>
    *    <script>
    *      FB.init({ apiKey: 'YOUR API KEY' });
    *    </script>
