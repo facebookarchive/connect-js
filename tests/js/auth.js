@@ -102,7 +102,7 @@ test(
 
     // expected log call
     var cb = function(msg) {
-      ok(msg == 'Calling FB.login() when user is already connected.',
+      ok(msg == 'FB.login() called when user is already connected.',
          'got expected log message');
       FB.Event.unsubscribe('fb.log', cb);
     };

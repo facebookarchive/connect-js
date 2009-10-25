@@ -55,7 +55,7 @@ FB.copy('', {
    */
   loginStatus: function(cb, force) {
     if (!FB._apiKey) {
-      FB.log('FB.loginStatus() called before calling FB.init()');
+      FB.log('FB.loginStatus() called before calling FB.init().');
       return;
     }
 
@@ -160,14 +160,14 @@ FB.copy('', {
    */
   login: function(cb, perms) {
     if (!FB._apiKey) {
-      FB.log('FB.login() called before calling FB.init()');
+      FB.log('FB.login() called before calling FB.init().');
       return;
     }
 
     // if we already have a session and permissions are not being requested, we
     // just fire the callback
     if (FB._session && !perms) {
-      FB.log('Calling FB.login() when user is already connected.');
+      FB.log('FB.login() called when user is already connected.');
       cb && cb({ status: FB._userStatus, session: FB._session });
       return;
     }
@@ -208,7 +208,7 @@ FB.copy('', {
    */
   logout: function(cb) {
     if (!FB._apiKey) {
-      FB.log('FB.logout() called before calling FB.init()');
+      FB.log('FB.logout() called before calling FB.init().');
       return;
     }
 

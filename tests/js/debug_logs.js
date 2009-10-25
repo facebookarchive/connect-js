@@ -17,7 +17,7 @@ test(
   function() {
     expect(1);
     stop();
-    expectLog('FB.loginStatus() called before calling FB.init()');
+    expectLog('FB.loginStatus() called before calling FB.init().');
     FB.loginStatus();
   }
 );
@@ -28,7 +28,7 @@ test(
   function() {
     expect(1);
     stop();
-    expectLog('FB.login() called before calling FB.init()');
+    expectLog('FB.login() called before calling FB.init().');
     FB.login();
   }
 );
@@ -39,7 +39,7 @@ test(
   function() {
     expect(1);
     stop();
-    expectLog('FB.logout() called before calling FB.init()');
+    expectLog('FB.logout() called before calling FB.init().');
     FB.logout();
   }
 );
