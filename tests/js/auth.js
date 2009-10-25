@@ -5,16 +5,12 @@ test(
   'should start with no session',
 
   function() {
-    action.onclick = function() {
-      FB.loginStatus(function(response) {
-        ok(!response.session, 'should not get a session');
-        action.innerHTML = '';
-        action.className = '';
-        start();
-      });
-    };
-    action.innerHTML = 'Click here to get the Status';
-    action.className = 'get-status';
+    FB.loginStatus(function(response) {
+      ok(!response.session, 'should not get a session');
+      action.innerHTML = '';
+      action.className = '';
+      start();
+    });
 
     expect(1);
     stop();
@@ -94,6 +90,29 @@ test(
 
     expect(2);
     stop();
+  }
+);
+
+test(
+  'FB.login should return the session right away and log a message',
+
+  function() {
+    expect(3);
+    stop();
+
+    // expected log call
+    var cb = function(msg) {
+      ok(msg == 'Calling FB.login() when user is already connected.',
+         'got expected log message');
+      FB.Event.unsubscribe('fb.log', cb);
+    };
+    FB.Event.subscribe('fb.log', cb);
+
+    FB.login(function(response) {
+      ok(response.session, 'should get a session');
+      ok(response.status == 'connected', 'should be connected');
+      start();
+    });
   }
 );
 

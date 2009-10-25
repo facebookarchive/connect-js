@@ -164,6 +164,14 @@ FB.copy('', {
       return;
     }
 
+    // if we already have a session and permissions are not being requested, we
+    // just fire the callback
+    if (FB._session && !perms) {
+      FB.log('Calling FB.login() when user is already connected.');
+      cb && cb({ status: FB._userStatus, session: FB._session });
+      return;
+    }
+
     var
       xdHandler = FB.Auth.xdHandler,
       g = FB.guid(),
