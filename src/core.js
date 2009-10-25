@@ -41,7 +41,7 @@ FB.copy('', {
    * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
    * logging  Boolean ``false`` to disable logging.       *Optional*   ``true``
    * session  Object  Use specified session object.       *Optional*   ``null``
-   * status   Boolean ``true`` to fetch fresh status. .   *Optional*   ``false``
+   * status   Boolean ``true`` to fetch fresh status.     *Optional*   ``false``
    * ======== ======= =================================== ============ =========
    *
    * *Note*: `FB.publish()`_ and `FB.share()`_ can be used without
