@@ -76,17 +76,15 @@ FB.copy('Content', {
    * @param content {String|Node} a DOM Node or HTML string
    * @param root    {Node}        node to insert the iframe into
    * @param onload  {Function}    optional onload callback
+   * @param extra   {String}      optional extra attributes string for the tag
    * @returns {Node} the node that was just appended
    */
-  iframe: function(url, root, onload) {
+  iframe: function(url, root, onload, extra) {
     var
       guid = FB.guid(),
       html = (
-        '<iframe' +
+        '<iframe ' + (extra || '') +
           ' src="' + url + '"' +
-          ' frameborder="0"' +
-          ' allowtransparency="true"' +
-          ' style="border: none;"' +
           ' onload="FB.Content._callbacks.' + guid + '()"' +
         '></iframe>'
       ),
