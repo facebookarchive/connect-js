@@ -48,8 +48,8 @@ FB.copy('', {
    * registering an application or calling this method. If you are
    * using an API key, all methods **must** be called after this method.
    *
-   * .. _FB.publish(): #method_publish
-   * .. _FB.share(): #method_share
+   * .. _FB.publish(): #method_FB.publish
+   * .. _FB.share(): #method_FB.share
    *
    * @access public
    * @param opts    {Object} options

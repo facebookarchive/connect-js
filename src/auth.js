@@ -41,13 +41,28 @@ FB.copy('', {
    * on load based on the session from www.facebook.com. For more
    * advanced use, you may with to monitor for various events.
    *
-   * Events:
+   * **Events**
+   *
    *  - auth.login
    *  - auth.logout
    *  - auth.sessionChange
    *  - auth.statusChange
    *
-   * FIXME interlink documentation to events.
+   * The `FB.Event.subscribe()`_ and `FB.Event.unsubscribe()`_ functions are
+   * used to subscribe to these events. For example::
+   *
+   *   FB.Event.subscribe('auth.login', function(response) {
+   *     // do something with response
+   *   });
+   *
+   * The response object returned to all these events is the same as the
+   * response from `FB.loginStatus()`_, `FB.login()`_ or `FB.logout()`_.
+   *
+   * .. _FB.Event.subscribe(): #method_FB.Event.subscribe
+   * .. _FB.Event.unsubscribe(): #method_FB.Event.unsubscribe
+   * .. _FB.loginStatus(): #method_FB.loginStatus
+   * .. _FB.login(): #method_FB.login
+   * .. _FB.logout(): #method_FB.logout
    *
    * @access public
    * @param cb     {Function} the callback function

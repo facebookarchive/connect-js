@@ -23,6 +23,13 @@ FB.copy('Event', {
   /**
    * Bind an event handler to a given event name.
    *
+   * For example, suppose you want to get notified whenever the session
+   * changes::
+   *
+   *   FB.Event.subscribe('auth.sessionChange', function(response) {
+   *     // do something with response.session
+   *   });
+   *
    * @access public
    * @param name    {String}   name of the event
    * @param cb      {Function} the handler function
@@ -39,6 +46,18 @@ FB.copy('Event', {
 
   /**
    * Removes subscribers, inverse of FB.Event.subscribe().
+   *
+   * Removing a subscriber is basically the same as adding one. You need to
+   * pass the same event name and function to unsubscribe that you passed into
+   * subscribe. If we use a similar example to FB.Event.subscribe, we get::
+   *
+   *   var onSessionChange = function(response) {
+   *     // do something with response.session
+   *   };
+   *   FB.Event.subscribe('auth.sessionChange', onSessionChange);
+   *
+   *   // sometime later in your code you dont want to get notified anymore
+   *   FB.Event.unsubscribe('auth.sessionChange', onSessionChange);
    *
    * @access public
    * @param name    {String}   name of the event
