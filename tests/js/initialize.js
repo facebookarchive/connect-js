@@ -15,22 +15,6 @@ module('initialize');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
-  'sans api key',
-
-  function() {
-    expect(1);
-
-    var logCb = function(msg) {
-      ok(msg == 'FB.init() called without an apiKey.',
-         'got the expected log message that the apiKey was not found.');
-    };
-    FB.Event.subscribe('fb.log', logCb);
-    FB.init();
-    FB.Event.unsubscribe('fb.log', logCb);
-  }
-);
-
-test(
   'apiKey: , debug: true, cookie: true, status: true',
 
   function() {

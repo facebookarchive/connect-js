@@ -204,6 +204,11 @@ FB.copy('', {
       return;
     }
 
+    if (!FB._session) {
+      FB.log('FB.logout() called without a session.');
+      return;
+    }
+
     var
       g   = FB.guid(),
       url = FB._domain.www + 'logout.php?' + FB.QS.encode({
