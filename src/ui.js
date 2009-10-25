@@ -93,7 +93,7 @@ FB.copy('', {
    *           'the power of Facebook, bringing the user\'s identity, ' +
    *           'social graph and distribution power to your site.'
    *         ),
-   *         href: 'http://mu.daaku.org/',
+   *         href: 'http://mu.daaku.org/'
    *       },
    *       action_links: [
    *         { text: 'Mu Console', href: 'http://mu.daaku.org/' },
