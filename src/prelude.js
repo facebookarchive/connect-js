@@ -22,9 +22,9 @@ if (!window.FB) {
     _session    : null,
     _userStatus : 'unknown', // or 'notConnected' or 'connected'
 
-    // enable debug logging. this can be turned on via a URL parameter or when
-    // calling FB.init
-    _debug : window.location.toString().indexOf('mu_debug=1') > -1,
+    // logging is enabled by default. this is the logging shown to the
+    // developer and not at all noisy.
+    _logging: true,
 
     // the various domains needed for using Connect
     _domain: {
@@ -97,13 +97,13 @@ if (!window.FB) {
     },
 
     /**
-     * Logs a message for the developer if debug is on.
+     * Logs a message for the developer if logging is on.
      *
      * @access private
      * @param args {Object} the thing to log
      */
-    log: function(args, debug) {
-      if ((!debug || FB._debug) && window.console) {
+    log: function(args) {
+      if (FB._logging && window.console) {
         console.log(args);
       }
 

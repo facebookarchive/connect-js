@@ -15,13 +15,15 @@ module('initialize');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
-  'apiKey: , debug: true, cookie: true, status: true',
+  'apiKey: , logging: false, cookie: true, status: true',
 
   function() {
-    FB.init({ apiKey: API_KEY, debug: true, cookie: true, status: true });
+    FB.init({ apiKey: API_KEY, logging: false, cookie: true, status: true });
     ok(FB._apiKey == API_KEY, 'should have the api key');
-    ok(FB._debug, 'debug is enabled');
+    ok(!FB._logging, 'logging is disabled');
     ok(FB.Cookie._initDone, 'cookie init was done');
+
+    FB._logging = true; // we actually do want logging
   }
 );
 

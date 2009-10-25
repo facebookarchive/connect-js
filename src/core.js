@@ -39,8 +39,8 @@ FB.copy('', {
    * ======== ======= =================================== ============ =========
    * apiKey   String  Your application API key.           **Required**
    * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
+   * logging  Boolean ``false`` to disable logging.       *Optional*   ``true``
    * session  Object  Use specified session object.       *Optional*   ``null``
-   * debug    Boolean ``true`` to enable debug messages.  *Optional*   ``false``
    * status   Boolean ``true`` to fetch fresh status. .   *Optional*   ``false``
    * ======== ======= =================================== ============ =========
    *
@@ -60,13 +60,22 @@ FB.copy('', {
       return;
     }
 
+    // only need to list values here that do not already have a falsy default.
+    // this is why cookie/session/status are not listed here.
+    FB.copy(opts, {
+      logging: true
+    });
+
     FB._apiKey = opts.apiKey;
 
-    if (opts.debug) {
-      FB._debug = true;
+    // disable logging if told to do so, but only if the url doesnt have the
+    // token to turn it on. this allows for easier debugging of third party
+    // sites even if logging has been turned off.
+    if (!opts.logging && window.location.toString().indexOf('fb_debug=1') < 0) {
+      FB._logging = false;
     }
 
-    // enable cookie support and use cookie session if possible
+    // enable cookie support if told to do so
     if (opts.cookie) {
       FB.Cookie.init();
     }
