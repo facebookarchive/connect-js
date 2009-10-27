@@ -85,6 +85,11 @@ FB.copy('', {
       }
     }
 
+    // if we're already loading, and this is not a force load, we're done
+    if (!force && FB.Auth._loadState == 'loading') {
+      return;
+    }
+
     FB.Auth._loadState = 'loading';
 
     // invoke the queued sessionLoad callbacks

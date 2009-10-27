@@ -76,42 +76,75 @@ FB.copy('Content', {
    * @param content {String|Node} a DOM Node or HTML string
    * @param root    {Node}        node to insert the iframe into
    * @param onload  {Function}    optional onload callback
-   * @param extra   {String}      optional extra attributes string for the tag
    * @returns {Node} the node that was just appended
    */
-  iframe: function(url, root, onload, extra) {
+  iframe: function(url, root, onload) {
+    //
+    // Browsers evolved. Evolution is messy.
+    //
+
+    // Dear IE, screw you. Only works with the magical incantations.
+    // Dear FF, screw you too. Needs src _after_ DOM insertion.
+    // Dear Webkit, you're okay. Works either way.
+
+
     var
       guid = FB.guid(),
-      html = (
-        '<iframe ' + (extra || '') +
+      div = FB.Content.append('', root),
+
+      // Since we set the src _after_ inserting the iframe node into the DOM,
+      // some browsers will fire two onload events, once for the first empty
+      // iframe insertion and then again when we set the src. Here some
+      // browsers are Webkit browsers which seem to be trying to do the
+      // "right thing". So we toggle this boolean right before we expect the
+      // correct onload handler to get fired.
+      srcSet = false;
+    FB.Content._callbacks[guid] = function() {
+      if (srcSet) {
+        onload && onload(div.firstChild);
+        delete FB.Content._callbacks[guid];
+      }
+    };
+
+    if (document.attachEvent) {
+      var html = (
+        '<iframe ' +
           ' src="' + url + '"' +
           ' onload="FB.Content._callbacks.' + guid + '()"' +
         '></iframe>'
-      ),
-      div = FB.Content.append('', root);
+      );
 
-    FB.Content._callbacks[guid] = function() {
-      onload && onload(div.firstChild);
-      delete FB.Content._callbacks[guid];
-    };
-
-    // There is an IE bug with iframe caching that we have to work around: We
-    // need to load a dummy iframe to consume the initial cache stream.  The
-    // setTimeout the actually sets the content to the HTML we created above,
-    // and because its the second load, we no longer suffer from cache
-    // sickness. It must be javascript:false instead of about:blank, otherwise
-    // IE6 will complain in https.
-    if (document.attachEvent) {
+      // There is an IE bug with iframe caching that we have to work around. We
+      // need to load a dummy iframe to consume the initial cache stream. The
+      // setTimeout actually sets the content to the HTML we created above, and
+      // because its the second load, we no longer suffer from cache sickness.
+      // It must be javascript:false instead of about:blank, otherwise IE6 will
+      // complain in https.
       div.innerHTML = '<iframe src="javascript:false"></iframe>';
-    }
 
-    // you may wonder why this is a setTimeout. read the IE source if you can
-    // somehow get your hands on it, and tell me if you figure it out. this is
-    // a continuation of the above trick which apparently does not work if the
-    // innerHTML is changed right away. we need to break apart the two with
-    // this setTimeout 0 which seems to fix the issue.
-    window.setTimeout(function() {
-      div.innerHTML = html;
-    }, 0);
+      // Now we'll be setting the real src.
+      srcSet = true;
+
+      // You may wonder why this is a setTimeout. Read the IE source if you can
+      // somehow get your hands on it, and tell me if you figure it out. This
+      // is a continuation of the above trick which apparently does not work if
+      // the innerHTML is changed right away. We need to break apart the two
+      // with this setTimeout 0 which seems to fix the issue.
+      window.setTimeout(function() {
+        div.innerHTML = html;
+      }, 0);
+    } else {
+      // This block works for all non IE browsers. But it's specifically
+      // designed for FF where we need to set the src after inserting the
+      // iframe node into the DOM to prevent cache issues.
+      var node = document.createElement('iframe');
+      node.onload = FB.Content._callbacks[guid];
+      div.appendChild(node);
+
+      // Now we'll be setting the real src.
+      srcSet = true;
+
+      node.src = url;
+    }
   }
 });
