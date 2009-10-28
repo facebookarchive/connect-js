@@ -5,20 +5,30 @@
  */
 
 /**
- * Event.
+ * Event Provider.
  *
- * @class FB.Event
+ * @class FB.EventProvider
  * @static
  * @access private
  */
-FB.copy('Event', {
+FB.copy('EventProvider', {
   /**
-   * Map of event name to subscribers.
+   * Returns the internal subscriber array that can be directly manipulated by
+   * adding/removing things.
    *
    * @access private
-   * @type Object
+   * @returns {Object}
    */
-  _subscribers: {},
+  subscribers: function() {
+    // this odd looking logic is to allow instances to lazily have a map of
+    // their events. if subscribers were an object literal itself, we would
+    // have issues with instances sharing the subscribers when its being used
+    // in a mixin style.
+    if (!this._subscribersMap) {
+      this._subscribersMap = {};
+    }
+    return this._subscribersMap;
+  },
 
   /**
    * Bind an event handler to a given event name.
@@ -35,7 +45,7 @@ FB.copy('Event', {
    * @param cb      {Function} the handler function
    */
   subscribe: function(name, cb) {
-    var S = FB.Event._subscribers;
+    var S = this.subscribers();
 
     if (!S[name]) {
       S[name] = [cb];
@@ -64,7 +74,7 @@ FB.copy('Event', {
    * @param cb      {Function} the handler function
    */
   unsubscribe: function(name, cb) {
-    var S = FB.Event._subscribers;
+    var S = this.subscribers();
 
     if (S[name]) {
       for (var i=0, l=S[name].length; i<l; i++) {
@@ -87,7 +97,7 @@ FB.copy('Event', {
     var
       args        = Array.prototype.slice.call(arguments),
       name        = args.shift(),
-      subscribers = FB.Event._subscribers[name],
+      subscribers = this.subscribers()[name],
       sub;
 
     // no subscribers, boo
@@ -104,3 +114,12 @@ FB.copy('Event', {
     }
   }
 });
+
+/**
+ * Event.
+ *
+ * @class FB.Event
+ * @static
+ * @access public
+ */
+FB.copy('Event', FB.EventProvider);
