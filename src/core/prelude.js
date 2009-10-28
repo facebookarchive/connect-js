@@ -10,6 +10,35 @@
  *     Namespaces are one honking great idea -- let's do more of those!
  *                                                            -- Tim Peters
  *
+ * The Prelude is what keeps us from being messy. In order to co-exist with
+ * arbitary environments, we need to control our footprint. The one and only
+ * rule to follow here is that we need to limit the globals we introduce. The
+ * only global we should every have is ``FB``. This is exactly what the prelude
+ * enables us to do.
+ *
+ * The main method to take away from this file is `FB.copy()`_. As the name
+ * suggests it copies things. Its powerful -- but to get started you only need
+ * to know that this is what you use when you are augmenting the FB object. For
+ * example, this is skeleton for how ``FB.Event`` is defined::
+ *
+ *   FB.copy('Event', {
+ *     subscribe: function() { ... },
+ *     unsubscribe: function() { ... },
+ *     fire: function() { ... }
+ *   });
+ *
+ * This is similar to saying::
+ *
+ *   FB.Event = {
+ *     subscribe: function() { ... },
+ *     unsubscribe: function() { ... },
+ *     fire: function() { ... }
+ *   };
+ *
+ * Except it does some housekeeping, prevents redefinition by default and other
+ * goodness.
+ *
+ * .. _FB.copy(): #method_FB.copy
  *
  * @class FB
  * @static
@@ -33,6 +62,8 @@ if (!window.FB) {
       www : window.location.protocol + '//www.facebook.com/'
     },
 
+    // TODO: these should live where they are used. so the flash versions are
+    // only included if the flash module is being included.
     // "dynamic constants"
     _registry: {
       // minimum required flash versions
