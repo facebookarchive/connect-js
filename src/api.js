@@ -3,11 +3,11 @@
  * ``FB.RestServer``.
  *
  * @module FB
- * @provides mu.api
- * @requires mu.prelude
- *           mu.qs
- *           mu.flash
- *           mu.md5sum
+ * @provides fb.api
+ * @requires fb.prelude
+ *           fb.qs
+ *           fb.flash
+ *           fb.md5sum
  */
 
 /**

@@ -2,13 +2,13 @@
  * JavaScript library providing Facebook Connect integration.
  *
  * @module FB
- * @provides mu.core
- * @requires mu.prelude
- *           mu.api
- *           mu.auth
- *           mu.cookie
- *           mu.ui
- *           mu.xd
+ * @provides fb.core
+ * @requires fb.prelude
+ *           fb.api
+ *           fb.auth
+ *           fb.cookie
+ *           fb.ui
+ *           fb.xd
  */
 
 /**

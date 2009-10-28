@@ -1,10 +1,10 @@
 /**
  * @module FB
- * @provides mu.frames
- * @requires mu.prelude
- *           mu.content
- *           mu.qs
- *           mu.xd
+ * @provides fb.frames
+ * @requires fb.prelude
+ *           fb.content
+ *           fb.qs
+ *           fb.xd
  */
 
 /**

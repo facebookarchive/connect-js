@@ -1,9 +1,9 @@
 /**
  * @module FB
- * @provides mu.flash
- * @requires mu.prelude
- *           mu.qs
- *           mu.content
+ * @provides fb.flash
+ * @requires fb.prelude
+ *           fb.qs
+ *           fb.content
  */
 
 /**

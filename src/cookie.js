@@ -1,9 +1,9 @@
 /**
  * @module FB
- * @provides mu.cookie
- * @requires mu.prelude
- *           mu.qs
- *           mu.auth
+ * @provides fb.cookie
+ * @requires fb.prelude
+ *           fb.qs
+ *           fb.auth
  */
 
 /**

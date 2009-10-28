@@ -1,7 +1,7 @@
 /**
  * @module FB
  * @prelude
- * @provides mu.prelude
+ * @provides fb.prelude
  */
 
 /**
