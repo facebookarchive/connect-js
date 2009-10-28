@@ -45,12 +45,12 @@ FB.copy('EventProvider', {
    * @param cb      {Function} the handler function
    */
   subscribe: function(name, cb) {
-    var S = this.subscribers();
+    var subs = this.subscribers();
 
-    if (!S[name]) {
-      S[name] = [cb];
+    if (!subs[name]) {
+      subs[name] = [cb];
     } else {
-      S[name].push(cb);
+      subs[name].push(cb);
     }
   },
 
@@ -74,12 +74,12 @@ FB.copy('EventProvider', {
    * @param cb      {Function} the handler function
    */
   unsubscribe: function(name, cb) {
-    var S = this.subscribers();
+    var subs = this.subscribers();
 
-    if (S[name]) {
-      for (var i=0, l=S[name].length; i<l; i++) {
-        if (S[name][i] == cb) {
-          S[name][i] = null;
+    if (subs[name]) {
+      for (var i=0, l=subs[name].length; i<l; i++) {
+        if (subs[name][i] == cb) {
+          subs[name][i] = null;
         }
       }
     }
