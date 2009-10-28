@@ -1,8 +1,8 @@
 /**
  * Tests the FB.QS module which implements Query String encoding/decoding.
  *
- * @requires mu.qs
- * @provides mu.tests.qs
+ * @requires fb.qs
+ * @provides fb.tests.qs
  */
 ////////////////////////////////////////////////////////////////////////////////
 module('qs');
