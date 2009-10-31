@@ -85,10 +85,10 @@ FB.copy('XD', {
       if (poundIndex > 0) {
         xdProxy = xdProxy.substr(0, poundIndex);
       }
-      // mu_xd_bust changes the url to prevent firefox from refusing to load
+      // fb_xd_bust changes the url to prevent firefox from refusing to load
       // because it thinks its smarter than the developer and believes it to be
       // a recusive load. the rest are explanined in the note above.
-      xdProxy += '?&mu_xd_bust#?=&' + FB.XD.Fragment._magic;
+      xdProxy += '?&fb_xd_bust#?=&' + FB.XD.Fragment._magic;
     }
 
     FB.XD._callbacks[id] = cb;
@@ -190,7 +190,7 @@ FB.copy('XD', {
    * @access private
    */
   Fragment: {
-    _magic: 'mu_xd_fragment;',
+    _magic: 'fb_xd_fragment;',
 
     /**
      * Check if the fragment looks like a message, and dispatch if it does.

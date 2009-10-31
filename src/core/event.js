@@ -90,8 +90,7 @@ FB.copy('EventProvider', {
    * arguments are passed to the subscribers.
    *
    * @access private
-   * @param name {String}     the event name
-   * @param ...  arguments    passed to the subscriber
+   * @param name {String} the event name
    */
   fire: function() {
     var

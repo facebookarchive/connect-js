@@ -19,7 +19,10 @@ FB.copy('', {
    * to the structured data explicitly given in the publish call, with share
    * you simply provide the URL and optionally a title::
    *
-   *    FB.share('http://mu.daaku.org/', 'Mu Connect');
+   *    FB.share(
+   *      'http://github.com/facebook/connect-js',
+   *      'Connect JavaScript SDK'
+   *    );
    *
    * Both arguments are optional, and just calling ``FB.share()`` will share the
    * current page.
@@ -86,20 +89,25 @@ FB.copy('', {
    *     var post = {
    *       message: 'getting educated about Facebook Connect',
    *       attachment: {
-   *         name: 'Mu Connect',
-   *         caption: 'A micro Facebook Connect library.',
+   *         name: 'Facebook Connect JavaScript SDK',
    *         description: (
-   *           'Mu is a small JavaScript library that allows you to harness ' +
+   *           'A JavaScript library that allows you to harness ' +
    *           'the power of Facebook, bringing the user\'s identity, ' +
    *           'social graph and distribution power to your site.'
    *         ),
-   *         href: 'http://mu.daaku.org/'
+   *         href: 'http://github.com/facebook/connect-js'
    *       },
    *       action_links: [
-   *         { text: 'Mu Console', href: 'http://mu.daaku.org/' },
-   *         { text: 'GitHub Repo', href: 'http://github.com/nshah/mu' }
+   *         {
+   *           text: 'SDK Console',
+   *           href: 'http://developers.facebook.com/connect/console.php'
+   *         },
+   *         {
+   *           text: 'GitHub Repo',
+   *           href: 'http://github.com/facebook/connect-js'
+   *         },
    *       ],
-   *       user_prompt_message: 'Share your thoughts about Mu Connect'
+   *       user_prompt_message: 'Share your thoughts about Facebook Connect'
    *     };
    *
    *     FB.publish(

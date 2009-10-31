@@ -6,7 +6,7 @@ function publishExample() {
   var post = {
     message: 'This is some text',
     action_links: [
-      { text:'custom action link', href:'http://mu.daaku.org/' }
+      { text:'custom action link', href:'http://github.com/facebook/connect-js'}
     ],
     user_message_prompt: 'Tell the world about Popups?'
   };
