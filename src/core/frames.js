@@ -5,6 +5,7 @@
  *           fb.content
  *           fb.qs
  *           fb.xd
+ *           fb.json2
  */
 
 /**

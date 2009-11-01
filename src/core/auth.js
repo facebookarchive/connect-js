@@ -3,7 +3,9 @@
  * @provides fb.auth
  * @requires fb.prelude
  *           fb.qs
+ *           fb.event
  *           fb.frames
+ *           fb.json2
  */
 
 /**

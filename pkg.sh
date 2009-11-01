@@ -1,6 +1,7 @@
 #!/bin/sh
 
 FILES=(
+  src/third-party/json2.js
   src/core/prelude.js
   src/core/api.js
   src/core/auth.js
@@ -16,5 +17,4 @@ FILES=(
   src/core/xd.js
 )
 
-curl http://json.org/json2.js
 cat ${FILES[@]}

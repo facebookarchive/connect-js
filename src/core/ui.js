@@ -4,6 +4,7 @@
  * @requires fb.prelude
  *           fb.qs
  *           fb.frames
+ *           fb.json2
  */
 
 /**

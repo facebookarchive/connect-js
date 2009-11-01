@@ -3,6 +3,7 @@
  * @provides fb.cookie
  * @requires fb.prelude
  *           fb.qs
+ *           fb.event
  *           fb.auth
  */
 

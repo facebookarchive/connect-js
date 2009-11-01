@@ -8,6 +8,7 @@
  *           fb.qs
  *           fb.flash
  *           fb.md5sum
+ *           fb.json2
  */
 
 /**
