@@ -14,6 +14,21 @@
  * @access private
  */
 FB.copy('Flash', {
+  //
+  // DYNAMIC DATA
+  //
+  _minVersions: [
+    [9,  0, 159, 0 ],
+    [10, 0, 22,  87]
+  ],
+  _swfPath: 'swf/XdComm.swf',
+
+  /**
+   * The onReady callbacks.
+   *
+   * @access private
+   * @type Array
+   */
   _callbacks: [],
 
   /**
@@ -42,7 +57,7 @@ FB.copy('Flash', {
     // create the swf
     var
       IE   = !!document.attachEvent,
-      swf  = FB._domain.cdn + 'swf/XdComm.swf',
+      swf  = FB._domain.cdn + FB.Flash._swfPath,
       html = (
         '<object ' +
           'type="application/x-shockwave-flash" ' +
@@ -105,11 +120,11 @@ FB.copy('Flash', {
 
       // look through all the allowed version definitions.
       majorVersion:
-      for (i=0, l=FB._registry.flashVersions.length; i<l; i++) {
-        var spec = FB._registry.flashVersions[i];
+      for (i=0, l=FB.Flash._minVersions.length; i<l; i++) {
+        var spec = FB.Flash._minVersions[i];
 
         // we only accept known major versions, and every supported major
-        // version has at least one entry in flashVersions. only if the major
+        // version has at least one entry in _minVersions. only if the major
         // version matches, does the rest of the check make sense.
         if (spec[0] != version[0]) {
           continue;

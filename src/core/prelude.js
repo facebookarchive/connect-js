@@ -55,23 +55,19 @@ if (!window.FB) {
     // developer and not at all noisy.
     _logging: true,
 
+
+    //
+    // DYNAMIC DATA
+    //
     // the various domains needed for using Connect
     _domain: {
       api : window.location.protocol + '//api.facebook.com/',
-      cdn : window.location.protocol + '//static.ak.fbcdn.net/',
+      cdn : (window.location.protocol == 'https:'
+              ? 'https://s-static.ak.fbcdn.net/'
+              : 'http://static.ak.fbcdn.net/'),
       www : window.location.protocol + '//www.facebook.com/'
     },
-
-    // TODO: these should live where they are used. so the flash versions are
-    // only included if the flash module is being included.
-    // "dynamic constants"
-    _registry: {
-      // minimum required flash versions
-      flashVersions: [
-        [9,  0, 159, 0 ],
-        [10, 0, 22,  87]
-      ]
-    },
+    _locale: null,
 
     /**
      * Copy stuff from one object to another.
