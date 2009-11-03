@@ -132,7 +132,8 @@ FB.copy('', {
         api_key    : FB._apiKey,
         no_session : xdHandler(lsCb, g, 'parent', false, 'notConnected'),
         no_user    : xdHandler(lsCb, g, 'parent', false, 'unknown'),
-        ok_session : xdHandler(lsCb, g, 'parent', false, 'connected')
+        ok_session : xdHandler(lsCb, g, 'parent', false, 'connected'),
+        session_version : 2
       });
 
     FB.Frames.hidden(url, g);
@@ -216,15 +217,16 @@ FB.copy('', {
       cancel = xdHandler(cb, g, 'opener', true,  FB._userStatus, FB._session),
       next = xdHandler(cb, g, 'opener', false, 'connected', FB._session),
       url = FB._domain.www + 'login.php?' + FB.QS.encode({
-        api_key        : FB._apiKey,
-        cancel_url     : cancel,
-        channel_url    : window.location.toString(),
-        display        : 'popup',
-        fbconnect      : 1,
-        next           : next,
-        req_perms      : perms,
-        return_session : 1,
-        v              : '1.0'
+        api_key         : FB._apiKey,
+        cancel_url      : cancel,
+        channel_url     : window.location.toString(),
+        display         : 'popup',
+        fbconnect       : 1,
+        next            : next,
+        req_perms       : perms,
+        return_session  : 1,
+        session_version : 2,
+        v               : '1.0'
       });
 
     FB.Frames.popup(url, 450, 415, g);
