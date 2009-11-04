@@ -1,6 +1,7 @@
 /**
  * Derived from http://pajhome.org.uk/crypt/md5/md5.html.
  * Copyright (C) Paul Johnston 1999 - 2009
+ * Other contributors: Greg Holt, Andrew Kepert, Ydnar, Lostinet
  *
  * Copyright (c) 2009, Facebook
  * All rights reserved.
