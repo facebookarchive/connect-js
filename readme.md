@@ -58,16 +58,16 @@ Usage
 The [examples][examples] are a good place to start. The minimal you'll need to
 have is:
 
-  <div id="fb-root"></div>
-  <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
-  <script>
-    FB.init({ apiKey: 'YOUR API KEY' });
-  </script>
+    <div id="fb-root"></div>
+    <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
+    <script>
+      FB.init({ apiKey: 'YOUR API KEY' });
+    </script>
 
 Note: For easier development, we also have a unminifed (raw code with comments)
 available using this URL:
 
-  http://static.ak.fbcdn.net/connect/en_US/core.debug.js
+    http://static.ak.fbcdn.net/connect/en_US/core.debug.js
 
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
 
@@ -81,8 +81,8 @@ you want to study the internals.
 We have a list of [FAQs][FAQs] that detail some of the changes and provide
 information about the new SDK.
 
-The repository also contains simple examples showing the use of the SDK with
-popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
+The repository also contains simple [examples][examples] showing the use of the
+SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [MooTools][MooTools], [Prototype][Prototype] and [YUI][YUI].
 
 
@@ -93,6 +93,7 @@ popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [Prototype]: http://prototypejs.org/
 [YUI]: http://developer.yahoo.com/yui/
 [FAQs]: http://wiki.github.com/facebook/connect-js/faq
+[examples]: http://github.com/facebook/connect-js/tree/master/examples/
 
 
 
