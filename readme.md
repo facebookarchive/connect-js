@@ -115,5 +115,5 @@ to keep us nimble and allow us to bring you new functionality, without
 compromising on stability, we have ensured full test coverage of the new SDK.
 We are including this in the open source repository to assure you of our
 commitment to quality, but also with the hopes that you will contribute back to
-help keep it stable. The easiest way to do so is file bugs and include a test
-case.
+help keep it stable. The easiest way to do so is to file bugs and include a
+test case.
