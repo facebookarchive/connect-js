@@ -47,7 +47,7 @@ FB.copy('Frames', {
    * @param id  {String} the id to store the node against in _active
    */
   hidden: function(url, id) {
-    FB.Content.iframe(url, FB.Content.hidden(''), function(node) {
+    FB.Content.insertIframe(url, FB.Content.appendHidden(''), function(node) {
       FB.Frames._active[id] = node;
     });
   },
@@ -91,7 +91,7 @@ FB.copy('Frames', {
     // if there's a default close action, setup the monitor for it
     if (id in FB.Frames._defaultCb) {
       FB.Frames._count++;
-      FB.Frames.winMonitor();
+      FB.Frames.popupMonitor();
     }
   },
 
@@ -102,7 +102,7 @@ FB.copy('Frames', {
    *
    * @access private
    */
-  winMonitor: function() {
+  popupMonitor: function() {
     // shutdown if we have nothing to monitor
     if (FB.Frames._count < 1) {
       window.clearInterval(FB.Frames._monitor);
@@ -112,7 +112,7 @@ FB.copy('Frames', {
 
     // start the monitor if its not already running
     if (!FB.Frames._monitor) {
-      FB.Frames._monitor = window.setInterval(FB.Frames.winMonitor, 100);
+      FB.Frames._monitor = window.setInterval(FB.Frames.popupMonitor, 100);
     }
 
     // check all open windows

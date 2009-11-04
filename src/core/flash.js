@@ -90,7 +90,7 @@ FB.copy('Flash', {
         '</object>'
       );
 
-    FB.Content.hidden(html);
+    FB.Content.appendHidden(html);
   },
 
   /**
