@@ -49,7 +49,7 @@ test(
   'clear session if exists',
 
   function() {
-    FB.loginStatus(function(response) {
+    FB.getLoginStatus(function(response) {
       if (response.session) {
         FB.api(
           { method: 'Auth.revokeAuthorization' },
@@ -74,10 +74,10 @@ test(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
-module('cached loginStatus');
+module('cached getLoginStatus');
 ////////////////////////////////////////////////////////////////////////////////
 test(
-  'get cached loginStatus result',
+  'get cached getLoginStatus result',
 
   function() {
     expect(1);
@@ -88,7 +88,7 @@ test(
     // or start(). yes, ugly hack - but exposing the fact that a result is a
     // cached result seems like unnecessary developer complexity for testing
     // purposes.
-    FB.loginStatus(function(response) {
+    FB.getLoginStatus(function(response) {
       ok(true, 'got a response');
     });
   }

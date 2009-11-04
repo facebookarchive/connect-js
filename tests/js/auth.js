@@ -20,7 +20,7 @@ test(
   'should start with no session',
 
   function() {
-    FB.loginStatus(function(response) {
+    FB.getLoginStatus(function(response) {
       ok(!response.session, 'should not get a session');
       action.innerHTML = '';
       action.className = '';
@@ -97,7 +97,7 @@ test(
   'status should now return a session',
 
   function() {
-    FB.loginStatus(function(response) {
+    FB.getLoginStatus(function(response) {
       ok(response.session, 'should get a session');
       ok(response.status == 'connected', 'should be connected');
       start();

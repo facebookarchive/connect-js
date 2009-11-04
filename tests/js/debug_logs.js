@@ -27,13 +27,13 @@ var expectLog = function(expectMsg) {
 module('debug logging');
 ////////////////////////////////////////////////////////////////////////////////
 test(
-  'FB.loginStatus without api key',
+  'FB.getLoginStatus without api key',
 
   function() {
     expect(1);
     stop();
-    expectLog('FB.loginStatus() called before calling FB.init().');
-    FB.loginStatus();
+    expectLog('FB.getLoginStatus() called before calling FB.init().');
+    FB.getLoginStatus();
   }
 );
 

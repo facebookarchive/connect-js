@@ -48,7 +48,7 @@
 
         <input type="button"
                value="Status"
-               onclick="FB.loginStatus(null, true)">
+               onclick="FB.getLoginStatus(null, true)">
         <input type="button"
                value="Login"
                onclick="FB.login()"
@@ -141,7 +141,7 @@
       });
 
       // fetch status from facebook
-      FB.loginStatus();
+      FB.getLoginStatus();
     </script>
 
 

@@ -105,7 +105,7 @@ FB.copy('', {
 
     // load a fresh session if requested
     if (opts.status) {
-      FB.loginStatus();
+      FB.getLoginStatus();
     }
   }
 });

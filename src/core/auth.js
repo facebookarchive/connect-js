@@ -47,7 +47,7 @@ FB.copy('', {
    *
    * Here's how you find out::
    *
-   *     FB.loginStatus(function(response) {
+   *     FB.getLoginStatus(function(response) {
    *       if (response.session) {
    *         // logged in and connected user, someone you know
    *       } else {
@@ -74,11 +74,11 @@ FB.copy('', {
    *   });
    *
    * The response object returned to all these events is the same as the
-   * response from `FB.loginStatus()`_, `FB.login()`_ or `FB.logout()`_.
+   * response from `FB.getLoginStatus()`_, `FB.login()`_ or `FB.logout()`_.
    *
    * .. _FB.Event.subscribe(): #method_FB.Event.subscribe
    * .. _FB.Event.unsubscribe(): #method_FB.Event.unsubscribe
-   * .. _FB.loginStatus(): #method_FB.loginStatus
+   * .. _FB.getLoginStatus(): #method_FB.getLoginStatus
    * .. _FB.login(): #method_FB.login
    * .. _FB.logout(): #method_FB.logout
    *
@@ -86,9 +86,9 @@ FB.copy('', {
    * @param cb     {Function} the callback function
    * @param force  {Boolean}  force reloading the login status (default false)
    */
-  loginStatus: function(cb, force) {
+  getLoginStatus: function(cb, force) {
     if (!FB._apiKey) {
-      FB.log('FB.loginStatus() called before calling FB.init().');
+      FB.log('FB.getLoginStatus() called before calling FB.init().');
       return;
     }
 
@@ -275,7 +275,7 @@ FB.copy('', {
  * @access private
  */
 FB.copy('Auth', {
-  // pending callbacks for FB.loginStatus() calls
+  // pending callbacks for FB.getLoginStatus() calls
   _callbacks: [],
 
   /**
