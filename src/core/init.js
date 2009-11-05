@@ -39,7 +39,7 @@ FB.copy('', {
    * Initialize the library::
    *
    *    <div id="fb-root"></div>
-   *    <script src="http://static.ak.fbcdn.net/assets.php/en_US/core.js"></script>
+   *    <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
    *    <script>
    *      FB.init({ apiKey: 'YOUR API KEY' });
    *    </script>
