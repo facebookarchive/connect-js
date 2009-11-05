@@ -15,7 +15,6 @@
  *
  *
  *
- * @module FB
  * @provides fb.event
  * @requires fb.prelude
  */
@@ -23,7 +22,9 @@
 /**
  * Event Provider.
  *
- * @class FB.EventProvider
+ * NB: We are calling this FB.Event instead of FB.EventProvider to punt
+ * on properly implementing "extends" support in our doc system (for now).
+ * @class FB.Event
  * @static
  * @access private
  */

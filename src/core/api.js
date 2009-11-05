@@ -18,7 +18,6 @@
  * Contains the public method ``FB.api`` and the internal implementation
  * ``FB.RestServer``.
  *
- * @module FB
  * @provides fb.api
  * @requires fb.prelude
  *           fb.qs

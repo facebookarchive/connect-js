@@ -15,7 +15,6 @@
  *
  *
  *
- * @module FB
  * @provides fb.frames
  * @requires fb.prelude
  *           fb.content

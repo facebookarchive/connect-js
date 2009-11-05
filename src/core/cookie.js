@@ -15,7 +15,6 @@
  *
  *
  *
- * @module FB
  * @provides fb.cookie
  * @requires fb.prelude
  *           fb.qs

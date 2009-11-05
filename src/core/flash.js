@@ -15,7 +15,6 @@
  *
  *
  *
- * @module FB
  * @provides fb.flash
  * @requires fb.prelude
  *           fb.qs

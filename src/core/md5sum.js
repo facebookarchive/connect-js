@@ -31,7 +31,6 @@
  *
  *
  *
- * @module FB
  * @provides fb.md5sum
  * @requires fb.prelude
  */

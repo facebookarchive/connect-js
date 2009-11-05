@@ -15,7 +15,6 @@
  *
  *
  *
- * @module FB
  * @provides fb.xd
  * @requires fb.prelude
  *           fb.qs
