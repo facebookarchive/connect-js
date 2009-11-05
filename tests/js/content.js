@@ -91,7 +91,7 @@ test(
 
   function() {
     var html = '<div id="test-div">test div</div>';
-    var div = FB.Content.hidden(html);
+    var div = FB.Content.appendHidden(html);
     ok(div.firstChild.id == 'test-div',
        'expect the correct id back in the first child');
     ok(document.getElementById('test-div'), 'expect it to be in the DOM');
@@ -117,6 +117,6 @@ test(
         node.parentNode.removeChild(node);
         start();
       };
-    FB.Content.iframe(url, root, onload);
+    FB.Content.insertIframe(url, root, onload);
   }
 );

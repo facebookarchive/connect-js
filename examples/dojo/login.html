@@ -31,13 +31,13 @@
     <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.3.2/dojo/dojo.xd.js"></script>
 
     <div id="fb-root"></div>
-    <script src="http://static.ak.fbcdn.net/assets.php/en_US/core.js"></script>
+    <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
     <script>
       // initialize the library with the API key
       FB.init({ apiKey: '48f06bc570aaf9ed454699ec4fe416df' });
 
       // fetch the status on load
-      FB.loginStatus(handleSessionResponse);
+      FB.getLoginStatus(handleSessionResponse);
 
       dojo.connect(dojo.byId('login'), 'click', function() {
         FB.login(handleSessionResponse);

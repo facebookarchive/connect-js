@@ -70,7 +70,7 @@ FB.copy('Content', {
    * @param content {String|Node} a DOM Node or HTML string
    * @returns {Node} the node that was just appended
    */
-  hidden: function(content) {
+  appendHidden: function(content) {
     if (!FB.Content._hiddenRoot) {
       var
         hiddenRoot = document.createElement('div'),
@@ -93,7 +93,7 @@ FB.copy('Content', {
    * @param onload  {Function}    optional onload callback
    * @returns {Node} the node that was just appended
    */
-  iframe: function(url, root, onload) {
+  insertIframe: function(url, root, onload) {
     //
     // Browsers evolved. Evolution is messy.
     //

@@ -46,7 +46,7 @@ FB.copy('', {
    *
    * Here's how you find out::
    *
-   *     FB.loginStatus(function(response) {
+   *     FB.getLoginStatus(function(response) {
    *       if (response.session) {
    *         // logged in and connected user, someone you know
    *       } else {
@@ -73,11 +73,11 @@ FB.copy('', {
    *   });
    *
    * The response object returned to all these events is the same as the
-   * response from `FB.loginStatus()`_, `FB.login()`_ or `FB.logout()`_.
+   * response from `FB.getLoginStatus()`_, `FB.login()`_ or `FB.logout()`_.
    *
    * .. _FB.Event.subscribe(): #method_FB.Event.subscribe
    * .. _FB.Event.unsubscribe(): #method_FB.Event.unsubscribe
-   * .. _FB.loginStatus(): #method_FB.loginStatus
+   * .. _FB.getLoginStatus(): #method_FB.getLoginStatus
    * .. _FB.login(): #method_FB.login
    * .. _FB.logout(): #method_FB.logout
    *
@@ -85,9 +85,9 @@ FB.copy('', {
    * @param cb     {Function} the callback function
    * @param force  {Boolean}  force reloading the login status (default false)
    */
-  loginStatus: function(cb, force) {
+  getLoginStatus: function(cb, force) {
     if (!FB._apiKey) {
-      FB.log('FB.loginStatus() called before calling FB.init().');
+      FB.log('FB.getLoginStatus() called before calling FB.init().');
       return;
     }
 
@@ -131,7 +131,8 @@ FB.copy('', {
         api_key    : FB._apiKey,
         no_session : xdHandler(lsCb, g, 'parent', false, 'notConnected'),
         no_user    : xdHandler(lsCb, g, 'parent', false, 'unknown'),
-        ok_session : xdHandler(lsCb, g, 'parent', false, 'connected')
+        ok_session : xdHandler(lsCb, g, 'parent', false, 'connected'),
+        session_version : 2
       });
 
     FB.Frames.hidden(url, g);
@@ -215,15 +216,16 @@ FB.copy('', {
       cancel = xdHandler(cb, g, 'opener', true,  FB._userStatus, FB._session),
       next = xdHandler(cb, g, 'opener', false, 'connected', FB._session),
       url = FB._domain.www + 'login.php?' + FB.QS.encode({
-        api_key        : FB._apiKey,
-        cancel_url     : cancel,
-        channel_url    : window.location.toString(),
-        display        : 'popup',
-        fbconnect      : 1,
-        next           : next,
-        req_perms      : perms,
-        return_session : 1,
-        v              : '1.0'
+        api_key         : FB._apiKey,
+        cancel_url      : cancel,
+        channel_url     : window.location.toString(),
+        display         : 'popup',
+        fbconnect       : 1,
+        next            : next,
+        req_perms       : perms,
+        return_session  : 1,
+        session_version : 2,
+        v               : '1.0'
       });
 
     FB.Frames.popup(url, 450, 415, g);
@@ -274,7 +276,7 @@ FB.copy('', {
  * @access private
  */
 FB.copy('Auth', {
-  // pending callbacks for FB.loginStatus() calls
+  // pending callbacks for FB.getLoginStatus() calls
   _callbacks: [],
 
   /**

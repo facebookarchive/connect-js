@@ -31,13 +31,13 @@
     <script src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo/yahoo-min.js&2.7.0/build/event/event-min.js"></script>
 
     <div id="fb-root"></div>
-    <script src="http://static.ak.fbcdn.net/assets.php/en_US/core.js"></script>
+    <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
     <script>
       // initialize the library with the API key
       FB.init({ apiKey: '48f06bc570aaf9ed454699ec4fe416df' });
 
       // fetch the status on load
-      FB.loginStatus(handleSessionResponse);
+      FB.getLoginStatus(handleSessionResponse);
 
       YAHOO.util.Event.addListener('login', 'click', function() {
         FB.login(handleSessionResponse);
