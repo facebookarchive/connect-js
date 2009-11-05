@@ -20,7 +20,7 @@ social. With it you gain access to:
 
 This repository contains the open source JavaScript SDK that allows you to
 utilize the above on your website. Except as otherwise noted, the Facebook
-Connect JavaScript SDK is is licensed under the Apache Licence, Version 2.0
+Connect JavaScript SDK is licensed under the Apache Licence, Version 2.0
 (http://www.apache.org/licenses/LICENSE-2.0.html)
 
 
