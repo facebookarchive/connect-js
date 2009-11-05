@@ -96,7 +96,7 @@ FB.copy('Flash', {
    * Check that the minimal version of Flash we need is available.
    *
    * @access private
-   * @returns {Boolean} true if the minimum version requirements are matched
+   * @return {Boolean} true if the minimum version requirements are matched
    */
   hasMinVersion: function() {
     if (typeof FB.Flash._hasMinVersion === 'undefined') {
@@ -189,7 +189,7 @@ FB.copy('Flash', {
    * FIXME should check if encodeURIComponent can be used instead.
    *
    * @param  {String} data
-   * @returns  String
+   * @return  String
    */
   decode: function(data) {
     // wierdly enough, Flash sometimes returns the result as an

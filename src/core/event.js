@@ -34,7 +34,7 @@ FB.copy('EventProvider', {
    * adding/removing things.
    *
    * @access private
-   * @returns {Object}
+   * @return {Object}
    */
   subscribers: function() {
     // this odd looking logic is to allow instances to lazily have a map of
@@ -51,15 +51,15 @@ FB.copy('EventProvider', {
    * Bind an event handler to a given event name.
    *
    * For example, suppose you want to get notified whenever the session
-   * changes::
+   * changes:
    *
-   *   FB.Event.subscribe('auth.sessionChange', function(response) {
-   *     // do something with response.session
-   *   });
+   *     FB.Event.subscribe('auth.sessionChange', function(response) {
+   *       // do something with response.session
+   *     });
    *
    * @access public
-   * @param name    {String}   name of the event
-   * @param cb      {Function} the handler function
+   * @param name {String} name of the event
+   * @param cb {Function} the handler function
    */
   subscribe: function(name, cb) {
     var subs = this.subscribers();
@@ -72,23 +72,26 @@ FB.copy('EventProvider', {
   },
 
   /**
-   * Removes subscribers, inverse of FB.Event.subscribe().
+   * Removes subscribers, inverse of [FB.Event.subscribe][subscribe].
    *
    * Removing a subscriber is basically the same as adding one. You need to
    * pass the same event name and function to unsubscribe that you passed into
-   * subscribe. If we use a similar example to FB.Event.subscribe, we get::
+   * subscribe. If we use a similar example to [FB.Event.subscribe][subscribe],
+   * we get:
    *
-   *   var onSessionChange = function(response) {
-   *     // do something with response.session
-   *   };
-   *   FB.Event.subscribe('auth.sessionChange', onSessionChange);
+   *     var onSessionChange = function(response) {
+   *       // do something with response.session
+   *     };
+   *     FB.Event.subscribe('auth.sessionChange', onSessionChange);
    *
-   *   // sometime later in your code you dont want to get notified anymore
-   *   FB.Event.unsubscribe('auth.sessionChange', onSessionChange);
+   *     // sometime later in your code you dont want to get notified anymore
+   *     FB.Event.unsubscribe('auth.sessionChange', onSessionChange);
+   *
+   * [subscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.subscribe
    *
    * @access public
-   * @param name    {String}   name of the event
-   * @param cb      {Function} the handler function
+   * @param name {String} name of the event
+   * @param cb {Function} the handler function
    */
   unsubscribe: function(name, cb) {
     var subs = this.subscribers();

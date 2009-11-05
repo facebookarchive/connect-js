@@ -43,7 +43,7 @@ FB.copy('Cookie', {
    * as the session changes.
    *
    * @access private
-   * @returns {Object} the session object from the cookie if one is found
+   * @return {Object} the session object from the cookie if one is found
    */
   init: function() {
     if (!FB.Cookie._initDone) {
@@ -58,7 +58,7 @@ FB.copy('Cookie', {
    * Try loading the session from the Cookie.
    *
    * @access private
-   * @returns {Object} the session object from the cookie if one is found
+   * @return {Object} the session object from the cookie if one is found
    */
   load: function() {
     var

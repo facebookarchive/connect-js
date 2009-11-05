@@ -38,7 +38,7 @@ FB.copy('Content', {
    * @access private
    * @param content {String|Node} a DOM Node or HTML string
    * @param root    {Node}        (optional) a custom root node
-   * @returns {Node} the node that was just appended
+   * @return {Node} the node that was just appended
    */
   append: function(content, root) {
     // setup the root node, creating it if necessary
@@ -68,7 +68,7 @@ FB.copy('Content', {
    *
    * @access private
    * @param content {String|Node} a DOM Node or HTML string
-   * @returns {Node} the node that was just appended
+   * @return {Node} the node that was just appended
    */
   appendHidden: function(content) {
     if (!FB.Content._hiddenRoot) {
@@ -91,7 +91,7 @@ FB.copy('Content', {
    * @param content {String|Node} a DOM Node or HTML string
    * @param root    {Node}        node to insert the iframe into
    * @param onload  {Function}    optional onload callback
-   * @returns {Node} the node that was just appended
+   * @return {Node} the node that was just appended
    */
   insertIframe: function(url, root, onload) {
     //

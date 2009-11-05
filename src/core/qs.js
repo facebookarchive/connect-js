@@ -34,7 +34,7 @@ FB.copy('QS', {
    * @param   params {Object}  the parameters to encode
    * @param   sep    {String}  the separator string (defaults to '&')
    * @param   encode {Boolean} indicate if the key/value should be URI encoded
-   * @returns        {String}  the query string
+   * @return        {String}  the query string
    */
   encode: function(params, sep, encode) {
     sep    = sep === undefined ? '&' : sep;
@@ -60,7 +60,7 @@ FB.copy('QS', {
    *
    * @access private
    * @param   str {String} the query string
-   * @returns     {Object} the parameters to encode
+   * @return     {Object} the parameters to encode
    */
   decode: function(str) {
     var

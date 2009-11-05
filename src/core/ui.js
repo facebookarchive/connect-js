@@ -32,21 +32,24 @@
 FB.copy('', {
   /**
    * Sharing is the light weight way of distributing your content. As opposed
-   * to the structured data explicitly given in the publish call, with share
-   * you simply provide the URL and optionally a title::
+   * to the structured data explicitly given in the [FB.publish][publish] call,
+   * with share you simply provide the URL and optionally a title:
    *
-   *    FB.share(
-   *      'http://github.com/facebook/connect-js',
-   *      'Connect JavaScript SDK'
-   *    );
+   *      FB.share(
+   *        'http://github.com/facebook/connect-js',
+   *        'Connect JavaScript SDK'
+   *      );
    *
-   * Both arguments are optional, and just calling ``FB.share()`` will share the
-   * current page.
+   * Both arguments are optional, and just calling [FB.share][share] will share
+   * the current page.
    *
    * This call can be used without requiring the user to sign in.
    *
+   * [publish]: /docs/?u=facebook.jslib-alpha.FB.publish
+   * [share]: /docs/?u=facebook.jslib-alpha.FB.share
+   *
    * @access public
-   * @param u     {String} the url (defaults to current URL)
+   * @param u {String} the url (defaults to current URL)
    * @param title {String} a custom title
    */
   share: function(u, title) {
@@ -66,8 +69,8 @@ FB.copy('', {
    * to publish into the user's stream. It can be used, with or
    * without an API key. With an API key you can control the
    * Application Icon and get attribution. You must also do this if
-   * you wish to use the callback to get notified of the ``post_id``
-   * and the ``message`` the user typed in the published post, or find
+   * you wish to use the callback to get notified of the `post_id`
+   * and the `message` the user typed in the published post, or find
    * out if the user did not publish (clicked on the skipped button).
    *
    * Publishing is a powerful feature that allows you to submit rich
@@ -83,24 +86,19 @@ FB.copy('', {
    *
    * A post may contain the following properties:
    *
-   * ===================   ======   ======================================
-   * Property              Type     Description
-   * ===================   ======   ======================================
-   * message               String   This allows prepopulating the message.
-   * attachment            Array    An attachment_ object.
-   * action_links          Array    An array of `action links`_.
-   * actor_id              String   A actor profile/page id.
-   * target_id             String   A target profile id.
-   * user_message_prompt   String   Custom prompt message.
-   * ===================   ======   ======================================
+   * Property            | Type   | Description
+   * ------------------- | ------ | --------------------------------------
+   * message             | String | This allows prepopulating the message.
+   * attachment          | Array  | An [[wiki:Attachment (Streams)]] object.
+   * action_links        | Array  | An array of [[wiki:Action Links]].
+   * actor_id            | String | A actor profile/page id.
+   * target_id           | String | A target profile id.
+   * user_message_prompt | String | Custom prompt message.
    *
    * The post and all the parameters are optional, so use what is best
    * for your specific case.
    *
-   * .. _attachment: http://wiki.developers.facebook.com/index.php/Attachment_(Streams)
-   * .. _action links: http://wiki.developers.facebook.com/index.php/Action_Links
-   *
-   * Example::
+   * Example:
    *
    *     var post = {
    *       message: 'getting educated about Facebook Connect',
@@ -142,8 +140,8 @@ FB.copy('', {
    *     );
    *
    * @access public
-   * @param post  {Object}   the post object
-   * @param cb    {Function} called with the result of the action
+   * @param post {Object} the post object
+   * @param cb {Function} called with the result of the action
    */
   publish: function(post, cb) {
     // YUCK
@@ -187,7 +185,7 @@ FB.copy('', {
    * Prompt the user to add the given id as a friend.
    *
    * @access public
-   * @param id {String}   the id of the target user
+   * @param id {String} the id of the target user
    * @param cb {Function} called with the result of the action
    */
   addFriend: function(id, cb) {

@@ -94,7 +94,7 @@ if (!window.FB) {
      * @param target    {Object|String}  the target object to copy into
      * @param source    {Object}         the source object to copy from
      * @param overwrite {Boolean}        indicate if we should overwrite
-     * @returns {Object} the *same* target object back
+     * @return {Object} the *same* target object back
      */
     copy: function(target, source, overwrite) {
       // a string means a dot separated object that gets appended to, or created
@@ -132,7 +132,7 @@ if (!window.FB) {
      * Generates a weak random ID.
      *
      * @access private
-     * @returns {String}  a random ID
+     * @return {String}  a random ID
      */
     guid: function() {
       return 'f' + (Math.random() * (1<<30)).toString(16).replace('.', '');

@@ -40,11 +40,10 @@ FB.copy('', {
    * ask facebook.com. Facebook will answer this question in one of
    * two ways:
    *
-   *     #. Someone you don't know.
-   *     #. Someone you know and have interacted with. Here's a
-   *        session for them.
+   * 1. Someone you don't know.
+   * 2. Someone you know and have interacted with. Here's a session for them.
    *
-   * Here's how you find out::
+   * Here's how you find out:
    *
    *     FB.getLoginStatus(function(response) {
    *       if (response.session) {
@@ -65,25 +64,37 @@ FB.copy('', {
    *  - auth.sessionChange
    *  - auth.statusChange
    *
-   * The `FB.Event.subscribe()`_ and `FB.Event.unsubscribe()`_ functions are
-   * used to subscribe to these events. For example::
+   * The [FB.Event.subscribe][subscribe] and
+   * [FB.Event.unsubscribe][unsubscribe] functions are used to subscribe to
+   * these events. For example:
    *
-   *   FB.Event.subscribe('auth.login', function(response) {
-   *     // do something with response
-   *   });
+   *     FB.Event.subscribe('auth.login', function(response) {
+   *       // do something with response
+   *     });
    *
    * The response object returned to all these events is the same as the
-   * response from `FB.getLoginStatus()`_, `FB.login()`_ or `FB.logout()`_.
+   * response from [FB.getLoginStatus][getLoginStatus], [FB.login][login] or
+   * [FB.logout][logout]. This response object contains:
    *
-   * .. _FB.Event.subscribe(): #method_FB.Event.subscribe
-   * .. _FB.Event.unsubscribe(): #method_FB.Event.unsubscribe
-   * .. _FB.getLoginStatus(): #method_FB.getLoginStatus
-   * .. _FB.login(): #method_FB.login
-   * .. _FB.logout(): #method_FB.logout
+   * status
+   * : The status of the User. One of `connected`, `notConnected` or `unknown`.
+   *
+   * session
+   * : The session object.
+   *
+   * perms
+   * : The comma separated permissions string. This is specific to a
+   *   permissions call. It is not persistent.
+   *
+   * [subscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.subscribe
+   * [unsubscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.unsubscribe
+   * [getLoginStatus]: /docs/?u=facebook.jslib-alpha.FB.getLoginStatus
+   * [login]: /docs/?u=facebook.jslib-alpha.FB.login
+   * [logout]: /docs/?u=facebook.jslib-alpha.FB.logout
    *
    * @access public
-   * @param cb     {Function} the callback function
-   * @param force  {Boolean}  force reloading the login status (default false)
+   * @param cb {Function} the callback function
+   * @param force {Boolean} force reloading the login status (default false)
    */
   getLoginStatus: function(cb, force) {
     if (!FB._apiKey) {
@@ -142,7 +153,7 @@ FB.copy('', {
    * Accessor for the current Session.
    *
    * @access public
-   * @returns {Object}  the current Session if available, null otherwise
+   * @return {Object} the current Session if available, `null` otherwise
    */
   getSession: function() {
     return FB._session;
@@ -155,18 +166,18 @@ FB.copy('', {
    * prompt the user to login. It is best to delay this action to
    * reduce user friction when they first arrive at your site. You can
    * then prompt and show them the "Connect with Facebook" button
-   * bound to an event handler which does the following::
+   * bound to an event handler which does the following:
    *
-   *    FB.login(function(response) {
-   *      if (response.session) {
-   *        // user successfully logged in
-   *      } else {
-   *        // user cancelled login
-   *      }
-   *    });
+   *     FB.login(function(response) {
+   *       if (response.session) {
+   *         // user successfully logged in
+   *       } else {
+   *         // user cancelled login
+   *       }
+   *     });
    *
    * You should **only** call this on a user event as it opens a
-   * popup. Most browsers block popups, *unless* they were initiated
+   * popup. Most browsers block popups, _unless_ they were initiated
    * from a user event, such as a click on a button or a link.
    *
    *
@@ -175,7 +186,7 @@ FB.copy('', {
    * any additional permissions, so you should first make sure you
    * need a permission. This is a good idea because this step
    * potentially adds friction to the user's process. Another point to
-   * remember is that this call can be made even *after* the user has
+   * remember is that this call can be made even _after_ the user has
    * first connected. So you may want to delay asking for permissions
    * until as late as possible::
    *
@@ -193,8 +204,9 @@ FB.copy('', {
    *     }, 'read_stream,publish_stream,offline_access');
    *
    * @access public
-   * @param cb    {Function} the callback function
-   * @param perms {String}   (optional) comma separated list of permissions
+   * @param cb {Function} the callback function
+   * @param perms {String} (_optional_) comma separated list of permissions
+   * your application requires
    */
   login: function(cb, perms) {
     if (!FB._apiKey) {
@@ -236,14 +248,14 @@ FB.copy('', {
    *
    * Just like logging in is tied to facebook.com, so is logging out.
    * The status shared between your site and Facebook, and logging out
-   * affects both sites. This is a simple call::
+   * affects both sites. This is a simple call:
    *
    *     FB.logout(function(response) {
    *       // user is now logged out
    *     });
    *
    * @access public
-   * @param cb    {Function} the callback function
+   * @param cb {Function} the callback function
    */
   logout: function(cb) {
     if (!FB._apiKey) {
@@ -286,7 +298,7 @@ FB.copy('Auth', {
    * @access private
    * @param session {Object}  the new Session
    * @param status  {String}  the new status
-   * @returns       {Object}  the "response" object
+   * @return       {Object}  the "response" object
    */
   setSession: function(session, status) {
     // detect special changes before changing the internal session
@@ -368,7 +380,7 @@ FB.copy('Auth', {
    * @param isDefault {Boolean}  is this the default callback for the frame
    * @param status    {String}   the connect status this handler will trigger
    * @param session   {Object}   backup session, if none is found in response
-   * @returns         {String}   the xd url bound to the callback
+   * @return         {String}   the xd url bound to the callback
    */
   xdHandler: function(cb, frame, target, isDefault, status, session) {
     return FB.Frames.xdHandler(function(params) {

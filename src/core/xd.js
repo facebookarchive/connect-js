@@ -80,7 +80,7 @@ FB.copy('XD', {
    * @access private
    * @param cb       {Function} the callback function
    * @param relation {String}   parent or opener to indicate window relation
-   * @returns        {String}   the xd url bound to the callback
+   * @return        {String}   the xd url bound to the callback
    */
   handler: function(cb, relation) {
     FB.XD.init();

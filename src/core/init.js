@@ -35,39 +35,39 @@
  */
 FB.copy('', {
   /**
-   * Initialize the library::
+   * Initialize the library.
    *
-   *    <div id="fb-root"></div>
-   *    <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
-   *    <script>
-   *      FB.init({ apiKey: 'YOUR API KEY' });
-   *    </script>
+   * The minimal you'll need is:
+   *
+   *      <div id="fb-root"></div>
+   *      <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
+   *      <script>
+   *        FB.init({ apiKey: 'YOUR API KEY' });
+   *      </script>
    *
    * The best place to put this code is right before the closing
-   * ``</body>`` tag.
+   * `</body>` tag.
    *
    *
-   * Options:
+   * **Options**:
    *
-   * ======== ======= =================================== ============ =========
-   * Property Type    Description                         Argument     Default
-   * ======== ======= =================================== ============ =========
-   * apiKey   String  Your application API key.           **Required**
-   * cookie   Boolean ``true`` to enable cookie support.  *Optional*   ``false``
-   * logging  Boolean ``false`` to disable logging.       *Optional*   ``true``
-   * session  Object  Use specified session object.       *Optional*   ``null``
-   * status   Boolean ``true`` to fetch fresh status.     *Optional*   ``false``
-   * ======== ======= =================================== ============ =========
+   * Property | Type    | Description                      | Argument     | Default
+   * -------- | ------- | -------------------------------- | ------------ | -------
+   * apiKey   | String  | Your application API key.        | **Required** |
+   * cookie   | Boolean | `true` to enable cookie support. | *Optional*   | `false`
+   * logging  | Boolean | `false` to disable logging.      | *Optional*   | `true`
+   * session  | Object  | Use specified session object.    | *Optional*   | `null`
+   * status   | Boolean | `true` to fetch fresh status.    | *Optional*   | `false`
    *
-   * *Note*: `FB.publish()`_ and `FB.share()`_ can be used without
-   * registering an application or calling this method. If you are
-   * using an API key, all methods **must** be called after this method.
+   * **Note**: [FB.publish][publish] and [FB.share][share] can be used without
+   * registering an application or calling this method. If you are using an API
+   * key, all methods **must** be called after this method.
    *
-   * .. _FB.publish(): #method_FB.publish
-   * .. _FB.share(): #method_FB.share
+   * [publish]: /docs/?u=facebook.jslib-alpha.FB.publish
+   * [share]: /docs/?u=facebook.jslib-alpha.FB.share
    *
    * @access public
-   * @param opts    {Object} options
+   * @param opts {Object} options
    */
   init: function(opts) {
     if (!opts || !opts.apiKey) {

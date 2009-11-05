@@ -153,7 +153,7 @@ FB.copy('Frames', {
    * @param frame     {String}   frame id for the callback will be used with
    * @param relation  {String}   parent or opener to indicate window relation
    * @param isDefault {Boolean}  is this the default callback for the frame
-   * @returns         {String}   the xd url bound to the callback
+   * @return         {String}   the xd url bound to the callback
    */
   xdHandler: function(cb, frame, relation, isDefault) {
     if (isDefault) {
@@ -214,7 +214,7 @@ FB.copy('Frames', {
    * @param frame     {String}   the frame id for the callback is tied to
    * @param target    {String}   parent or opener to indicate window relation
    * @param isDefault {Boolean}  is this the default callback for the frame
-   * @returns         {String}   the xd url bound to the callback
+   * @return         {String}   the xd url bound to the callback
    */
   xdResult: function(cb, frame, target, isDefault) {
     return (

@@ -36,6 +36,13 @@
  * @requires fb.prelude
  */
 
+/**
+ * Generate MD5 Sum for the given input string.
+ *
+ * @access private
+ * @param input {String} the data
+ * @return {String} the hex md5
+ */
 FB.md5sum = function(input) {
   // FLOW: input -> utf8 input -> bin input -> bin md5 -> utf8 md5 -> hex md5
   var

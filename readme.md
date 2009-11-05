@@ -86,7 +86,7 @@ SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [MooTools][MooTools], [Prototype][Prototype] and [YUI][YUI].
 
 
-[docs]: http://developers.facebook.com/docs/?u=facebook.jslib-alpha "Public API Documentation"
+[docs]: http://developers.facebook.com/docs/?u=facebook.jslib-alpha.FB "Public API Documentation"
 [Dojo]: http://www.dojotoolkit.org/
 [jQuery]: http://jquery.com/
 [MooTools]: http://mootools.net/

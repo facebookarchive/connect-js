@@ -40,7 +40,7 @@ FB.copy('', {
    * picture, friends lists or upcoming events they will be
    * attending. In order to do this, you will be making signed API
    * calls to Facebook using their session. Suppose we want to alert
-   * the current user's name::
+   * the current user's name:
    *
    *     FB.api(
    *       {
@@ -52,24 +52,18 @@ FB.copy('', {
    *       }
    *     );
    *
-   * API Calls are listed here:
-   * http://wiki.developers.facebook.com/index.php/API
+   * [[wiki:API]] Calls are documented on the wiki.
    *
-   * FQL is the preferred way of reading data from Facebook (write/update/delete
-   * queries are done via simpler URL parameters). FQL.multiQuery is also very
-   * crucial for good performance, as it allows efficiently collecting different
-   * types of data.
+   * [[wiki:FQL]] is the preferred way of reading data from Facebook
+   * (write/update/delete queries are done via simpler URL parameters).
+   * [[wiki:Fql.multiquery]] is also very crucial for good performance, as it
+   * allows efficiently collecting different types of data.
    *
-   * FQL is described here: http://wiki.developers.facebook.com/index.php/FQL
-   *
-   * FQL Tables are listed here:
-   * http://wiki.developers.facebook.com/index.php/FQL_Tables
-   *
-   * .. _FQL: http://wiki.developers.facebook.com/index.php/FQL
+   * [[wiki:FQL Tables]] are available for various types of data.
    *
    * @access public
-   * @param params {Object}   the parameters for the query
-   * @param cb     {Function} the callback function to handle the response
+   * @param params {Object} parameters for the query
+   * @param cb {Function} the callback function to handle the response
    */
   api: function(params, cb) {
     // this is an optional dependency on FB.Auth
@@ -112,7 +106,7 @@ FB.copy('RestServer', {
    *
    * @access private
    * @param params {Object} the parameters to sign
-   * @returns {Object} the *same* params object back
+   * @return {Object} the *same* params object back
    */
   sign: function(params) {
     // general api call parameters
