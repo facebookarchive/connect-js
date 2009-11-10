@@ -106,6 +106,26 @@ FB.copy('EventProvider', {
   },
 
   /**
+   * Removes all subscribers for named event.
+   *
+   * You need to pass the same event name that was passed to FB.Event.subscribe.
+   * This is useful if the event is no longer worth listening to and you
+   * believe that multiple subscribers have been set up.
+   *
+   * @access public
+   * @param name    {String}   name of the event
+   */
+  clear: function(name) {
+    var subs = this.subscribers();
+
+    if (subs[name]) {
+      for (var i=0, l=subs[name].length; i<l; i++) {
+        subs[name][i] = null;
+      }
+    }
+  },
+
+  /**
    * Fires a named event. The first argument is the name, the rest of the
    * arguments are passed to the subscribers.
    *

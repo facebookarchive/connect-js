@@ -109,7 +109,7 @@ FB.copy('', {
         cb({ status: FB._userStatus, session: FB._session });
         return;
       } else {
-        FB.Auth._callbacks.push(cb);
+        FB.Event.subscribe('FB.loginStatus', cb);
       }
     }
 
@@ -125,13 +125,9 @@ FB.copy('', {
       // done
       FB.Auth._loadState = 'loaded';
 
-      // consume the current load queue and reset
-      var waitingCb = FB.Auth._callbacks;
-      FB.Auth._callbacks = [];
-
-      for (var i=0, l=waitingCb.length; i<l; i++) {
-        waitingCb[i](response);
-      }
+      // invoke callbacks
+      FB.Event.fire('FB.loginStatus', response);
+      FB.Event.clear('FB.loginStatus');
     };
 
     // finally make the call to login status

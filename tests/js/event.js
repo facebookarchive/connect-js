@@ -68,6 +68,27 @@ test(
 );
 
 
+test(
+  'clear subscriptions',
+
+  function() {
+    expect(4);
+
+    var num_fires = 0;
+
+    var cb1 = function(arg1, arg2) {
+      ok(arg1 == 41, 'got expected arg1');
+      ok(num_fires++ < 2, 'should only be two events');
+    };
+
+    FB.Event.subscribe('fake.event3', cb1);
+    FB.Event.fire('fake.event3', 41, 42);
+    FB.Event.fire('fake.event3', 41, 42);
+    FB.Event.clear('fake.event3');
+    FB.Event.fire('fake.event3', 41, 42);
+  }
+);
+
 ////////////////////////////////////////////////////////////////////////////////
 module('event mixin');
 ////////////////////////////////////////////////////////////////////////////////
