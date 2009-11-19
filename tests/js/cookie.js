@@ -52,7 +52,7 @@ test(
     FB._apiKey = cookieApiKey;
 
     FB.Cookie.set({
-      expires: (10000 + (+new Date())) / 1000,
+      expires: (1000000 + (+new Date())) / 1000,
       base_domain: document.domain,
       answer: 42
     });

@@ -81,6 +81,10 @@ you want to study the internals.
 We have a list of [FAQs][FAQs] that detail some of the changes and provide
 information about the new SDK.
 
+We are maintaining a [changelog][changelog] as we update the SDK. Since this is
+an Alpha SDK, we might need to break compatibility between releases if the need
+arises.
+
 The repository also contains simple [examples][examples] showing the use of the
 SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [MooTools][MooTools], [Prototype][Prototype] and [YUI][YUI].
@@ -93,6 +97,7 @@ SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [Prototype]: http://prototypejs.org/
 [YUI]: http://developer.yahoo.com/yui/
 [FAQs]: http://wiki.github.com/facebook/connect-js/faq
+[changelog]: http://github.com/facebook/connect-js/tree/master/changelog.md
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
 
 

@@ -62,15 +62,16 @@ FB.copy('Cookie', {
    */
   load: function() {
     var
-      cookie = document.cookie.match('\\b' +'fbs_' + FB._apiKey+ '=([^;]*)\\b'),
-      session,
-      expires;
+      // note, we have the opening quote (") for the value in the regex, but do
+      // not have a closing quote. this is because the \b already handles it.
+      cookie = document.cookie.match('\\bfbs_' + FB._apiKey + '="([^;]*)\\b'),
+      session;
 
     if (cookie) {
       // url encoded session stored as "sub-cookies"
       session = FB.QS.decode(cookie[1]);
       // decodes as a string, convert to a number
-      expires = session.expires = parseInt(session.expires, 10);
+      session.expires = parseInt(session.expires, 10);
       // capture base_domain for use when we need to clear
       FB.Cookie._domain = session.base_domain;
     }
@@ -88,7 +89,7 @@ FB.copy('Cookie', {
    */
   setRaw: function(val, timestamp, domain) {
     document.cookie =
-      'fbs_' + FB._apiKey + '=' + val +
+      'fbs_' + FB._apiKey + '="' + val + '"' +
       '; expires=' + new Date(timestamp * 1000).toGMTString() +
       '; path=/' +
       (domain ? '; domain=.' + domain : '');
