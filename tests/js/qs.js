@@ -73,3 +73,21 @@ test(
     ok(encoded['a b c'] == 'd e f', 'expect decoded key and value');
   }
 );
+
+test(
+  'query string empty value bug',
+
+  function() {
+    var empty = FB.QS.decode('');
+    ok(!('' in empty), 'should not find empty value');
+  }
+);
+
+test(
+  'query string lone = value bug',
+
+  function() {
+    var empty = FB.QS.decode('=');
+    ok(!('' in empty), 'should not find empty value');
+  }
+);

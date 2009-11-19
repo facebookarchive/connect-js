@@ -72,7 +72,9 @@ FB.copy('QS', {
 
     for (i=0; i<parts.length; i++) {
       pair = parts[i].split('=', 2);
-      params[decode(pair[0])] = decode(pair[1]);
+      if (pair && pair[0]) {
+        params[decode(pair[0])] = decode(pair[1]);
+      }
     }
 
     return params;
