@@ -68,7 +68,7 @@ FB.copy('', {
   api: function(params, cb) {
     // this is an optional dependency on FB.Auth
     // Auth.revokeAuthorization affects the session
-    if (FB.Auth && params.method == 'Auth.revokeAuthorization') {
+    if (FB.Auth && params.method.toLowerCase() == 'auth.revokeauthorization') {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {

@@ -32,3 +32,20 @@ test(
     stop();
   }
 );
+
+test(
+  'revoke authorization ignore case',
+
+  function() {
+    FB.api(
+      { method: 'AuTH.reVOkeAuthorizaTIon' },
+      function(response) {
+        ok(!FB.getSession(), 'should not get a session');
+        start();
+      }
+    );
+
+    expect(1);
+    stop();
+  }
+);
