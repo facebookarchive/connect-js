@@ -88,10 +88,9 @@ FB.copy('Content', {
    * Insert a new iframe. Unfortunately, its tricker than you imagine.
    *
    * @access private
-   * @param content {String|Node} a DOM Node or HTML string
+   * @param url     {String}      url for the iframe
    * @param root    {Node}        node to insert the iframe into
    * @param onload  {Function}    optional onload callback
-   * @return {Node} the node that was just appended
    */
   insertIframe: function(url, root, onload) {
     //
