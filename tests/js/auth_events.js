@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 ////////////////////////////////////////////////////////////////////////////////
-module('sessionChange');
+module('auth events');
 ////////////////////////////////////////////////////////////////////////////////
 test(
-  'verify subscriber gets notified on disconnect',
+  'verify subscriber gets notified on various events',
 
   function() {
     var expected = 5;
@@ -60,5 +60,35 @@ test(
 
     expect(expected + 1);
     stop();
+  }
+);
+
+test(
+  'verify status event only gets fired once per change',
+
+  function() {
+    var expected = 2;
+    expect(expected);
+    stop();
+
+    var oldSession = FB._session;
+    var oldStatus = FB._userStatus;
+
+    FB.Auth.setSession(EXPIRED_SESSION, 'connected');
+    var cb = function(response) {
+      ok(true, 'subscriber got called');
+      expected -= 1;
+
+      if (expected == 0) {
+        // reset back
+        FB._session = oldSession;
+        FB._userStatus = oldStatus;
+        start();
+      }
+    };
+    FB.Event.subscribe('auth.statusChange', cb);
+    FB.Auth.setSession(null, 'notConnected');
+    FB.Auth.setSession(null, 'notConnected');
+    FB.Auth.setSession(null, 'unknown');
   }
 );

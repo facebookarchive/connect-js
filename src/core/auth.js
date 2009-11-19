@@ -304,7 +304,7 @@ FB.copy('Auth', {
       both          = FB._session && session && FB._session.uid != session.uid,
       sessionChange = (FB._session && session &&
                          FB._session.session_key != session.session_key),
-      statusChange  = status != FB._status;
+      statusChange  = status != FB._userStatus;
 
     var response = {
       session : session,
