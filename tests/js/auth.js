@@ -179,7 +179,7 @@ test(
         action.innerHTML = '';
         action.className = '';
         start();
-      }, 'offline_access');
+      }, {perms: 'offline_access'});
     };
     action.innerHTML = 'Click on "Don\'t Allow"';
     action.className = 'dont-allow-perms';
@@ -202,7 +202,7 @@ test(
         action.innerHTML = '';
         action.className = '';
         start();
-      }, 'offline_access');
+      }, {perms: 'offline_access'});
     };
     action.innerHTML = 'Click on "Allow"';
     action.className = 'allow-perms';
@@ -239,7 +239,7 @@ test(
         action.innerHTML = '';
         action.className = '';
         start();
-      }, 'offline_access');
+      }, {perms: 'offline_access'});
     };
     action.innerHTML = 'Click on "Connect" and then "Dont Allow"';
     action.className = 'connect-and-dont-allow';
@@ -276,7 +276,7 @@ test(
         action.innerHTML = '';
         action.className = '';
         start();
-      }, 'offline_access');
+      }, {perms: 'offline_access'});
     };
     action.innerHTML = 'Click on "Connect" and then "Allow"';
     action.className = 'connect-and-allow';

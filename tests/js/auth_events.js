@@ -48,7 +48,7 @@ test(
                   FB.Event.unsubscribe('auth.sessionChange', cb);
                   start();
                 }, 'email');
-              }, 'offline_access');
+              }, {perms: 'offline_access'});
             });
           });
         });

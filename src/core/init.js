@@ -67,43 +67,45 @@ FB.copy('', {
    * [share]: /docs/?u=facebook.jslib-alpha.FB.share
    *
    * @access public
-   * @param opts {Object} options
+   * @param options {Object} options
    */
-  init: function(opts) {
-    if (!opts || !opts.apiKey) {
+  init: function(options) {
+    if (!options || !options.apiKey) {
       FB.log('FB.init() called without an apiKey.');
       return;
     }
 
     // only need to list values here that do not already have a falsy default.
     // this is why cookie/session/status are not listed here.
-    FB.copy(opts, {
+    FB.copy(options, {
       logging: true
     });
 
-    FB._apiKey = opts.apiKey;
+    FB._apiKey = options.apiKey;
 
     // disable logging if told to do so, but only if the url doesnt have the
     // token to turn it on. this allows for easier debugging of third party
     // sites even if logging has been turned off.
-    if (!opts.logging && window.location.toString().indexOf('fb_debug=1') < 0) {
+    if (!options.logging &&
+        window.location.toString().indexOf('fb_debug=1') < 0) {
       FB._logging = false;
     }
 
     // enable cookie support if told to do so
-    if (opts.cookie) {
+    if (options.cookie) {
       FB.Cookie.init();
     }
 
     // if an explicit session was not given, try to _read_ an existing cookie.
     // we dont enable writing automatically, but we do read automatically.
-    opts.session = opts.session || FB.Cookie.load();
+    options.session = options.session || FB.Cookie.load();
 
     // set the session
-    FB.Auth.setSession(opts.session, opts.session ? 'connected' : 'unknown');
+    FB.Auth.setSession(options.session,
+                       options.session ? 'connected' : 'unknown');
 
     // load a fresh session if requested
-    if (opts.status) {
+    if (options.status) {
       FB.getLoginStatus();
     }
   }
