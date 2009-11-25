@@ -89,7 +89,7 @@ FB.provide('', {
    * Property            | Type   | Description
    * ------------------- | ------ | --------------------------------------
    * message             | String | This allows prepopulating the message.
-   * attachment          | Array  | An [[wiki:Attachment (Streams)]] object.
+   * attachment          | Object | An [[wiki:Attachment (Streams)]] object.
    * action_links        | Array  | An array of [[wiki:Action Links]].
    * actor_id            | String | A actor profile/page id.
    * target_id           | String | A target profile id.
@@ -121,7 +121,7 @@ FB.provide('', {
    *           href: 'http://github.com/facebook/connect-js'
    *         },
    *       ],
-   *       user_prompt_message: 'Share your thoughts about Facebook Connect'
+   *       user_message_prompt: 'Share your thoughts about Facebook Connect'
    *     };
    *
    *     FB.publish(
