@@ -30,7 +30,7 @@
  * @static
  * @access private
  */
-FB.copy('Frames', {
+FB.provide('Frames', {
   _monitor     : null,
   _count       : 0,
   _active      : {},

@@ -33,7 +33,7 @@
  * @static
  * @access private
  */
-FB.copy('', {
+FB.provide('', {
   /**
    * Once you have a session for the current user, you will want to
    * access data about that user, such as getting their name & profile
@@ -97,7 +97,7 @@ FB.copy('', {
  * @static
  * @access private
  */
-FB.copy('RestServer', {
+FB.provide('RestServer', {
   _callbacks: {},
 
   /**

@@ -29,7 +29,7 @@
  * @static
  * @access private
  */
-FB.copy('', {
+FB.provide('', {
   /**
    * Sharing is the light weight way of distributing your content. As opposed
    * to the structured data explicitly given in the [FB.publish][publish] call,

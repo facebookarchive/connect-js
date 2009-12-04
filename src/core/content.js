@@ -27,7 +27,7 @@
  * @static
  * @access private
  */
-FB.copy('Content', {
+FB.provide('Content', {
   _root       : null,
   _hiddenRoot : null,
   _callbacks  : {},

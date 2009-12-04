@@ -66,7 +66,7 @@ test(
 
   function() {
     ok(!FB.TestModule, 'module must not exist');
-    FB.copy('TestModule', { answer: 42 });
+    FB.provide('TestModule', { answer: 42 });
     ok(FB.TestModule.answer == 42, 'expect the new named value');
     delete FB.TestModule;
   }
@@ -79,3 +79,42 @@ test(
     ok(FB.guid() != FB.guid(), 'wonder what the odds of this failing are');
   }
 );
+
+test(
+  'forEach array',
+  function() {
+    var a = [1,2,3];
+    var c = 0;
+    FB.forEach(a, function(v) {
+      c += v;
+    });
+
+    equals(c, 6, 'expect the answer');
+  }
+);
+
+test(
+  'forEach dict',
+  function() {
+    var d = {a:1, b:2, c:3};
+    var results=[];
+    FB.forEach(d, function(v, k) {
+      results.push(k);
+      results.push(v);
+    });
+
+    var s = results.join(',');
+    equals(s, 'a,1,b,2,c,3', 'expect the answer');
+  }
+);
+
+test(
+  'getElementById FB.$',
+  function() {
+    var element = FB.$('qunit-header-wrong-id');
+    equals(element, null, 'expect null');
+    element = FB.$('qunit-header');
+    ok (element != null, 'element should not be null anymore');
+  }
+);
+

@@ -26,7 +26,7 @@
  * @static
  * @access private
  */
-FB.copy('QS', {
+FB.provide('QS', {
   /**
    * Encode parameters to a query string.
    *

@@ -33,7 +33,7 @@
  * @static
  * @access public
  */
-FB.copy('', {
+FB.provide('', {
   /**
    * Initialize the library.
    *

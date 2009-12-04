@@ -28,7 +28,7 @@
  * @static
  * @access private
  */
-FB.copy('Flash', {
+FB.provide('Flash', {
   //
   // DYNAMIC DATA
   //

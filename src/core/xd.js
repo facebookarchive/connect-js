@@ -28,7 +28,7 @@
  * @static
  * @access private
  */
-FB.copy('XD', {
+FB.provide('XD', {
   _origin    : null,
   _transport : null,
   _callbacks : {},

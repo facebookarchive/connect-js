@@ -30,7 +30,7 @@
  * @static
  * @access private
  */
-FB.copy('', {
+FB.provide('', {
   /**
    * Find out the current status from the server, and get a session if the user
    * is connected.
@@ -283,7 +283,7 @@ FB.copy('', {
  * @static
  * @access private
  */
-FB.copy('Auth', {
+FB.provide('Auth', {
   // pending callbacks for FB.getLoginStatus() calls
   _callbacks: [],
 

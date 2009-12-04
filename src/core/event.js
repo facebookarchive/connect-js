@@ -28,7 +28,7 @@
  * @static
  * @access private
  */
-FB.copy('EventProvider', {
+FB.provide('EventProvider', {
   /**
    * Returns the internal subscriber array that can be directly manipulated by
    * adding/removing things.
@@ -161,4 +161,4 @@ FB.copy('EventProvider', {
  * @static
  * @access public
  */
-FB.copy('Event', FB.EventProvider);
+FB.provide('Event', FB.EventProvider);

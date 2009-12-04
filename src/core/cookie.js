@@ -29,7 +29,7 @@
  * @static
  * @access private
  */
-FB.copy('Cookie', {
+FB.provide('Cookie', {
   /**
    * Holds the base_domain property to match the Cookie domain.
    *

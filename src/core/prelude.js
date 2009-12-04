@@ -36,7 +36,7 @@
  * to know that this is what you use when you are augmenting the FB object. For
  * example, this is skeleton for how ``FB.Event`` is defined::
  *
- *   FB.copy('Event', {
+ *   FB.provide('Event', {
  *     subscribe: function() { ... },
  *     unsubscribe: function() { ... },
  *     fire: function() { ... }
@@ -84,11 +84,70 @@ if (!window.FB) {
     },
     _locale: null,
 
+
     /**
-     * Copy stuff from one object to another.
+     * Copies things from source into target.
      *
-     * If ``target`` is a ``String``, it will be resolved using the FB object
-     * as the root.
+     * @access protected
+     * @param target    {Object}  the target object where things will be copied
+     *                            into
+     * @param source    {Object}  the source object where things will be copied
+     *                            from
+     * @param overwrite {Boolean} indicate if existing items should be
+     *                            overwritten
+     * @param tranform  {function} [Optional], transformation function for
+     *        each item
+     */
+    copy: function(target, source, overwrite, transform) {
+      for (key in source) {
+        if (overwrite || typeof target[key] === 'undefined') {
+          target[key] = transform ? transform(source[key]) :  source[key];
+        }
+      }
+      return target;
+    },
+
+
+    /**
+     * Create a namespaced object
+     * This create an fullly namespaced name.
+     * Examples:
+     * FB.create('XFBML.ProfilePic') = function() {...}
+     *   create FB.XFBML.ProfilePic and assign the value of the function.
+     *   If FB.XFBML does not exist, this call
+     *   would automatically create it.
+     *
+     * FB.create('Util');
+     *   create a namespace FB.Util if it doesn't already exist;
+     *
+     * @access private
+     * @param {string} name full qualified name ('Util.foo', etc.)
+     * @param {string} value value to set. Default value is {}. [Optional]
+     * @return object  The created object, or boolean if testOnly is true.
+     * @static
+     */
+    create: function(name, value) {
+      var node = window.FB, // We will use 'FB' as root namespace
+      nameParts = name ? name.split('.') : [],
+      c = nameParts.length;
+      for (var i = 0; i < c; i++) {
+        var part = nameParts[i];
+        var nso = node[part];
+        if (!nso) {
+          nso = (value && i + 1 == c) ? value : {};
+          node[part] = nso;
+        }
+        node = nso;
+      }
+      return node;
+    },
+
+
+
+    /**
+     * Copy stuff from one object to the specified namespace that
+     * is FB.<target>.
+     * If the namespace target doesn't exist, it will be created automatically.
      *
      * @access private
      * @param target    {Object|String}  the target object to copy into
@@ -96,46 +155,22 @@ if (!window.FB) {
      * @param overwrite {Boolean}        indicate if we should overwrite
      * @return {Object} the *same* target object back
      */
-    copy: function(target, source, overwrite) {
+    provide: function(target, source, overwrite) {
       // a string means a dot separated object that gets appended to, or created
-      if (typeof target == 'string') {
-        var
-          root = FB,
-          parts = target.split('.');
-
-        for (var i=0, l=parts.length; i<l; i++) {
-          var part = parts[i];
-
-          if (part === '') {
-            continue;
-          }
-
-          if (typeof root[part] === 'undefined') {
-            root[part] = {};
-          }
-
-          root = root[part];
-        }
-
-        target = root;
-      }
-
-      for (var k in source) {
-        if (source.hasOwnProperty(k) && (overwrite || !(k in target))) {
-          target[k] = source[k];
-        }
-      }
-      return target;
+      return FB.copy((typeof target == 'string') ?
+                     FB.create(target) : target,
+                     source, overwrite);
     },
 
     /**
      * Generates a weak random ID.
-     *
+     * @param {String}  optional prefix. Default value is 'f'
      * @access private
      * @return {String}  a random ID
      */
-    guid: function() {
-      return 'f' + (Math.random() * (1<<30)).toString(16).replace('.', '');
+    guid: function(prefix) {
+      return (prefix || 'f') + (Math.random() *
+                                (1<<30)).toString(16).replace('.', '');
     },
 
     /**
@@ -145,13 +180,54 @@ if (!window.FB) {
      * @param args {Object} the thing to log
      */
     log: function(args) {
-      if (FB._logging && window.console) {
-        console.log(args);
+      if (FB._logging) {
+        if (window.Debug && window.Debug.writeln) {
+          window.Debug.writeln(args);
+        } else if (window.console) {
+          window.console.log(args);
+        }
       }
 
       // fire an event if the event system is available
       if (FB.Event) {
         FB.Event.fire('fb.log', args);
+      }
+    },
+
+    /**
+     * Shortcut for document.getElementById
+     * @method $
+     * @param {string} DOM id
+     * @return DOMElement
+     */
+    $: function(id) {
+      return document.getElementById(id);
+    },
+
+    /**
+     * For looping through Arrays and Objects.
+     *
+     * @param {Object} item   an Array or an Object
+     * @param {Function} fn   the callback function for iteration.
+     *    The function will be pass (value, [index/key], item) paramters
+     * @param {Bool} proto  indicate if properties from the prototype should
+     *                      be included
+     */
+    forEach: function(item, fn, proto) {
+      if (Object.prototype.toString.apply(item) === '[object Array]') {
+        if (item.forEach) {
+          item.forEach(fn);
+        } else {
+          for (var i=0, l=item.length; i<l; i++) {
+            fn(item[i], i, item);
+          }
+        }
+      } else {
+        for (var key in item) {
+          if (proto || item.hasOwnProperty(key)) {
+            fn(item[key], key, item);
+          }
+        }
       }
     }
   };
