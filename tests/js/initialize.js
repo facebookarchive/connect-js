@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-var API_KEY = '48f06bc570aaf9ed454699ec4fe416df';
+var API_KEY = '94e09284285b2db1e0abb43a2a449f9b';
 var EXPIRED_SESSION = {
   session_key : "5070653ddbe6a2efbfb23388-499433185",
   uid         : 499433185,

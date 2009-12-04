@@ -184,7 +184,7 @@ FB.provide('', {
    * potentially adds friction to the user's process. Another point to
    * remember is that this call can be made even _after_ the user has
    * first connected. So you may want to delay asking for permissions
-   * until as late as possible::
+   * until as late as possible:
    *
    *     FB.login(function(response) {
    *       if (response.session) {
@@ -197,14 +197,21 @@ FB.provide('', {
    *       } else {
    *         // user is not logged in
    *       }
-   *     }, 'read_stream,publish_stream,offline_access');
+   *     }, {perms:'read_stream,publish_stream,offline_access'});
    *
    * @access public
    * @param cb {Function} the callback function
-   * @param perms {String} (_optional_) comma separated list of permissions
-   * your application requires
+   * @param options {Object} (_optional_) Options to modify login behavior.
+   *
+   * Name      | Type   | Description
+   * --------- | ------ | -------------
+   * perms     | String | comma separated list of [extended permissions][permissions] your application requires
+   *
+   * [permissions]: http://wiki.developers.facebook.com/index.php/Extended_permissions
    */
-  login: function(cb, perms) {
+  login: function(cb, options) {
+    options = options || {};
+
     if (!FB._apiKey) {
       FB.log('FB.login() called before calling FB.init().');
       return;
@@ -212,7 +219,7 @@ FB.provide('', {
 
     // if we already have a session and permissions are not being requested, we
     // just fire the callback
-    if (FB._session && !perms) {
+    if (FB._session && !options.perms) {
       FB.log('FB.login() called when user is already connected.');
       cb && cb({ status: FB._userStatus, session: FB._session });
       return;
@@ -230,7 +237,7 @@ FB.provide('', {
         display         : 'popup',
         fbconnect       : 1,
         next            : next,
-        req_perms       : perms,
+        req_perms       : options.perms,
         return_session  : 1,
         session_version : 2,
         v               : '1.0'

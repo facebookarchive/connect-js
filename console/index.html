@@ -72,25 +72,25 @@
 
           <input type="button"
                  value="Read Stream"
-                 onclick="FB.login(gotPerms, 'read_stream')">
+                 onclick="FB.login(gotPerms, {perms:'read_stream'})">
           <input type="button"
                  value="Publish Stream"
-                 onclick="FB.login(gotPerms, 'publish_stream')">
+                 onclick="FB.login(gotPerms, {perms: 'publish_stream'})">
           <input type="button"
                  value="Full Stream"
-                 onclick="FB.login(gotPerms, 'read_stream,publish_stream')">
+                 onclick="FB.login(gotPerms, {perms: 'read_stream,publish_stream'})">
           <input type="button"
                  value="Offline Access"
-                 onclick="FB.login(gotPerms, 'offline_access')">
+                 onclick="FB.login(gotPerms, {perms: 'offline_access'})">
           <input type="button"
                  value="Events"
-                 onclick="FB.login(gotPerms, 'create_event,rsvp_event')">
+                 onclick="FB.login(gotPerms, {perms: 'create_event,rsvp_event'})">
           <input type="button"
                  value="SMS"
-                 onclick="FB.login(gotPerms, 'sms')">
+                 onclick="FB.login(gotPerms, {perms: 'sms'})">
           <input type="button"
                  value="Bulk"
-                 onclick="FB.login(gotPerms, 'read_stream,offline_access,sms,create_event,rsvp_event')">
+                 onclick="FB.login(gotPerms, {perms: 'read_stream,offline_access,sms,create_event,rsvp_event'})">
         </div>
 
         <div id="integration">

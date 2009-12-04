@@ -11,3 +11,12 @@ The result is that you will need to update your server side logic for parsing
 the Cookie to handle the quotes if needed.
 
 [CookieRFC]: http://www.faqs.org/rfcs/rfc2965.html
+
+Options for FB.login
+-------------
+
+*Date*: 25th November, 2009
+
+We changed the signature for FB.login. It now takes a dictionary of
+options instead of just a permissions string. This will allow us to maintain
+backwards compatibility in the future if we expand the arguments.
