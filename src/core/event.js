@@ -106,6 +106,29 @@ FB.provide('EventProvider', {
   },
 
   /**
+   * Invoke callback immediately and when specified event is fired,
+   * until the callback return true
+   * @param {string} name Name of event.
+   * @param {function} callback A callback function. arguments may be
+   *   passed to the callback.
+   *     If the callback function returns true, the event will be unsubscribed.
+   * @static
+   */
+  monitor: function(name, callback) {
+    if (!callback()) {
+      var ctx = this,
+      fn = function() {
+        if (callback.apply(callback, arguments)) {
+          // unsubscribe
+          this.unsubscribe(name, fn);
+        }
+      };
+
+      this.subscribe(name, fn);
+    }
+  },
+
+  /**
    * Removes all subscribers for named event.
    *
    * You need to pass the same event name that was passed to FB.Event.subscribe.
@@ -148,7 +171,7 @@ FB.provide('EventProvider', {
       sub = subscribers[i];
       // this is because we null out unsubscribed rather than jiggle the array
       if (sub) {
-        sub.apply(window, args);
+        sub.apply(this, args);
       }
     }
   }

@@ -44,7 +44,7 @@ FB.provide('Content', {
     // setup the root node, creating it if necessary
     if (!root) {
       if (!FB.Content._root) {
-        FB.Content._root = root = document.getElementById('fb-root');
+        FB.Content._root = root = FB.$('fb-root');
         if (!root) {
           FB.log('The "fb-root" div has not been created.');
           return;

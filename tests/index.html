@@ -56,6 +56,17 @@
     <script src="../src/core/ui.js"></script>
     <script src="../src/core/xd.js"></script>
 
+    <script src="../src/common/core/loader.js"></script>
+    <script src="../src/common/core/use.js"></script>
+    <script src="../src/common/extended/array.js"></script>
+    <script src="../src/common/extended/string.js"></script>
+    <script src="../src/common/extended/type.js"></script>
+    <script src="../src/common/extended/dom.js"></script>
+    <script src="../src/common/extended/obj.js"></script>
+
+    <script src="../src/data/waitable.js"></script>
+    <script src="../src/data/data.js"></script>
+
     <!-- Tests Expect This -->
     <script>
       var action = document.getElementById('action');
@@ -64,10 +75,15 @@
     <div id="fb-root"></div>
 
     <!-- Tests -->
+
+    <!-- tests that don't require interaction -->
     <script src="js/prelude.js"></script>
     <script src="js/content.js"></script>
     <script src="js/qs.js"></script>
     <script src="js/md5sum.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/waitable.js"></script>
+    <script src="js/array.js"></script>
     <script src="js/flash.js"></script>
     <script src="js/xd.js"></script>
     <script src="js/event.js"></script>
@@ -75,6 +91,8 @@
     <script src="js/debug_logs.js"></script>
     <script src="js/initialize.js"></script>
     <script src="js/api.js"></script>
+
+    <!-- tests that require user interaction: -->
     <script src="js/frames.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/share.js"></script>
@@ -83,5 +101,6 @@
     <script src="js/revoke.js"></script>
     <script src="js/auth_events.js"></script>
     <script src="js/cleanup.js"></script>
+
   </body>
 </html>

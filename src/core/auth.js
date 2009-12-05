@@ -205,7 +205,8 @@ FB.provide('', {
    *
    * Name      | Type   | Description
    * --------- | ------ | -------------
-   * perms     | String | comma separated list of [extended permissions][permissions] your application requires
+   * perms     | String | comma separated list of
+   *      [extended permissions][permissions] your application requires
    *
    * [permissions]: http://wiki.developers.facebook.com/index.php/Extended_permissions
    */
@@ -389,11 +390,20 @@ FB.provide('Auth', {
     return FB.Frames.xdHandler(function(params) {
       // try to extract a session
       var response;
+
+      // Try to parse a session out of params.session.
+      // Note I moved FB.Auth.setSession out of the try
+      // catch scope. Otherwise possible unrelated exception triggered
+      // by setSession (app's codes can be invoked through events)
+      // will be caught and silently ignored.
+      //
+      // TODO: Stop using try/catch in the first place!
       try {
-        response = FB.Auth.setSession(JSON.parse(params.session), status);
-      } catch(x) {
-        response = FB.Auth.setSession(session || null, status);
+        session = JSON.parse(params.session);
+      } catch (x) {
       }
+
+      response = FB.Auth.setSession(session || null, status);
 
       // incase we were granted some new permissions
       response.perms = (
