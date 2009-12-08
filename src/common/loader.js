@@ -1,11 +1,18 @@
 /**
- * @provides fb.Loader.use
+ * @provides fb.Loader
  * @layer Basic
- * @requires fb.Loader fb.Array fb.Dom fb.prelude
+ * @requires fb.Component fb.Array fb.Dom fb.prelude
  */
 
 /**
- * Provide dynamic loading feature
+ * Dynamically load components by inserting a <script> tag. Dynamic
+ * loading can be good if it will be occasionally used on a page,
+ * and you don't know until runtime. However, it can be bad because
+ * it tends to break packaging and caching mechanisms. Be careful
+ * when choosing to dynamically load a component, and if a component
+ * is dynamically loaded in common usage, then prefer to just load
+ * directly.
+ *
  * @class FB.Loader
  * @private
  */
@@ -38,7 +45,7 @@ FB.provide('Loader', {
         FB.Dom.addScript(FB.dynData.resources.loader_url  + '?comps=' +
                          FB.Array.keys(FB.Loader._comps).join(',') +
                          '&exclude=' +
-                      FB.Array.keys(FB.Loader.loaded).join(','));
+                      FB.Array.keys(FB.Component.loaded).join(','));
       }, 0);
     }
   },
@@ -61,9 +68,8 @@ FB.provide('Loader', {
     // Now call the callbacks
     FB.forEach(completed, function(item) {
       item[1]();
-    })
+    });
   },
-
 
   /**
    * Check if a comp if fullfilled
@@ -71,8 +77,7 @@ FB.provide('Loader', {
    * @static
    */
   _check: function(comp) {
-    // Is comp loaded?
-    return (FB.Loader.loaded[comp] || FB.create(comp, false, true));
+    return FB.Component.loaded[comp];
   },
 
   /*
@@ -81,4 +86,3 @@ FB.provide('Loader', {
   _reqs : [],
   _comps: {}
 });
-
