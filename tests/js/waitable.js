@@ -14,33 +14,21 @@
  * limitations under the License.
  */
 ////////////////////////////////////////////////////////////////////////////////
-module('loader');
+module('waitable');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
-  'Load a single component',
+  'FB.Waitable',
 
   function() {
-    ok(!FB.Loader._check('FB.test-component'), '_check is false');
+    var w = new FB.Waitable();
+    w.wait(function(x) {
+             equals(x, 42);
+           });
 
-    FB.Loader.use('FB.test-component',
-                  function() {
-                    ok(true, "component loaded");
-                  });
+    expect(1);
+    w.set(42);
 
-    // todo: assert that the <script> tag was inserted
-
-    // this function will be called when the script file is included
-    FB.Component.onScriptLoaded(['FB.test-component']);
-
-    ok(FB.Loader._check('FB.test-component'), '_check is true');
-
-    // test it again now that it's loaded
-    FB.Loader.use('FB.test-component',
-                  function() {
-                    ok(true, "component loaded");
-                  });
-
-    }
-  );
-
+    // this should not fire callback, value already set
+    w.set(64);
+  });

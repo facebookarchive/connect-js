@@ -1,5 +1,5 @@
 /**
- * @provides fb.XFBML.ShareButton
+ * @provides xfbml.fb:share-button
  * @layer XFBML
  * @requires fb.Type fb.XFBML  fb.String fb.Dom fb.XFBML.Element fb.ui
  *  fb.Data fb.Helper fb.share-button-css

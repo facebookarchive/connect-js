@@ -46,8 +46,7 @@ FB.provide('', {
    */
   Class: function(name, constructor, proto) {
     if (FB.CLASSES[name]) {
-      // FB.Log.warn('Ignoring Class "' + name + '" reload.');
-      return;
+      return FB.CLASSES[name];
     }
 
     var newClass = constructor ||  function(){};
@@ -59,6 +58,7 @@ FB.provide('', {
 
     newClass.prototype.constructor = newClass;
     FB.create(name, newClass);
+    FB.CLASSES[name] = newClass;
     return newClass;
   },
 
@@ -75,8 +75,8 @@ FB.provide('', {
    * @static
    */
   subclass: function(name, baseName, constructor, proto) {
-    if (FB.CLASSES[name]) {1
-      return;
+    if (FB.CLASSES[name]) {
+      return FB.CLASSES[name];
     }
     var base = FB.create(baseName);
     FB.copy(proto, base.prototype);

@@ -34,7 +34,7 @@ FB.Class('XFBML.Element',
 
   _getBoolAttribute: function(name, defaultValue) {
     return this.getAttribute(name, defaultValue, function(s) {
-                             s.toLowerCase() == 'true';
+                             return s.toLowerCase() == 'true';
                              });
   },
 

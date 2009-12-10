@@ -34,13 +34,12 @@ FB.provide('XFBML', {
    */
   parse: function(dom) {
     dom = dom || document.body;
-    // Parse first
-    // Each TagInfo is an array
-    // [<namespace>, <tag-name>, <implementation class/component name>]
 
     // First, find all tags that are present
     FB.forEach(FB.XFBML._tagInfos, function(tagInfo) {
-      xfbmlDoms = FB.XFBML._getDoms(dom, tagInfo[0], tagInfo[1]);
+      xfbmlDoms = FB.XFBML._getDomElements(dom,
+                                           tagInfo.xmlns,
+                                           tagInfo.localName);
       for(var i=0; i < xfbmlDoms.length; i++) {
         FB.XFBML._processElement(xfbmlDoms[i], tagInfo);
       };
@@ -51,12 +50,15 @@ FB.provide('XFBML', {
   },
 
   /**
-   * Register a custom XFBML Tag
-   * Example: FB.XFBML.registerTag('digg', 'digg-button', 'Digg.DiggButton'])
+   * Register an XFBML tag, for example:
    *
-   * @param {object} An array of the format ['<xmls-namespace>', '<tag-name>',
-   *       '<name of the JS class that implements the tag>']
-   * @static
+   *       FB.XFBML.registerTag("fb", "login-button", "FB.XFBML.LoginButton");
+   *
+   * @param {Object} tagInfo
+   * an object containiner the following keys:
+   * - xmlns
+   * - localName
+   * - className
    */
   registerTag: function(tagInfo) {
     FB.XFBML._tagInfos.push(tagInfo);
@@ -73,17 +75,26 @@ FB.provide('XFBML', {
   _processElement: function(dom, tagInfo) {
     // Check if element for the dom already exists
     var element = dom._element;
-    if (!element) {
-      var className = tagInfo[2];
-      var comp = tagInfo[3];
-      // Load necessary class on-demand if necessary
-      FB.Loader.use(comp, function() {
-        fn = eval(className);
-        element = dom._element = new fn(dom);
-        element.process();
-      });
-    } else {
+    if (element) {
       element.process();
+    } else {
+      var processor = function() {
+         var fn = eval(tagInfo.className);
+         element = dom._element = new fn(dom);
+         element.process();
+      };
+
+      if (FB.CLASSES[tagInfo.className.substr(3)]) {
+        processor();
+      } else {
+        // Load necessary class on-demand if necessary
+        // haste component name is "xfbml:" plus the
+        // tag name
+        var component = 'xfbml.' +
+          tagInfo.xmlns + ':' + tagInfo.localName;
+
+        FB.Loader.use(component, processor);
+      }
     }
   },
 
@@ -97,7 +108,7 @@ FB.provide('XFBML', {
    * @private
    * @static
    */
-  _getDoms: function(dom, xmlns, localName) {
+  _getDomElements: function(dom, xmlns, localName) {
     // Different browsers behave slightly differently in handling tags
     // with custom namespace.
     switch (FB.Dom.getBrowserType()) {
@@ -129,13 +140,18 @@ FB.provide('XFBML', {
     }
   },
 
-  _tagInfos: [
-    ['fb', 'profile-pic','FB.XFBML.ProfilePic', 'fb.XFBML.ProfilePic'],
-    ['fb', 'name','FB.XFBML.Name', 'fb.XFBML.Name'],
-    ['fb', 'login-button', 'FB.XFBML.LoginButton', 'fb.XFBML.LoginButton'],
-    ['fb', 'share-button', 'FB.XFBML.ShareButton', 'fb.XFBML.ShareButton']
-  ],
-  _list:[]
+  /**
+   * Register the default set of base tags.
+   */
+
+  _tagInfos:
+    [{xmlns: 'fb', localName: 'profile-pic',  className: 'FB.XFBML.ProfilePic'},
+     {xmlns: 'fb', localName: 'name',         className: 'FB.XFBML.Name'},
+     {xmlns: 'fb', localName: 'login-button', className: 'FB.XFBML.LoginButton'},
+     {xmlns: 'fb', localName: 'share-button', className: 'FB.XFBML.ShareButton'}
+    ],
+
+  _list: []
 });
 
 /*

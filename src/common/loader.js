@@ -17,13 +17,13 @@
  * @private
  */
 FB.provide('Loader', {
-  /*
+
+  /**
    * Use this to request dynamic loading of components in Facebook Client
    * JavaScript library
-   * @param {string} comp  a component
-   * @param {function} callback  callback function to be executed when all
-   *                  required comp
-   *                  are finished loading
+   * @param {String} comp  a component
+   * @param {Function} callback  callback function to be executed when all
+   *                  required components are finished loading
    * @static
    */
   use: function(comp, callback) {
@@ -42,12 +42,26 @@ FB.provide('Loader', {
     if (!FB.Loader._timer) {
       FB.Loader._timer = setTimeout(function(){
         FB.Loader._timer = 0;
-        FB.Dom.addScript(FB.dynData.resources.loader_url  + '?comps=' +
-                         FB.Array.keys(FB.Loader._comps).join(',') +
-                         '&exclude=' +
-                      FB.Array.keys(FB.Component.loaded).join(','));
+        FB.Dom.addScript(FB.Loader._resourceUrl(
+                           FB.Array.keys(FB.Loader._comps),
+                           FB.Array.keys(FB.Component.loaded)));
       }, 0);
     }
+  },
+
+  /**
+   * Construct a URL that will load the requested components.
+   *
+   * @param {Array} included  list of strings specifying requirements
+   * @param {Array} excluded  list of strings for components that
+   *                          should be excluded (because already loaded)
+   * @private
+   */
+ _resourceUrl: function(included, excluded) {
+    return FB._domain.cdn +
+     'dynamic_loader/' + // TODO: doesn't exist yet
+     '?comps=' + included.join(',') +
+     '&exclude=' + excluded.join(',');
   },
 
   _onCompLoaded: function() {

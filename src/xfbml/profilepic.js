@@ -1,7 +1,7 @@
 /**
- * @provides fb.XFBML.ProfilePic
+ * @provides xfbml.fb:profile-pic
  * @layer XFBML
- * @requires fb.Type fb.XFBML  fb.String fb.Dom fb.XFBML.Element fb.Data
+ * @requires fb.Type fb.XFBML fb.String fb.Dom fb.XFBML.Element fb.Data
  *           fb.Helper
  */
 

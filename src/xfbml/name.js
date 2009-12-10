@@ -1,5 +1,5 @@
 /**
- * @provides fb.XFBML.Name
+ * @provides xfbml.fb:name
  * @layer XFBML
  * @requires fb.Type fb.XFBML  fb.Dom fb.XFBML.Element fb.Data fb.Helper
  */

@@ -1,5 +1,5 @@
 /**
- * @provides fb.XFBML.LoginButton
+ * @provides xfbml.fb:login-button
  * @layer XFBML
  * @requires fb.Type fb.XFBML.Element fb.auth
  */
