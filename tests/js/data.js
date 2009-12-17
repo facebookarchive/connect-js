@@ -160,8 +160,8 @@ test(
   'FB.Data.query with dependency',
 
   function() {
-    var query = FB.Data.query('select username from page where id = 6815841748');
-    var dependentQuery = FB.Data.query('select name from page where username = {0}', query);
+    var query = FB.Data.query('select username from page where page_id = 6815841748');
+    var dependentQuery = FB.Data.query('select name from page where username in (select username from {0})', query);
 
     dependentQuery.wait(function(data) {
                           assertFQLResponse(data, [{name: 'Barack Obama'}]);

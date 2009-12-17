@@ -20,7 +20,7 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null,
                               square: 'pic_square', t: 'pic_small',
                               s: 'pic', n: 'pic_big', q: 'pic_square' },
     picFieldName = sizeToPicFieldMap[size],
-        widthAttribute = this.getAttribute('width'),
+    widthAttribute = this.getAttribute('width'),
     heightAttribute = this.getAttribute('height'),
     style = this.dom.style,
     uid = this.getAttribute('uid');
@@ -65,15 +65,16 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null,
     // Wait for status to be known
     FB.Event.monitor('auth.statusChange', this.bind(function() {
       //Is Element still in DOM tree
-      if (!this.isValid())
+      if (!this.isValid()) {
         return true; // Stop processing
+      }
+
+      if (uid === 'loggedinuser') {
+        uid = FB.Helper.getLoggedInUser();
+      }
 
       // Is status known?
-      if (FB._userStatus) {
-        if (uid === 'loggedinuser') {
-          uid = FB.App.session.uid;
-        }
-
+      if (FB._userStatus && uid) {
         // Get data
         // Use profile if uid is a user, but a page
         FB.Data._selectByIndex(['name', picFieldName],
