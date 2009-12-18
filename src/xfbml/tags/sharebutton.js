@@ -9,6 +9,7 @@
  * Implementation for fb:share-button tag.
  * @class FB.XFBML.ShareButton
  * @extends  FB.XFBML.Element
+ * @private
  */
 FB.subclass('XFBML.ShareButton', 'XFBML.Element', null,
   /*

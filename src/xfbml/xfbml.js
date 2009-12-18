@@ -7,7 +7,7 @@
  */
 
 /**
- * This provides public APIs for developer to programming XFBML
+ * This provides public APIs for developer to program XFBML
  * @class FB.XFBML
  * @static
  */
@@ -15,10 +15,16 @@ FB.provide('XFBML', {
   /**
    * Set XFBML markup on a given DOM node. This is like
    * setInnerHTML
-   * Example: FB.XFBML.set($('container',
-   *          '<fb:name uid="4"></fb:name><div>.....')
+   * Example:
+   * --------
+   * Set the innerHTML of a dom element with id "container"
+   * to some markup (fb:name + regular HTML) and render it
+   *
+   *      FB.XFBML.set(FB.$('container'),
+   *          '<fb:name uid="4"></fb:name><div>Hello</div>');
+   *
    * @param {DOMElement} dom  DOM element
-   * @param {string} markup XFBML markup. It may contain reguarl
+   * @param {String} markup XFBML markup. It may contain reguarl
    *         HTML markup as well.
    */
   set: function(dom, markup) {
@@ -28,6 +34,13 @@ FB.provide('XFBML', {
 
   /**
    * Parse and render XFBML markup inside a DOM element
+   * Example:
+   * --------
+   * Parse and render all XFBML on current page
+   *      FB.XFBML.parse();
+   *
+   * Parse and render XFBML inside DOM element with id 'foo'
+   *      FB.XFBML.parse(document.getElementById('foo'));
    * @param {DOMElement} dom [Optional] Container DOM of XFBML
    *         By default, we parse document.body
    */
@@ -49,9 +62,17 @@ FB.provide('XFBML', {
   },
 
   /**
-   * Register an XFBML tag, for example:
+   * Register an XFBML tag. If you create an custom xfbml tag, you can
+   * use this method to register it so the it can be treated like
+   * any build-in XFBML tags
    *
-   *       FB.XFBML.registerTag("fb", "login-button", "FB.XFBML.LoginButton");
+   * Example
+   *
+   * Register fb:name tag that is implemented by class FB.XFBML.Name
+   *       tagInfo = {xmlns: 'fb',
+   *                  localName: 'name',
+   *                  className: 'FB.XFBML.Name'},
+   *       FB.XFBML.registerTag(tagInfo);
    *
    * @param {Object} tagInfo
    * an object containiner the following keys:

@@ -8,6 +8,7 @@
 /**
  * @class FB.XFBML.ProfilePic
  * @extends  FB.XFBML.Element
+ * @private
  */
 FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null,
   /*

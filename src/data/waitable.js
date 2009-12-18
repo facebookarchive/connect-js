@@ -5,7 +5,9 @@
  */
 
 /**
- * An node that holds data that may not be available immediately
+ * A object that holds data that may not be available immediately.
+ * This is base type for results returned from FB.Data.query()
+ * method.
  * @class FB.Waitable
  */
 FB.subclass('Waitable', 'Obj',
@@ -20,7 +22,7 @@ function(value) {
 }, {
 
   /**
-   * @param {object} Set value property of the data object. This will
+   * @param {Object} value Set value property of the data object. This will
    *  cause "value" event to be fire on the object. Any callback functions
    *  that are waiting for the data through wait() methods will be invoked
    *  if the value was previously not set.
@@ -29,6 +31,7 @@ function(value) {
     this.setProperty('value', value);
   },
 
+
   error: function(ex) {
     this.fire("error", ex);
   },
@@ -36,8 +39,6 @@ function(value) {
   /**
    * Wait until this.value is set.
    * Example:
-   * <div class="code_border">
-   * <xmp class="prettyprint lang-js">
    *     var friendInfos = FB.Data.query(
    *      'select name, pic from user where uid in (select uid2 from {0})',
    *      friends);
@@ -50,10 +51,11 @@ function(value) {
    *       });
    *       FB.$('infos').innerHTML = html;
    *     });
-   * </xmp>
-   * </div>
-   * @param {function} A callback function that will be invoked when this.value
-   *   is set.
+   * @param {Function} callback A callback function that will be invoked
+   *   when this.value is set. The value property will be passed to the
+   *   callback function as a parameter
+   * @param {Function} errorHandler [optional] A callback function that
+   *   will be invoked if there is an error in getting the value.
    */
   wait: function(callback, errorHandler) {
     this.monitor('value', this.bind(function() {

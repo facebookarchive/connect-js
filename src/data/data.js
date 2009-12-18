@@ -8,6 +8,21 @@
 /**
  * Data access class for accessing Facebook data efficiently.
  *
+ * FB.Data is a data layer that offers the following advantages over
+ * direct use of FB.Api:
+ *
+ * 1. Reduce number of individual HTTP requests through the following
+ *    optimizations:
+ *
+ *   a. Automatically combine individual data requests into a single
+ *      multi-query request.
+ *
+ *   b. Automatic query optimization.
+ *
+ *   c. Enable caching of data through browser local cache (not implemented yet)
+ *
+ * 2. Reduce complexity of asynchronous API programming, especially multiple
+ *     asynchronous request, though FB.Waitable and FB.waitOn.
  * @class FB.Data
  * @static
  */
@@ -15,33 +30,30 @@ FB.provide('Data', {
   /**
    * Perform a FQL query
    * Example:
-   * <div class="code_border">
-   * <xmp class="prettyprint js">
-   * // Get random 5 friends ids
-   * var friends = FB.Data.query(
-   * 'select uid2 from friend where uid1={0} ORDER BY rand() limit 5',
-   * FB.App.session.uid);
-   * var friendInfos = FB.Data.query(
-   *      'select name, pic from user where uid in (select uid2 from {0})',
-   *      friends);
+   *      // Get random 5 friends ids
+   *      var friends = FB.Data.query(
+   *        'select uid2 from friend where uid1={0} ORDER BY rand() limit 5',
+   *        FB.App.session.uid);
+   *      var friendInfos = FB.Data.query(
+   *           'select name, pic from user where uid in (select uid2 from {0})',
+   *           friends);
    *
-   * friendInfos.wait(function(data) {
-   *   // Render info. For illustration of API, I am using any XFBML tags
-   *   var html = '';
-   *   FB.forEach(data, function(info) {
-   *    html += '<p>' + info.name + '<img src="' + info.pic + '" /></p>';
-   *   });
-   *   FB.$('infos').innerHTML = html;
-   * });
-   * </xmp>
-   * </div>
+   *      friendInfos.wait(function(data) {
+   *        // Render info. For illustration of API, I am using any XFBML tags
+   *        var html = '';
+   *        FB.forEach(data, function(info) {
+   *         html += '<p>' + info.name + '<img src="' + info.pic + '" /></p>';
+   *        });
+   *        FB.$('infos').innerHTML = html;
+   *      });
    *
-   * @param {string} template FQL query string template. It can contains
+   * @param {String} template FQL query string template. It can contains
    *                optional
-   *                 formated parameters. When these
+   *                 formated parameters in the format of '{<arg-indx>}'.
+   *                 When these
    *                 parameters are used in the string, the actual data should
    *                 be passed as parameter following the template parameter.
-   * @param {object} data optional 0-n arguments of data. The arguments can be
+   * @param {Object} data optional 0-n arguments of data. The arguments can be
    * either real data or results from previous FB.Data.query().
    * @return {FB.Waitable} An async query object that contains query result.
    *   You can pass the result as arguments to other functions that expect
@@ -59,46 +71,42 @@ FB.provide('Data', {
   /**
    * Given a list of potential async data,
    * wait until they are all ready
-   * Example 1: Wait for several data then perform some action
-   * <xmp class="prettyprint js">
+   * Example 1
+   * ------------
+   *  Wait for several data then perform some action
    * var queryTemplate = 'select name from profile where id={0}';
-   * var u1 = FB.Data.query(queryTemplate, 4);
-   * var u2 = FB.Data.query(queryTemplate, 1160);
-   *  FB.Data.waitOn([u1, u2], function(args) {
-   *     log('u1 value = '+ u1.value); // You can also use args[0]
-   *     log('u2 value = '+ u2.value); // You can also use args[1]
-   *  });
-   * </xmp>
+   *      var u1 = FB.Data.query(queryTemplate, 4);
+   *      var u2 = FB.Data.query(queryTemplate, 1160);
+   *       FB.Data.waitOn([u1, u2], function(args) {
+   *          log('u1 value = '+ u1.value); // You can also use args[0]
+   *          log('u2 value = '+ u2.value); // You can also use args[1]
+   *       });
    *
    * Examples 2: Create a new Waitable that compute its value
    * based on other Waitables
-   * <xmp class="prettyprint js">
-   * var friends = FB.Data.query('select uid2 from friend where uid1={0}',
-   *  FB._session.uid);
-   * // ...
-   * // Create a Waitable that is the count of friends
-   * var count = FB.Data.waitOn([friends], 'args[0].length');
-   * displayFriendsCount(count);
-   * // ...
-   * function displayFriendsCount(count) {
-   *  count.wait(function(result) {
-   *    log('friends count = ' + result);
-   *  });
-   * }
-   * </xmp>
+   *      var friends = FB.Data.query('select uid2 from friend where uid1={0}',
+   *       FB._session.uid);
+   *      // ...
+   *      // Create a Waitable that is the count of friends
+   *      var count = FB.Data.waitOn([friends], 'args[0].length');
+   *      displayFriendsCount(count);
+   *      // ...
+   *      function displayFriendsCount(count) {
+   *       count.wait(function(result) {
+   *         log('friends count = ' + result);
+   *       });
+   *      }
    *
    * Example 3: Note waiOn can handle data that is direct value
    * as well.
-   *  <xmp class="prettyprint js">
-   * var queryTemplate = 'select name from profile where id={0}';
-   * var u1 = FB.Data.query(queryTemplate, 4);
-   * var u2 = FB.Data.query(queryTemplate, 1160);
-   *  FB.Data.waitOn([u1, u2, FB._session.uid], function(args) {
-   *     log('u1 = '+ args[0]);
-   *     log('u2 = '+ args[1]);
-   *     log('uid = '+ args[2]);
-   *  });
-   * </xmp>
+   *      var queryTemplate = 'select name from profile where id={0}';
+   *      var u1 = FB.Data.query(queryTemplate, 4);
+   *      var u2 = FB.Data.query(queryTemplate, 1160);
+   *       FB.Data.waitOn([u1, u2, FB._session.uid], function(args) {
+   *          log('u1 = '+ args[0]);
+   *          log('u2 = '+ args[1]);
+   *          log('uid = '+ args[2]);
+   *       });
    * @param {Array} an array of data to wait on. Each item
    *                could be a Waitable object or actual value
    * @param {Function | String} A function callback that will be invoked

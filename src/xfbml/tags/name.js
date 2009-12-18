@@ -7,6 +7,7 @@
 /**
  * @class FB.XFBML.Name
  * @extends  FB.XFBML.Element
+ * @private
  */
 FB.subclass('XFBML.Name', 'XFBML.Element', null,
   /*

@@ -14,6 +14,7 @@
  * 3. Validation of allowed values on attributes
  * @class FB.XFBML.LoginButton
  * @extends  FB.XFBML.Element
+ * @private
  */
 FB.subclass('XFBML.LoginButton', 'XFBML.Element', null,
   /*
