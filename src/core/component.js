@@ -18,6 +18,7 @@
 * See FB.Loader for more info on usage.
 *
 * @class FB.Component
+* @static
 * @private
 */
 FB.provide('Component', {

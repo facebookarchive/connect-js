@@ -7,6 +7,7 @@
 /**
  * Helper class for XFBML
  * @class FB.Helper
+ * @static
  * @private
  */
 FB.provide('Helper', {
@@ -15,7 +16,6 @@ FB.provide('Helper', {
    * [NOTE:] This code is based on is_user_id function in our server code.
    * If that function changes, we'd have to update this one as well.
    * @param {uid} id
-   * @static
    */
   isUser: function(id) {
     return id < 2200000000 || (
@@ -32,7 +32,6 @@ FB.provide('Helper', {
   /**
    * @param  {String} s
    * @return  {String}
-   * @static
    */
   upperCaseFirstChar: function(s) {
     if (s.length > 0) {
@@ -50,7 +49,6 @@ FB.provide('Helper', {
    * @param  {String} html
    * @param  {String} href
    * @return  String
-   * @static
    */
   getProfileLink: function(userInfo, html, href) {
     href = href || (userInfo ?  FB._domain.www + 'profile.php?id=' +

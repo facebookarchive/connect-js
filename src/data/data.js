@@ -107,7 +107,6 @@ FB.provide('Data', {
    *        be evaluted as a JavaScript string
    * @return {FB.Waitable} A Waitable object that will be set with
    *        the return value of callback function.
-   * @static
    */
   waitOn: function(data, callback) {
     var result = new FB.Waitable();

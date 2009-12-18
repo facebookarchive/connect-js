@@ -124,7 +124,6 @@ if (!window.FB) {
      * @param {string} name full qualified name ('Util.foo', etc.)
      * @param {string} value value to set. Default value is {}. [Optional]
      * @return object  The created object, or boolean if testOnly is true.
-     * @static
      */
     create: function(name, value) {
       var node = window.FB, // We will use 'FB' as root namespace
@@ -199,6 +198,7 @@ if (!window.FB) {
      * @method $
      * @param {string} DOM id
      * @return DOMElement
+     * @access private
      */
     $: function(id) {
       return document.getElementById(id);
@@ -207,11 +207,13 @@ if (!window.FB) {
     /**
      * For looping through Arrays and Objects.
      *
+     *
      * @param {Object} item   an Array or an Object
      * @param {Function} fn   the callback function for iteration.
      *    The function will be pass (value, [index/key], item) paramters
      * @param {Bool} proto  indicate if properties from the prototype should
      *                      be included
+     * @access private
      */
     forEach: function(item, fn, proto) {
       if (Object.prototype.toString.apply(item) === '[object Array]') {

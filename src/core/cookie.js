@@ -62,7 +62,7 @@ FB.provide('Cookie', {
    */
   load: function() {
     var
-      // note, we have the opening quote (") for the value in the regex, but do
+      // note, we have the opening quote for the value in the regex, but do
       // not have a closing quote. this is because the \b already handles it.
       cookie = document.cookie.match('\\bfbs_' + FB._apiKey + '="([^;]*)\\b'),
       session;

@@ -94,7 +94,6 @@ FB.provide('', {
  * API call implementations.
  *
  * @class FB.RestServer
- * @static
  * @access private
  */
 FB.provide('RestServer', {

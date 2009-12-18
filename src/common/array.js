@@ -9,6 +9,7 @@
  * Array related helper methods
  * @class FB.Array
  * @private
+ * @static
  */
 FB.provide('Array', {
   /**
@@ -16,7 +17,6 @@ FB.provide('Array', {
    * @param {array} Array
    * @param {object} item to locate
    * @return {number} index of item
-   * @static
    */
   indexOf: function (a, item) {
     if (a.indexOf) {
@@ -39,7 +39,6 @@ FB.provide('Array', {
    * @param {array} a
    * @param {array} b
    * @return {array} merged array
-   * @static
    */
   merge: function(a, b) {
     for (var i=0; i < b.length; i++) {
@@ -56,7 +55,6 @@ FB.provide('Array', {
    * @param {array} source array
    * @param {function} filter callback function
    * @return {array} filtered array
-   * @static
    */
   filter: function(a, fn) {
     var b  = [];
@@ -73,7 +71,6 @@ FB.provide('Array', {
    * Example: keys({'x': 2, 'y': 3'}) returns ['x', 'y']
    * @param {object} source object
    * @return {array} an array
-   * @static
    */
   keys: function(obj) {
     var a =[];

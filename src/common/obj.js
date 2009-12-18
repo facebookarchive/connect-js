@@ -6,6 +6,7 @@
 /**
  * Base object type that support events
  * @class FB.Obj
+ * @private
  */
 FB.Class('Obj', null,
   FB.copy(FB.Event, {

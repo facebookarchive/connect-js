@@ -9,6 +9,7 @@
 /**
  * This provides public APIs for developer to programming XFBML
  * @class FB.XFBML
+ * @static
  */
 FB.provide('XFBML', {
   /**
@@ -19,7 +20,6 @@ FB.provide('XFBML', {
    * @param {DOMElement} dom  DOM element
    * @param {string} markup XFBML markup. It may contain reguarl
    *         HTML markup as well.
-   * @static
    */
   set: function(dom, markup) {
     dom.innerHTML = markup;
@@ -28,9 +28,8 @@ FB.provide('XFBML', {
 
   /**
    * Parse and render XFBML markup inside a DOM element
-   * @param [DOMElement} dom [Optional] Container DOM of XFBML
+   * @param {DOMElement} dom [Optional] Container DOM of XFBML
    *         By default, we parse document.body
-   * @static
    */
   parse: function(dom) {
     dom = dom || document.body;
@@ -70,7 +69,6 @@ FB.provide('XFBML', {
   /**
    * Process an XFBML element
    * @private
-   * @static
    */
   _processElement: function(dom, tagInfo) {
     // Check if element for the dom already exists
@@ -106,7 +104,6 @@ FB.provide('XFBML', {
    * @param  {String} localName
    * @return  DOMElementCollection
    * @private
-   * @static
    */
   _getDomElements: function(dom, xmlns, localName) {
     // Different browsers behave slightly differently in handling tags

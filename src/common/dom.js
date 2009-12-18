@@ -7,13 +7,13 @@
 /**
  * This provides helper methods related to DOM
  * @class FB.Dom
+ * @static
  * @private
  */
 FB.provide('Dom', {
   /**
    * @param  {DOMElement} dom
    * @param  {String} newClass
-   * @static
    */
   addCss: function(dom, newClass) {
     var cssClassWithSpace = ' ' + dom.className + ' ';
@@ -26,7 +26,6 @@ FB.provide('Dom', {
    * @param  {DOMElement} dom
    * @param  {String} className
    * @return  Boolean
-   * @static
    */
   containsCss: function(dom, className) {
     var cssClassWithSpace = ' ' + dom.className + ' ';
@@ -35,7 +34,6 @@ FB.provide('Dom', {
   /**
    * @param  {DOMElement} dom
    * @param  {String} className
-   * @static
    */
   removeCss: function(dom, className) {
     var cssClassWithSpace = ' ' + dom.className + ' ';
@@ -51,7 +49,6 @@ FB.provide('Dom', {
 
   /**
    * Dynamically add a script tag
-   * @static
    */
    addScript: function(src) {
      var script = document.createElement('script');
@@ -93,7 +90,6 @@ FB.provide('Dom', {
    /**
    * Get browser type
    * @return string 'ie' | 'mozilla' |'safari' | 'other'
-   * @static
    */
   getBrowserType: function() {
     if (!FB.Dom._browserType) {

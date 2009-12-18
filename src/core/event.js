@@ -26,7 +26,6 @@
  * on properly implementing "extends" support in our doc system (for now).
  * @class FB.Event
  * @static
- * @access private
  */
 FB.provide('EventProvider', {
   /**
@@ -112,7 +111,6 @@ FB.provide('EventProvider', {
    * @param {function} callback A callback function. arguments may be
    *   passed to the callback.
    *     If the callback function returns true, the event will be unsubscribed.
-   * @static
    */
   monitor: function(name, callback) {
     if (!callback()) {
@@ -177,11 +175,4 @@ FB.provide('EventProvider', {
   }
 });
 
-/**
- * Event.
- *
- * @class FB.Event
- * @static
- * @access public
- */
 FB.provide('Event', FB.EventProvider);

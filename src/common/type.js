@@ -7,21 +7,20 @@
 /**
  * Provide Class/Type support
  * @class FB
- * @private
+ * @static
  */
 FB.provide('', {
 
   /**
    * Bind a function to a given context and arguments.
    *
-   * @access protected
+   * @access private
    * @param {Function} fn  the function to bind
    * @param {Object} context     object to be used as the context when
    *                             calling the function
    * @param {...} arguments    additional arguments to be bound to the
    *                             function
    * @returns       {Function}   the bound function
-   * @static
    */
   bind: function() {
     var
@@ -39,10 +38,11 @@ FB.provide('', {
    * Create a new class.
    * Note: I have to use 'Class' instead of 'class' because 'class' is
    * a reserved (but unused) keyword.
+   *
+   * @access private
    * @param {string} name class name
    * @param {function} constructor class constructor
    * @param {object} proto instance methods for class
-   * @static
    */
   Class: function(name, constructor, proto) {
     if (FB.CLASSES[name]) {
@@ -68,11 +68,12 @@ FB.provide('', {
    * Note: To call base class constructor, use this._base(...).
    * If you override a method 'foo' but still want to call
    * the base class's method 'foo', use this._callBase('foo', ...)
+   *
+   * @access private
    * @param {string} name class name
    * @param {string} baseName,
    * @param {function} constructor class constructor
    * @param {object} proto instance methods for class
-   * @static
    */
   subclass: function(name, baseName, constructor, proto) {
     if (FB.CLASSES[name]) {
@@ -97,6 +98,11 @@ FB.provide('', {
   CLASSES: {}
 });
 
+/**
+ * @class FB.Type
+ * @static
+ * @private
+ */
 FB.provide('Type', {
   isType: function(obj, type) {
     while (obj) {
