@@ -20,3 +20,13 @@ Options for FB.login
 We changed the signature for FB.login. It now takes a dictionary of
 options instead of just a permissions string. This will allow us to maintain
 backwards compatibility in the future if we expand the arguments.
+
+XFBML and Advanced Data layer
+-------------
+
+*Date*: 18th December, 2009
+
+Alpha release for an implementation of [XFBML] and an [advanced data layer].
+
+[XFBML]: http://wiki.github.com/facebook/connect-js/xfbml
+[advanced data layer]: http://wiki.github.com/facebook/connect-js/data-layer
