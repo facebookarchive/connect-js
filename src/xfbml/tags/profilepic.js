@@ -70,7 +70,7 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null,
         return true; // Stop processing
       }
 
-      if (uid === 'loggedinuser') {
+      if (this.getAttribute('uid', null) == 'loggedinuser') {
         uid = FB.Helper.getLoggedInUser();
       }
 

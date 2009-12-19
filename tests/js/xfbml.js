@@ -59,8 +59,6 @@ test(
   function() {
 
     // preset
-    FB.XFBML._tagInfos = [];
-
     FB.XFBML.registerTag({xmlns:'test', localName:'answer',
                           className:'FB.XFBML.TestElement'});
 

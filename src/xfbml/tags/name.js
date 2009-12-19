@@ -16,10 +16,6 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
   {
   process: function() {
     this._uid = this.getAttribute('uid', null);
-    if(this._uid == 'loggedinuser' && FB.App.session) {
-      this._uid = FB.App.session.uid;
-    }
-
     if (!this._uid) {
       return;
     }
@@ -53,10 +49,19 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
     // Wait for status to be known
     FB.Event.monitor('auth.statusChange', this.bind(function() {
       //Is Element still in DOM tree
-      if (!this.isValid())
+      if (!this.isValid()) {
         return true; // Stop processing
+      }
 
       if (FB._userStatus) {
+        if(this.getAttribute('uid', null ) == 'loggedinuser') {
+         this._uid = FB.Helper.getLoggedInUser();
+        }
+
+        if (!this._uid) {
+          return false;
+        }
+
         if (FB.Helper.isUser(this._uid)) {
           data = FB.Data._selectByIndex(fields, 'user', 'uid', this._uid);
         } else {
@@ -74,6 +79,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
           }
         }));
       }
+      return false;
     }));
   },
 

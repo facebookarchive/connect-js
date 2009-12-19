@@ -21,6 +21,7 @@ FILES=(
   src/core/prelude.js
   src/core/api.js
   src/core/auth.js
+  src/core/component.js
   src/core/content.js
   src/core/cookie.js
   src/core/init.js
@@ -31,6 +32,24 @@ FILES=(
   src/core/qs.js
   src/core/ui.js
   src/core/xd.js
+
+  src/common/loader.js
+  src/common/array.js
+  src/common/string.js
+  src/common/type.js
+  src/common/dom.js
+  src/common/obj.js
+
+  src/data/waitable.js
+  src/data/data.js
+
+  src/xfbml/element.js
+  src/xfbml/xfbml.js
+  src/xfbml/helper.js
+  src/xfbml/tags/loginbutton.js
+  src/xfbml/tags/name.js
+  src/xfbml/tags/profilepic.js
+  src/xfbml/tags/sharebutton.js
 )
 
 cat ${FILES[@]}
