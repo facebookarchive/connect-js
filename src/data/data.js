@@ -37,8 +37,9 @@ FB.provide('Data', {
    * Make a simple FQL call and handle the results.
    *
    *      var query = FB.Data.query('select name, uid from user where uid={0}', user_id);
-   *      query.wait(function(data) {
-   *        document.getElementById('name').
+   *      query.wait(function(rows) {
+   *        document.getElementById('name').innerHTML =
+   *          'Your name is ' + rows[0].name;
    *      });
    *
    * Display the names and events of 10 random friends.  This can't be done using a simple
