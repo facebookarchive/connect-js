@@ -7,14 +7,30 @@
  */
 
 /**
- * This provides public APIs for developer to program XFBML
+ * Methods for the rendering of [[wiki:XFBML]] tags.
+ *
+ * This library defines four XFBML tags:
+ *
+ * - [[xfbml:fb:login-button]]
+ * - [[xfbml:fb:share]]
+ * - [[xfbml:fb:profile-pic]]
+ * - [[xfbml:fb:name]]
+ *
+ * To render the tags, simple use them anywhere in your page,
+ * and then call:
+ *
+ *      FB.XFBML.parse();
+ *
  * @class FB.XFBML
  * @static
  */
 FB.provide('XFBML', {
+
   /**
-   * Set XFBML markup on a given DOM node. This is like
-   * setInnerHTML
+   * Dynamically set XFBML markup on a given DOM element. Use this
+   * method if you want to set XFBML after the page has already loaded
+   * (for example, in response to an Ajax request or API call).
+   *
    * Example:
    * --------
    * Set the innerHTML of a dom element with id "container"
@@ -33,16 +49,22 @@ FB.provide('XFBML', {
   },
 
   /**
-   * Parse and render XFBML markup inside a DOM element
-   * Example:
-   * --------
-   * Parse and render all XFBML on current page
-   *      FB.XFBML.parse();
+   * Parse and render XFBML markup in the document.
    *
-   * Parse and render XFBML inside DOM element with id 'foo'
-   *      FB.XFBML.parse(document.getElementById('foo'));
+   * Examples
+   * --------
+   *
+   * By default, this is all you need to make XFBML work:
+   *
+   *       FB.XFBML.parse();
+   *
+   * Alternately, you may want to only evaluate a portion of
+   * the document. In that case, you can pass in the elment.
+   *
+   *       FB.XFBML.parse(document.getElementById('foo'));
+   *
    * @param {DOMElement} dom [Optional] Container DOM of XFBML
-   *         By default, we parse document.body
+   * By default, we parse document.body
    */
   parse: function(dom) {
     dom = dom || document.body;
@@ -62,11 +84,12 @@ FB.provide('XFBML', {
   },
 
   /**
-   * Register an XFBML tag. If you create an custom xfbml tag, you can
+   * Register a custom XFBML tag. If you create an custom XFBML tag, you can
    * use this method to register it so the it can be treated like
-   * any build-in XFBML tags
+   * any build-in XFBML tags.
    *
    * Example
+   * -------
    *
    * Register fb:name tag that is implemented by class FB.XFBML.Name
    *       tagInfo = {xmlns: 'fb',
@@ -88,7 +111,7 @@ FB.provide('XFBML', {
   //////////////// Private methods ////////////////////////////////////////////
 
   /**
-   * Process an XFBML element
+   * Process an XFBML element.
    * @private
    */
   _processElement: function(dom, tagInfo) {
@@ -120,6 +143,9 @@ FB.provide('XFBML', {
 
 
   /**
+   * Get all the DOM elements present under a given node with a
+   * given tag name.
+   *
    * @param  {Object} element
    * @param  {String} xmlns
    * @param  {String} localName
@@ -161,7 +187,6 @@ FB.provide('XFBML', {
   /**
    * Register the default set of base tags.
    */
-
   _tagInfos:
     [{xmlns: 'fb', localName: 'profile-pic',  className: 'FB.XFBML.ProfilePic'},
      {xmlns: 'fb', localName: 'name',         className: 'FB.XFBML.Name'},

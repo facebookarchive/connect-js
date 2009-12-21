@@ -1,7 +1,7 @@
 /**
  * @provides fb.Data
  * @layer Data
- * @requires fb.prelude fb.Type fb.Array fb.String  fb.api fb.Waitable fb.Obj
+ * @requires fb.prelude fb.Type fb.Array fb.String fb.api fb.Obj fb.Data.Query
  */
 
 
@@ -28,38 +28,73 @@
  */
 FB.provide('Data', {
   /**
-   * Perform a FQL query
-   * Example:
-   *      // Get random 5 friends ids
-   *      var friends = FB.Data.query(
-   *        'select uid2 from friend where uid1={0} ORDER BY rand() limit 5',
-   *        FB.App.session.uid);
-   *      var friendInfos = FB.Data.query(
-   *           'select name, pic from user where uid in (select uid2 from {0})',
-   *           friends);
+   * Performs a parameterized FQL query and returns a [[joey:FB.Data.Query]] object
+   * which can be waited on for the asynchronously fetched data.
    *
-   *      friendInfos.wait(function(data) {
-   *        // Render info. For illustration of API, I am using any XFBML tags
-   *        var html = '';
-   *        FB.forEach(data, function(info) {
-   *         html += '<p>' + info.name + '<img src="' + info.pic + '" /></p>';
+   * Examples
+   * --------
+   *
+   * Make a simple FQL call and handle the results.
+   *
+   *      var query = FB.Data.query('select name, uid from user where uid={0}', user_id);
+   *      query.wait(function(data) {
+   *        document.getElementById('name').
+   *      });
+   *
+   * Display the names and events of 10 random friends.  This can't be done using a simple
+   * FQL query because you need more than one field from more than one table, so we use
+   * FB.Data.query to help construct the call to [[api:fql.multiquery]].
+   *
+   *      // First, get ten of the logged-in user's friends and
+   *      // the events they are attending. In this query, the argument
+   *      // is just an int value (the logged-in user id)
+   *      var query = FB.Data.query(
+   *            "select uid, eid from event_member "
+   *          + "where uid in "
+   *          + "(select uid2 from friend where uid1 = {0}"
+   *          + " order by rand() limit 10)",
+   *          user_id);
+   *
+   *      // Now, construct two dependent queries - one each to get the
+   *      // names of the friends and the events referenced
+   *      var friends = FB.Data.query(
+   *            "select uid, name from user where uid in "
+   *          + "(select uid from {0})", query);
+   *      var events = FB.Data.query(
+   *            "select eid, name from event where eid in "
+   *          + " (select eid from {0})", query);
+   *
+   *      // Now, register a callback which will execute once all three
+   *      // queries return with data
+   *      FB.Data.waitOn([query, friends, events], function() {
+   *        // build a map of eid, uid to name
+   *        var eventNames = friendNames = {};
+   *        FB.forEach(events.value, function(row) {
+   *          eventNames[row.eid] = row.name;
    *        });
-   *        FB.$('infos').innerHTML = html;
+   *        FB.forEach(friends.value, function(row) {
+   *          friendNames[row.uid] = row.name;
+   *        });
+   *
+   *        // now display all the results
+   *        var html = '';
+   *        FB.forEach(query.value, function(row) {
+   *          html += '<p>'
+   *            + friendNames[row.uid]
+   *            + ' is attending '
+   *            + eventNames[row.eid]
+   *            + '</p>';
+   *        });
+   *        document.getElementById('display').innerHTML = html;
    *      });
    *
    * @param {String} template FQL query string template. It can contains
-   *                optional
-   *                 formated parameters in the format of '{<arg-indx>}'.
-   *                 When these
-   *                 parameters are used in the string, the actual data should
-   *                 be passed as parameter following the template parameter.
+   * optional formatted parameters in the format of '{<argument-index>}'.
    * @param {Object} data optional 0-n arguments of data. The arguments can be
-   * either real data or results from previous FB.Data.query().
-   * @return {FB.Waitable} An async query object that contains query result.
-   *   You can pass the result as arguments to other functions that expect
-   *  FB.Waitable immediately, such as FB.Data.query(), FB.Data.eval(),
-   *  FB.Data.waitOn(). If you want wait for the data's value to be available,
-   * you can call the wait() method on the result.
+   * either real data (String or Integer) or an [[joey:FB.Data.Query]] object from a
+   * previous [[joey:FB.Data.query]]().
+   * @return {FB.Data.Query}
+   * An async query object that contains query result.
    */
   query: function(template, data) {
     var query = (new FB.Data.Query).parse(arguments);
@@ -69,21 +104,35 @@ FB.provide('Data', {
   },
 
   /**
-   * Given a list of potential async data,
-   * wait until they are all ready
-   * Example 1
-   * ------------
-   *  Wait for several data then perform some action
-   * var queryTemplate = 'select name from profile where id={0}';
+   * Wait until the results of all queries are ready. See also [[joey:FB.Data.query]] for more
+   * examples of usage.
+   *
+   * Examples
+   * --------
+   *
+   * Wait for several queries to be ready, then perform some action:
+   *
+   *      var queryTemplate = 'select name from profile where id={0}';
    *      var u1 = FB.Data.query(queryTemplate, 4);
    *      var u2 = FB.Data.query(queryTemplate, 1160);
    *       FB.Data.waitOn([u1, u2], function(args) {
-   *          log('u1 value = '+ u1.value); // You can also use args[0]
-   *          log('u2 value = '+ u2.value); // You can also use args[1]
+   *          log('u1 value = '+ args[0].value);
+   *          log('u2 value = '+ args[1].value);
    *       });
    *
-   * Examples 2: Create a new Waitable that compute its value
-   * based on other Waitables
+   * Same as above, except we take advantage of JavaScript closures to
+   * avoid using args[0], args[1], etc:
+   *
+   *      var queryTemplate = 'select name from profile where id={0}';
+   *      var u1 = FB.Data.query(queryTemplate, 4);
+   *      var u2 = FB.Data.query(queryTemplate, 1160);
+   *       FB.Data.waitOn([u1, u2], function(args) {
+   *          log('u1 value = '+ u1.value);
+   *          log('u2 value = '+ u2.value);
+   *       });
+   *
+   * Create a new Waitable that computes its value based on other Waitables:
+   *
    *      var friends = FB.Data.query('select uid2 from friend where uid1={0}',
    *       FB._session.uid);
    *      // ...
@@ -97,28 +146,32 @@ FB.provide('Data', {
    *       });
    *      }
    *
-   * Example 3: Note waiOn can handle data that is direct value
+   * You can mix Waitables and data in the list of dependencies
    * as well.
+   *
    *      var queryTemplate = 'select name from profile where id={0}';
    *      var u1 = FB.Data.query(queryTemplate, 4);
    *      var u2 = FB.Data.query(queryTemplate, 1160);
-   *       FB.Data.waitOn([u1, u2, FB._session.uid], function(args) {
+   *
+   *      // FB._session.uid is just an Integer
+   *      FB.Data.waitOn([u1, u2, FB._session.uid], function(args) {
    *          log('u1 = '+ args[0]);
    *          log('u2 = '+ args[1]);
    *          log('uid = '+ args[2]);
    *       });
-   * @param {Array} an array of data to wait on. Each item
-   *                could be a Waitable object or actual value
-   * @param {Function | String} A function callback that will be invoked
-   *        when all the data are ready. An array of ready data will be
-   *        passed to the callback. If a string is passed, it will
-   *        be evaluted as a JavaScript string
-   * @return {FB.Waitable} A Waitable object that will be set with
-   *        the return value of callback function.
+   *
+   * @param {Array} dependencies an array of dependencies to wait on. Each item
+   * could be a Waitable object or actual value
+   * @param {Function} callback A function callback that will be invoked
+   * when all the data are ready. An array of ready data will be
+   * passed to the callback. If a string is passed, it will
+   * be evaluted as a JavaScript string
+   * @return {FB.Waitable}
+   * A Waitable object that will be set with the return value of callback function.
    */
-  waitOn: function(data, callback) {
+  waitOn: function(dependencies, callback) {
     var result = new FB.Waitable();
-    var c = data.length;
+    var c = dependencies.length;
 
     // For developer convenience, we allow the callback
     // to be a string of javascript expression
@@ -129,7 +182,7 @@ FB.provide('Data', {
       };
     }
 
-    FB.forEach(data, function(item) {
+    FB.forEach(dependencies, function(item) {
       item.monitor('value', function() {
         var done = false;;
         if (FB.Data._getValue(item) !== undefined) {
@@ -137,7 +190,7 @@ FB.provide('Data', {
           done = true;
         }
         if (c == 0) {
-          var value = callback(FB.Array.map(data, FB.Data._getValue));
+          var value = callback(FB.Array.map(dependencies, FB.Data._getValue));
           result.set(value !== undefined ? value : true);
         }
         return done;
@@ -248,104 +301,3 @@ FB.provide('Data', {
   timer: -1,
   queue: []
 });
-
-
-/**
- * Query class that represent a FQL query
- * @class FB.Data.Query
- * @extends FB.Waitable
- * @private
- */
-FB.subclass('Data.Query', 'Waitable',
-  function () {
-    if (!FB.Data.Query._c) {
-      FB.Data.Query._c = 1;
-    }
-    this.name = 'v_' + FB.Data.Query._c++;
-  },
-  {
-  parse: function(args) {
-    var fql = FB.String.format.apply(null, args);
-    // Parse it
-    re = (/^select (.*?) from (\w+)\s+where (.*)$/i).exec(fql);
-    this.fields = this._toFields(re[1]);
-    this.table = re[2];
-    this.where = this._parseWhere(re[3]);
-
-    for (var i=1; i < args.length; i++) {
-      if (FB.Type.isType(args[i], FB.Data.Query)) {
-        // Indicate this query can not be merged because
-        // others depend on it.
-        args[i].hasDependency = true;
-      }
-    }
-
-    return this;
-  },
-
-  toFql: function() {
-    var s = 'select ' + this.fields.join(',') + ' from ' +
-      this.table + ' where ';
-    switch(this.where.type) {
-      case 'unknown':
-        s += this.where.value;
-        break;
-      case 'index':
-        s += this.where.key + '=' + this._encode(this.where.value);
-        break;
-      case 'in':
-        if (this.where.value.length == 1) {
-          s += this.where.key + '=' +  this._encode(this.where.value[0]);
-        } else {
-          s += this.where.key + ' in (' +
-            FB.Array.map(this.where.value, this._encode).join(',') + ')';
-        }
-        break;
-    }
-    return s;
-  },
-
-  _encode: function(value) {
-    return typeof(value) == 'string' ?  FB.String.quote(value) : value;
-  },
-
-  toString: function() {
-    return '#' + this.name;
-  },
-
-  _toFields: function(s) {
-    return FB.Array.map(s.split(','), FB.String.trim);
-  },
-
-  _parseWhere: function(s) {
-    // First check if the where is of pattern
-    // key = XXX
-    var re = (/^\s*(\w+)\s*=\s*(.*)\s*$/i).exec(s),
-     result,
-     type = 'unknown';
-    if (re) {
-      // Now check if XXX is either an number or string.
-      var value = re[2];
-      // The RegEx expression for checking quoted string
-      // is from http://blog.stevenlevithan.com/archives/match-quoted-string
-      if (/^(["'])(?:\\?.)*?\1$/.test(value)) {
-        // Use eval to unquote the string
-        // convert
-        value = eval(value);
-        type = 'index';
-      } else if (/^\d+\.?\d*$/.test(value)) {
-        type = 'index';
-      }
-   }
-
-   if (type == 'index') {
-     // a simple <key>=<value> clause
-      result = {type:'index', key:re[1], value:value};
-    } else {
-      // Not a simple <key>=<value> clause
-      result = {type:'unknown', value:s};
-    }
-    return result;
-  }
-});
-

@@ -41,6 +41,7 @@ FILES=(
   src/common/obj.js
 
   src/data/waitable.js
+  src/data/query.js
   src/data/data.js
 
   src/xfbml/element.js

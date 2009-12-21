@@ -20,11 +20,12 @@
  */
 
 /**
- * Event Provider.
+ * General event interface provides fire, subscribe, unsubscribe methods.
+ * Global events are accessed via the [[joey:FB.Event]] object. This also
+ * supports events on specific objects that derive from FB.EventProvider.
  *
- * NB: We are calling this FB.Event instead of FB.EventProvider to punt
- * on properly implementing "extends" support in our doc system (for now).
- * @class FB.Event
+ * @class FB.EventProvider
+ * @private
  * @static
  */
 FB.provide('EventProvider', {
@@ -105,12 +106,14 @@ FB.provide('EventProvider', {
   },
 
   /**
-   * Invoke callback immediately and when specified event is fired,
-   * until the callback return true
+   * Repeatedly listen for an event over time. The callback is invoked
+   * immediately when monitor is called, and then every time the event
+   * fires. The subscription is canceled when the callback returns true.
+   *
    * @param {string} name Name of event.
-   * @param {function} callback A callback function. arguments may be
-   *   passed to the callback.
-   *     If the callback function returns true, the event will be unsubscribed.
+   * @param {function} callback A callback function. Any additional arguments
+   * to monitor() will be passed on to the callback. When the callback returns
+   * true, the monitoring will cease.
    */
   monitor: function(name, callback) {
     if (!callback()) {
@@ -175,4 +178,10 @@ FB.provide('EventProvider', {
   }
 });
 
+/**
+ * Event handling mechanism for globally named events.
+ *
+ * @class FB.Event
+ * @extends FB.EventProvider
+ */
 FB.provide('Event', FB.EventProvider);

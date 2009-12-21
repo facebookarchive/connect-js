@@ -5,8 +5,9 @@
  */
 
 /**
- * Base class for all XFBML element
- * Note: we removed support for condition attribute that was in V1.
+ * Base class for all XFBML elements. To create your own XFBML element,
+ * make a class that derives from this, and then call [[joey:FB.XFBML.registerTag]].
+ *
  * @class FB.XFBML.Element
  */
 FB.Class('XFBML.Element',
