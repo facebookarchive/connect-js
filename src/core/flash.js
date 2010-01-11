@@ -109,12 +109,14 @@ FB.provide('Flash', {
         versionString = new ActiveXObject('ShockwaveFlash.ShockwaveFlash')
                           .GetVariable('$version');
       } catch(x) {
-        var mimeType = 'application/x-shockwave-flash';
-        if (navigator.mimeTypes[mimeType].enabledPlugin) {
-          var name = 'Shockwave Flash';
-          versionString = (navigator.plugins[name + ' 2.0'] ||
-                           navigator.plugins[name])
-                          .description;
+        if (navigator.mimeTypes.length > 0) {
+          var mimeType = 'application/x-shockwave-flash';
+          if (navigator.mimeTypes[mimeType].enabledPlugin) {
+            var name = 'Shockwave Flash';
+            versionString = (navigator.plugins[name + ' 2.0'] ||
+                             navigator.plugins[name])
+                            .description;
+          }
         }
       }
 
