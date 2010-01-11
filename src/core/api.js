@@ -62,13 +62,14 @@ FB.provide('', {
    * [[wiki:FQL Tables]] are available for various types of data.
    *
    * @access public
-   * @param params {Object} parameters for the query
+   * @param user_params {Object} parameters for the query
    * @param cb {Function} the callback function to handle the response
    */
-  api: function(params, cb) {
+  api: function(user_params, cb) {
     // this is an optional dependency on FB.Auth
     // Auth.revokeAuthorization affects the session
-    if (FB.Auth && params.method.toLowerCase() == 'auth.revokeauthorization') {
+    if (FB.Auth &&
+        user_params.method.toLowerCase() == 'auth.revokeauthorization') {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {
@@ -76,6 +77,19 @@ FB.provide('', {
         }
         old_cb && old_cb(response);
       };
+    }
+
+    // automatically JSON encode non string values
+    var params = {};
+    for (var key in user_params) {
+      if (user_params.hasOwnProperty(key)) {
+        var value = user_params[key];
+        if (typeof value == 'string') {
+          params[key] = value;
+        } else {
+          params[key] = JSON.stringify(value);
+        }
+      }
     }
 
     try {

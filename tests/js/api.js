@@ -78,6 +78,33 @@ test(
 );
 
 ////////////////////////////////////////////////////////////////////////////////
+module('automatically json encoded values');
+////////////////////////////////////////////////////////////////////////////////
+test(
+  'automatic json encoding',
+
+  function() {
+    FB.api(
+      {
+        method: 'fql.multiquery',
+        queries: {
+          'zuck': 'SELECT name FROM user WHERE uid=4'
+        }
+      },
+      function(r) {
+        ok(r[0].name == 'zuck', 'expect the query result back');
+        ok(r[0].fql_result_set[0].name == 'Mark Zuckerberg',
+           'should get zucks name back');
+        start();
+      }
+    );
+
+    expect(2);
+    stop();
+  }
+);
+
+////////////////////////////////////////////////////////////////////////////////
 module('padded call to trigger >2k request flow');
 ////////////////////////////////////////////////////////////////////////////////
 test(
