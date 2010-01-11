@@ -44,24 +44,22 @@ FB.provide('XD', {
       return;
     }
 
-    // The origin is used for:
-    // 1) postMessage origin, provides security
-    // 2) Flash Local Connection name
-    // It is required and validated by Facebook as part of the xd_proxy.php.
-    FB.XD._origin = (
-      window.location.protocol +
-      '//' +
-      window.location.host +
-      '/' +
-      FB.guid()
-    );
-
     // We currently disable postMessage in IE8 because it does not work with
     // window.opener. We can probably be smarter about it.
     if (window.addEventListener && window.postMessage) {
+      // The origin here is used for postMessage security. It needs to be based
+      // on the URL of the current window. It is required and validated by
+      // Facebook as part of the xd_proxy.php.
+      FB.XD._origin = (window.location.protocol + '//' +
+                       window.location.host + '/' + FB.guid());
       FB.XD.PostMessage.init();
       FB.XD._transport = 'postmessage';
     } else if (FB.Flash.hasMinVersion()) {
+      // The origin here is used for Flash XD security. It needs to be based on
+      // document.domain rather than the URL of the current window. It is
+      // required and validated by Facebook as part of the xd_proxy.php.
+      FB.XD._origin = (window.location.protocol + '//' + document.domain +
+                       '/' + FB.guid());
       FB.XD.Flash.init();
       FB.XD._transport = 'flash';
     } else {
