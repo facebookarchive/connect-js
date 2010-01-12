@@ -1,7 +1,21 @@
 /**
- * @provides fb.Loader
- * @layer Basic
- * @requires fb.Component fb.Array fb.Dom fb.prelude
+ * Copyright Facebook Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @provides fb.loader
+ * @layer basic
+ * @requires fb.component fb.array fb.dom fb.prelude
  */
 
 /**
@@ -18,16 +32,16 @@
  * @private
  */
 FB.provide('Loader', {
-
   /**
    * Use this to request dynamic loading of components in Facebook Client
-   * JavaScript library
-   * @param {String} comp  a component
-   * @param {Function} callback  callback function to be executed when all
-   *                  required components are finished loading
+   * JavaScript library.
+   *
+   * @param comp {String} a component
+   * @param callback {Function} callback function to execute on completion
    */
   use: function(comp, callback) {
-    var request = {'comp': comp, 'cb': callback};
+    var request = { comp: comp, cb: callback };
+
     // Check if request is already completed
     if (FB.Loader._check(comp)) {
       callback();
@@ -40,7 +54,7 @@ FB.provide('Loader', {
     // We use a timer trick to queue up multiple components requests
     // so we just need to send out a single script HTTP request
     if (!FB.Loader._timer) {
-      FB.Loader._timer = setTimeout(function(){
+      FB.Loader._timer = setTimeout(function() {
         FB.Loader._timer = 0;
         FB.Dom.addScript(FB.Loader._resourceUrl(
                            FB.Array.keys(FB.Loader._comps),

@@ -1,8 +1,22 @@
 /**
+ * Copyright Facebook Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
  * @provides xfbml.fb:share-button
- * @layer XFBML
- * @requires fb.Type fb.XFBML  fb.String fb.Dom fb.XFBML.Element fb.ui
- *  fb.Data fb.Helper fb.share-button-css
+ * @layer xfbml
+ * @requires fb.type fb.xfbml  fb.string fb.dom fb.xfbml.element fb.ui
+ *  fb.data fb.helper fb.share-button-css
  */
 
 /**
@@ -30,11 +44,12 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null,
     if (!this.isValid()) {
       return;
     }
-    var contentStr = '',
-    extra ='',
-    classStr = '';
-    share = 'Share',
-    wrapperClass = '';
+    var
+      contentStr = '',
+      extra = '',
+      classStr = '',
+      share = 'Share',
+      wrapperClass = '';
 
     switch (this._type) {
     case 'icon':
@@ -86,8 +101,8 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null,
       if (this._count.value.length > 0) {
         var c = this._count.value[0].share_count;
         if (c > 3) {
-          prettyCount = c >= 10000000 ? Math.round(c/1000000) + 'M' :
-                          ( c >= 10000 ? Math.round(c/1000) + 'K' : c );
+          var prettyCount = c >= 10000000 ? Math.round(c/1000000) + 'M' :
+                            (c >= 10000 ? Math.round(c/1000) + 'K' : c);
           return  '<span class=\'fb_share_count_inner\'>' +
             prettyCount + '</span>';
         }

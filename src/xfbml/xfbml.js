@@ -1,9 +1,21 @@
 /**
- * @provides fb.XFBML
- * @layer XFBML
- * @requires fb.prelude fb.Loader.use fb.Loader
+ * Copyright Facebook Inc.
  *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @provides fb.xfbml
+ * @layer xfbml
+ * @requires fb.prelude fb.loader
  */
 
 /**
@@ -25,7 +37,6 @@
  * @static
  */
 FB.provide('XFBML', {
-
   /**
    * Dynamically set XFBML markup on a given DOM element. Use this
    * method if you want to set XFBML after the page has already loaded
@@ -71,12 +82,14 @@ FB.provide('XFBML', {
 
     // First, find all tags that are present
     FB.forEach(FB.XFBML._tagInfos, function(tagInfo) {
-      xfbmlDoms = FB.XFBML._getDomElements(dom,
-                                           tagInfo.xmlns,
-                                           tagInfo.localName);
-      for(var i=0; i < xfbmlDoms.length; i++) {
+      var xfbmlDoms = FB.XFBML._getDomElements(
+        dom,
+        tagInfo.xmlns,
+        tagInfo.localName
+      );
+      for (var i=0; i < xfbmlDoms.length; i++) {
         FB.XFBML._processElement(xfbmlDoms[i], tagInfo);
-      };
+      }
     });
 
     // TODO: We need put functionality to detect when
@@ -140,8 +153,6 @@ FB.provide('XFBML', {
     }
   },
 
-
-
   /**
    * Get all the DOM elements present under a given node with a
    * given tag name.
@@ -168,17 +179,17 @@ FB.provide('XFBML', {
       if (docNamespaces && docNamespaces[xmlns]) {
         return dom.getElementsByTagName(localName);
       } else {
-        //  it seems that developer tends to forget to declare the fb namespace
-        //  in the HTML tag (xmlns:fb="http://www.facebook.com/2008/fbml")
-        //  IE has a stricter implementation for custom tags.
-        //  If namespace is missing, custom DOM dom does not appears to be
-        //  fully functional. For example, setting innerHTML on it will
-        //  fail.
-        //  As such, we can't tolerate the absence the namespace
-        //  declaration. We can however, detect this mistake and throw an
-        //  exception to help developer identify the problem and fix it.
-        //  If a namespace is not declared, we can still find the
-        //  element using GetElementssByTagName with namespace appended.
+        // it seems that developer tends to forget to declare the fb namespace
+        // in the HTML tag (xmlns:fb="http://www.facebook.com/2008/fbml")
+        // IE has a stricter implementation for custom tags.
+        // If namespace is missing, custom DOM dom does not appears to be
+        // fully functional. For example, setting innerHTML on it will
+        // fail.
+        // As such, we can't tolerate the absence the namespace
+        // declaration. We can however, detect this mistake and throw an
+        // exception to help developer identify the problem and fix it.
+        // If a namespace is not declared, we can still find the
+        // element using GetElementssByTagName with namespace appended.
         return dom.getElementsByTagName(xmlns + ':' + localName);
       }
       break;
@@ -191,12 +202,12 @@ FB.provide('XFBML', {
   /**
    * Register the default set of base tags.
    */
-  _tagInfos:
-    [{xmlns: 'fb', localName: 'profile-pic',  className: 'FB.XFBML.ProfilePic'},
-     {xmlns: 'fb', localName: 'name',         className: 'FB.XFBML.Name'},
-     {xmlns: 'fb', localName: 'login-button', className: 'FB.XFBML.LoginButton'},
-     {xmlns: 'fb', localName: 'share-button', className: 'FB.XFBML.ShareButton'}
-    ],
+  _tagInfos: [
+    {xmlns: 'fb', localName: 'profile-pic',  className: 'FB.XFBML.ProfilePic'},
+    {xmlns: 'fb', localName: 'name',         className: 'FB.XFBML.Name'},
+    {xmlns: 'fb', localName: 'login-button', className: 'FB.XFBML.LoginButton'},
+    {xmlns: 'fb', localName: 'share-button', className: 'FB.XFBML.ShareButton'}
+  ],
 
   _list: []
 });

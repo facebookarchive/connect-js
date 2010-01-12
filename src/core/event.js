@@ -117,13 +117,14 @@ FB.provide('EventProvider', {
    */
   monitor: function(name, callback) {
     if (!callback()) {
-      var ctx = this,
-      fn = function() {
-        if (callback.apply(callback, arguments)) {
-          // unsubscribe
-          this.unsubscribe(name, fn);
-        }
-      };
+      var
+        ctx = this,
+        fn = function() {
+          if (callback.apply(callback, arguments)) {
+            // unsubscribe
+            ctx.unsubscribe(name, fn);
+          }
+        };
 
       this.subscribe(name, fn);
     }

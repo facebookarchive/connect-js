@@ -99,7 +99,7 @@ if (!window.FB) {
      *        each item
      */
     copy: function(target, source, overwrite, transform) {
-      for (key in source) {
+      for (var key in source) {
         if (overwrite || typeof target[key] === 'undefined') {
           target[key] = transform ? transform(source[key]) :  source[key];
         }
@@ -107,10 +107,10 @@ if (!window.FB) {
       return target;
     },
 
-
     /**
      * Create a namespaced object
      * This create an fullly namespaced name.
+     * TODO I dont think example is possible.
      * Examples:
      * FB.create('XFBML.ProfilePic') = function() {...}
      *   create FB.XFBML.ProfilePic and assign the value of the function.
@@ -141,8 +141,6 @@ if (!window.FB) {
       return node;
     },
 
-
-
     /**
      * Copy stuff from one object to the specified namespace that
      * is FB.<target>.
@@ -156,20 +154,21 @@ if (!window.FB) {
      */
     provide: function(target, source, overwrite) {
       // a string means a dot separated object that gets appended to, or created
-      return FB.copy((typeof target == 'string') ?
-                     FB.create(target) : target,
-                     source, overwrite);
+      return FB.copy(
+        typeof target == 'string' ? FB.create(target) : target,
+        source,
+        overwrite
+      );
     },
 
     /**
      * Generates a weak random ID.
-     * @param {String}  optional prefix. Default value is 'f'
+     *
      * @access private
-     * @return {String}  a random ID
+     * @return {String} a random ID
      */
-    guid: function(prefix) {
-      return (prefix || 'f') + (Math.random() *
-                                (1<<30)).toString(16).replace('.', '');
+    guid: function() {
+      return 'f' + (Math.random() * (1<<30)).toString(16).replace('.', '');
     },
 
     /**
@@ -180,6 +179,8 @@ if (!window.FB) {
      */
     log: function(args) {
       if (FB._logging) {
+        //TODO what is window.Debug, and should it instead be relying on the
+        //     event fired below?
         if (window.Debug && window.Debug.writeln) {
           window.Debug.writeln(args);
         } else if (window.console) {

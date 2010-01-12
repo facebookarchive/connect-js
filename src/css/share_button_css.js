@@ -1,8 +1,8 @@
 /**
  * author arunv
  * @provides fb.share-button-css
- * @layer XFBML
- * @requires fb.connect-button-css fb.Dom
+ * @layer xfbml
+ * @requires fb.connect-button-css fb.dom
  */
 
 FB.Dom.addCssRules(

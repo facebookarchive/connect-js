@@ -1,7 +1,21 @@
 /**
- * @provides fb.Data
- * @layer Data
- * @requires fb.prelude fb.Type fb.Array fb.String fb.api fb.Obj fb.Data.Query
+ * Copyright Facebook Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @provides fb.data
+ * @layer data
+ * @requires fb.prelude fb.type fb.array fb.string fb.api fb.obj fb.data.query
  */
 
 
@@ -23,32 +37,36 @@
  *
  * 2. Reduce complexity of asynchronous API programming, especially multiple
  *     asynchronous request, though FB.Waitable and FB.waitOn.
+ *
  * @class FB.Data
+ * @access public
  * @static
  */
 FB.provide('Data', {
   /**
-   * Performs a parameterized FQL query and returns a [[joey:FB.Data.Query]] object
-   * which can be waited on for the asynchronously fetched data.
+   * Performs a parameterized FQL query and returns a [[joey:FB.Data.Query]]
+   * object which can be waited on for the asynchronously fetched data.
    *
    * Examples
    * --------
    *
    * Make a simple FQL call and handle the results.
    *
-   *      var query = FB.Data.query('select name, uid from user where uid={0}', user_id);
+   *      var query = FB.Data.query('select name, uid from user where uid={0}',
+   *                                user_id);
    *      query.wait(function(rows) {
    *        document.getElementById('name').innerHTML =
    *          'Your name is ' + rows[0].name;
    *      });
    *
-   * Display the names and events of 10 random friends.  This can't be done using a simple
-   * FQL query because you need more than one field from more than one table, so we use
-   * FB.Data.query to help construct the call to [[api:fql.multiquery]].
+   * Display the names and events of 10 random friends. This can't be done
+   * using a simple FQL query because you need more than one field from more
+   * than one table, so we use FB.Data.query to help construct the call to
+   * [[api:fql.multiquery]].
    *
-   *      // First, get ten of the logged-in user's friends and
-   *      // the events they are attending. In this query, the argument
-   *      // is just an int value (the logged-in user id)
+   *      // First, get ten of the logged-in user's friends and the events they
+   *      // are attending. In this query, the argument is just an int value
+   *      // (the logged-in user id). Note, we are not firing the query yet.
    *      var query = FB.Data.query(
    *            "select uid, eid from event_member "
    *          + "where uid in "
@@ -92,21 +110,21 @@ FB.provide('Data', {
    * @param {String} template FQL query string template. It can contains
    * optional formatted parameters in the format of '{<argument-index>}'.
    * @param {Object} data optional 0-n arguments of data. The arguments can be
-   * either real data (String or Integer) or an [[joey:FB.Data.Query]] object from a
-   * previous [[joey:FB.Data.query]]().
+   * either real data (String or Integer) or an [[joey:FB.Data.Query]] object
+   * from a previous [[joey:FB.Data.query]]().
    * @return {FB.Data.Query}
    * An async query object that contains query result.
    */
   query: function(template, data) {
-    var query = (new FB.Data.Query).parse(arguments);
+    var query = (new FB.Data.Query()).parse(arguments);
     FB.Data.queue.push(query);
     FB.Data._waitToProcess();
     return query;
   },
 
   /**
-   * Wait until the results of all queries are ready. See also [[joey:FB.Data.query]] for more
-   * examples of usage.
+   * Wait until the results of all queries are ready. See also
+   * [[joey:FB.Data.query]] for more examples of usage.
    *
    * Examples
    * --------
@@ -116,10 +134,10 @@ FB.provide('Data', {
    *      var queryTemplate = 'select name from profile where id={0}';
    *      var u1 = FB.Data.query(queryTemplate, 4);
    *      var u2 = FB.Data.query(queryTemplate, 1160);
-   *       FB.Data.waitOn([u1, u2], function(args) {
-   *          log('u1 value = '+ args[0].value);
-   *          log('u2 value = '+ args[1].value);
-   *       });
+   *      FB.Data.waitOn([u1, u2], function(args) {
+   *        log('u1 value = '+ args[0].value);
+   *        log('u2 value = '+ args[1].value);
+   *      });
    *
    * Same as above, except we take advantage of JavaScript closures to
    * avoid using args[0], args[1], etc:
@@ -127,24 +145,24 @@ FB.provide('Data', {
    *      var queryTemplate = 'select name from profile where id={0}';
    *      var u1 = FB.Data.query(queryTemplate, 4);
    *      var u2 = FB.Data.query(queryTemplate, 1160);
-   *       FB.Data.waitOn([u1, u2], function(args) {
-   *          log('u1 value = '+ u1.value);
-   *          log('u2 value = '+ u2.value);
-   *       });
+   *      FB.Data.waitOn([u1, u2], function(args) {
+   *        log('u1 value = '+ u1.value);
+   *        log('u2 value = '+ u2.value);
+   *      });
    *
    * Create a new Waitable that computes its value based on other Waitables:
    *
    *      var friends = FB.Data.query('select uid2 from friend where uid1={0}',
-   *       FB._session.uid);
+   *                                  FB.getSession().uid);
    *      // ...
    *      // Create a Waitable that is the count of friends
    *      var count = FB.Data.waitOn([friends], 'args[0].length');
    *      displayFriendsCount(count);
    *      // ...
    *      function displayFriendsCount(count) {
-   *       count.wait(function(result) {
-   *         log('friends count = ' + result);
-   *       });
+   *        count.wait(function(result) {
+   *          log('friends count = ' + result);
+   *        });
    *      }
    *
    * You can mix Waitables and data in the list of dependencies
@@ -154,25 +172,26 @@ FB.provide('Data', {
    *      var u1 = FB.Data.query(queryTemplate, 4);
    *      var u2 = FB.Data.query(queryTemplate, 1160);
    *
-   *      // FB._session.uid is just an Integer
-   *      FB.Data.waitOn([u1, u2, FB._session.uid], function(args) {
+   *      // FB.getSession().uid is just an Integer
+   *      FB.Data.waitOn([u1, u2, FB.getSession().uid], function(args) {
    *          log('u1 = '+ args[0]);
    *          log('u2 = '+ args[1]);
    *          log('uid = '+ args[2]);
    *       });
    *
-   * @param {Array} dependencies an array of dependencies to wait on. Each item
-   * could be a Waitable object or actual value
-   * @param {Function} callback A function callback that will be invoked
+   * @param dependencies {Array} an array of dependencies to wait on. Each item
+   * could be a Waitable object or actual value.
+   * @param callback {Function} A function callback that will be invoked
    * when all the data are ready. An array of ready data will be
    * passed to the callback. If a string is passed, it will
-   * be evaluted as a JavaScript string
-   * @return {FB.Waitable}
-   * A Waitable object that will be set with the return value of callback function.
+   * be evaluted as a JavaScript string.
+   * @return {FB.Waitable} A Waitable object that will be set with the return
+   * value of callback function.
    */
   waitOn: function(dependencies, callback) {
-    var result = new FB.Waitable();
-    var c = dependencies.length;
+    var
+      result = new FB.Waitable(),
+      c = dependencies.length;
 
     // For developer convenience, we allow the callback
     // to be a string of javascript expression
@@ -185,12 +204,12 @@ FB.provide('Data', {
 
     FB.forEach(dependencies, function(item) {
       item.monitor('value', function() {
-        var done = false;;
+        var done = false;
         if (FB.Data._getValue(item) !== undefined) {
           c--;
           done = true;
         }
-        if (c == 0) {
+        if (c === 0) {
           var value = callback(FB.Array.map(dependencies, FB.Data._getValue));
           result.set(value !== undefined ? value : true);
         }
@@ -200,28 +219,40 @@ FB.provide('Data', {
     return result;
   },
 
+  /**
+   * Helper method to get value from Waitable or return self.
+   *
+   * @param item {FB.Waitable|Object} potential Waitable object
+   * @returns {Object} the value
+   */
   _getValue: function(item) {
-    return  FB.Type.isType(item, FB.Waitable) ? item.value : item;
+    return FB.Type.isType(item, FB.Waitable) ? item.value : item;
   },
 
   /**
-   * Alternate method from query, this method is more specific
-   * but more efficient. We use it internally.
-   * @private
+   * Alternate method from query, this method is more specific but more
+   * efficient. We use it internally.
+   *
+   * @access private
+   * @param fields {Array} the array of fields to select
+   * @param table {String} the table name
+   * @param name {String} the key name
+   * @param value {Object} the key value
+   * @returns {FB.Data.Query} the query object
    */
   _selectByIndex: function(fields, table, name, value) {
-    var query = (new FB.Data.Query);
+    var query = new FB.Data.Query();
     query.fields = fields;
     query.table = table;
-    query.where = {type: 'index', key: name, value: value};
+    query.where = { type: 'index', key: name, value: value };
     FB.Data.queue.push(query);
     FB.Data._waitToProcess();
     return query;
   },
 
   /**
-   * Set up a short timer to ensure that we process all requests
-   * at once. If the timer is already set then ignore.
+   * Set up a short timer to ensure that we process all requests at once. If
+   * the timer is already set then ignore.
    */
   _waitToProcess: function() {
     if (FB.Data.timer < 0) {
@@ -229,13 +260,16 @@ FB.provide('Data', {
     }
   },
 
+  /**
+   * Process the current queue.
+   */
   _process: function() {
     FB.Data.timer = -1;
 
-    var mergedQ = {};
-    var q = FB.Data.queue;
+    var
+      mqueries = {},
+      q = FB.Data.queue;
     FB.Data.queue = [];
-    var mqueries = {};
 
     for (var i=0; i < q.length; i++) {
       var item = q[i];
@@ -247,7 +281,7 @@ FB.provide('Data', {
     }
 
     // Now make a single multi-query API call
-    var params = {method: 'fql.multiquery', queries: {}};
+    var params = { method: 'fql.multiquery', queries: {} };
     FB.copy(params.queries, mqueries, true, function(query) {
       return query.toFql();
     });
@@ -256,17 +290,14 @@ FB.provide('Data', {
 
     FB.api(params, function(result) {
       if (result.error_msg) {
-        FB.forEach(mqueries,
-          function(q) {
-            q.error(Error(result.error_msg));
-          });
+        FB.forEach(mqueries, function(q) {
+          q.error(Error(result.error_msg));
+        });
       } else {
-        FB.forEach(result,
-          function(o) {
-            mqueries[o.name].set(o.fql_result_set);
-          });
+        FB.forEach(result, function(o) {
+          mqueries[o.name].set(o.fql_result_set);
+        });
       }
-
     });
   },
 
