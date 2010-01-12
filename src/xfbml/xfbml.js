@@ -157,7 +157,11 @@ FB.provide('XFBML', {
     // with custom namespace.
     switch (FB.Dom.getBrowserType()) {
     case 'mozilla':
-      return dom.getElementsByTagNameNS(null, xmlns + ':' + localName);
+      // Use document.body.namespaceURI as first parameter per
+      // suggestion by Firefox developers.
+      // See https://bugzilla.mozilla.org/show_bug.cgi?id=531662
+      return dom.getElementsByTagNameNS(document.body.namespaceURI,
+                                        xmlns + ':' + localName);
       break;
     case 'ie':
       var docNamespaces = document.namespaces;
