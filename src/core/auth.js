@@ -310,7 +310,7 @@ FB.provide('Auth', {
       login         = !FB._session && session,
       logout        = FB._session && !session,
       both          = FB._session && session && FB._session.uid != session.uid,
-      sessionChange = (FB._session && session &&
+      sessionChange = login || logout || (FB._session && session &&
                          FB._session.session_key != session.session_key),
       statusChange  = status != FB._userStatus;
 
@@ -321,6 +321,13 @@ FB.provide('Auth', {
 
     FB._session = session;
     FB._userStatus = status;
+
+    // If cookie support is enabled, set the cookie. Cookie support does not
+    // rely on events, because we want the cookie to be set _before_ any of the
+    // event handlers are fired. Note, this is a _weak_ dependency on Cookie.
+    if (sessionChange && FB.Cookie && FB.Cookie.getEnabled()) {
+      FB.Cookie.set(session);
+    }
 
     // events
     if (statusChange) {
@@ -347,7 +354,7 @@ FB.provide('Auth', {
        */
       FB.Event.fire('auth.login', response);
     }
-    if (login || logout || sessionChange) {
+    if (sessionChange) {
       /**
        * Fired when the session changes. This includes a session being
        * refreshed, or a login or logout action.

@@ -92,9 +92,7 @@ FB.provide('', {
     }
 
     // enable cookie support if told to do so
-    if (options.cookie) {
-      FB.Cookie.init();
-    }
+    FB.Cookie.setEnabled(options.cookie);
 
     // if an explicit session was not given, try to _read_ an existing cookie.
     // we dont enable writing automatically, but we do read automatically.

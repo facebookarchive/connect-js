@@ -36,7 +36,7 @@ test(
     FB.init({ apiKey: API_KEY, logging: false, cookie: true, status: true });
     ok(FB._apiKey == API_KEY, 'should have the api key');
     ok(!FB._logging, 'logging is disabled');
-    ok(FB.Cookie._initDone, 'cookie init was done');
+    ok(FB.Cookie._enabled, 'cookie was enabled');
 
     FB._logging = true; // we actually do want logging
   }

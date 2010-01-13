@@ -19,7 +19,6 @@
  * @requires fb.prelude
  *           fb.qs
  *           fb.event
- *           fb.auth
  */
 
 /**
@@ -39,19 +38,31 @@ FB.provide('Cookie', {
   _domain: null,
 
   /**
-   * Initialize the Cookie support. Sets up the handler to update the cookie
-   * as the session changes.
+   * Indicate if Cookie support should be enabled.
    *
    * @access private
-   * @return {Object} the session object from the cookie if one is found
+   * @type Boolean
    */
-  init: function() {
-    if (!FB.Cookie._initDone) {
-      FB.Event.subscribe('auth.sessionChange', function(response) {
-        FB.Cookie.set(response.session);
-      });
-      FB.Cookie._initDone = true;
-    }
+  _enabled: false,
+
+  /**
+   * Enable or disable Cookie support.
+   *
+   * @access private
+   * @param val {Boolean} true to enable, false to disable
+   */
+  setEnabled: function(val) {
+    FB.Cookie._enabled = val;
+  },
+
+  /**
+   * Return the current status of the cookie system.
+   *
+   * @access private
+   * @returns {Boolean} true if Cookie support is enabled
+   */
+  getEnabled: function() {
+    return FB.Cookie._enabled;
   },
 
   /**
