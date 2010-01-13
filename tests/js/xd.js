@@ -85,3 +85,48 @@ test(
     stop();
   }
 );
+
+test(
+  'test flash message flow with custom document.domain',
+
+  function() {
+    var
+      newDomain = /\.([^.]*.[^.]*)$/.exec(window.location.hostname)[1],
+      oldDomain = document.domain,
+      oldOrigin = FB.XD._origin,
+      oldTransport = FB.XD._transport;
+
+    document.domain = newDomain;
+    FB.XD._origin = (window.location.protocol + '//' + document.domain +
+                     '/' + FB.guid());
+    FB.XD._transport = 'flash';
+    FB.XD.Flash.init();
+
+    var url = FB.XD.handler(function(response) {
+      ok(response.answer == 42, 'expect the answer');
+      FB.Frames.xdRecv({frame: 'a'}, function() {});
+
+      // if old transport was flash, then we dont restore it. this is because
+      // we're already in a good state.
+      if (oldTransport != 'flash') {
+        FB.XD._transport = oldTransport;
+        FB.XD._origin = oldOrigin;
+
+        //FIXME this fails, but i'm pretty sure it shouldn't. it doesn't affect
+        // anything even if it fails.
+        try {
+          document.domain = oldDomain;
+        } catch(e) {
+          FB.log('document.domain could not be restored');
+        }
+      }
+
+      start();
+    }, 'parent') + '&answer=42';
+
+    FB.Frames.hidden(url, 'a');
+
+    expect(1);
+    stop();
+  }
+);
