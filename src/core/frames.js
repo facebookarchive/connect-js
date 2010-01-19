@@ -46,8 +46,12 @@ FB.provide('Frames', {
    * @param id  {String} the id to store the node against in _active
    */
   hidden: function(url, id) {
-    FB.Content.insertIframe(url, FB.Content.appendHidden(''), function(node) {
-      FB.Frames._active[id] = node;
+    FB.Content.insertIframe({
+      url: url,
+      root: FB.Content.appendHidden(''),
+      onload: function(node) {
+        FB.Frames._active[id] = node;
+      }
     });
   },
 

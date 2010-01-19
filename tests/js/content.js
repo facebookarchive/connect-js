@@ -108,15 +108,15 @@ test(
     expect(1);
     stop();
 
-    // doesnt really matter as long as the host will respond
-    var
-      url = 'http://static.ak.fbcdn.net/connect/xd_proxy.php',
-      root = document.getElementById('fb-root'),
-      onload = function(node) {
+    // url doesnt really matter as long as the host will respond
+    FB.Content.insertIframe({
+      url: 'http://static.ak.fbcdn.net/connect/xd_proxy.php',
+      root: FB.Content.appendHidden(''),
+      onload: function(node) {
         ok(true, 'onload callback was invoked');
         node.parentNode.removeChild(node);
         start();
-      };
-    FB.Content.insertIframe(url, root, onload);
+      }
+    });
   }
 );

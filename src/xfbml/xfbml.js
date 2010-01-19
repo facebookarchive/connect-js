@@ -21,13 +21,6 @@
 /**
  * Methods for the rendering of [[wiki:XFBML]] tags.
  *
- * This library defines four XFBML tags:
- *
- * - [[xfbml:fb:login-button]]
- * - [[xfbml:fb:share]]
- * - [[xfbml:fb:profile-pic]]
- * - [[xfbml:fb:name]]
- *
  * To render the tags, simple use them anywhere in your page,
  * and then call:
  *
@@ -82,6 +75,11 @@ FB.provide('XFBML', {
 
     // First, find all tags that are present
     FB.forEach(FB.XFBML._tagInfos, function(tagInfo) {
+      // default the xmlns if needed
+      if (!tagInfo.xmlns) {
+        tagInfo.xmlns = 'fb';
+      }
+
       var xfbmlDoms = FB.XFBML._getDomElements(
         dom,
         tagInfo.xmlns,
@@ -142,12 +140,9 @@ FB.provide('XFBML', {
       if (FB.CLASSES[tagInfo.className.substr(3)]) {
         processor();
       } else {
-        // Load necessary class on-demand if necessary
-        // haste component name is "xfbml:" plus the
-        // tag name
-        var component = 'xfbml.' +
-          tagInfo.xmlns + ':' + tagInfo.localName;
-
+        // Load necessary class on-demand if necessary. Component name is lower
+        // case className.
+        var component = tagInfo.className.toLowerCase();
         FB.Loader.use(component, processor);
       }
     }
@@ -200,13 +195,23 @@ FB.provide('XFBML', {
   },
 
   /**
-   * Register the default set of base tags.
+   * Register the default set of base tags. Each entry must have a localName
+   * and a className property, and can optionally have a xmlns property which
+   * if missing defaults to 'fb'.
+   *
+   * NOTE: Keep the list alpha sorted.
    */
   _tagInfos: [
-    {xmlns: 'fb', localName: 'profile-pic',  className: 'FB.XFBML.ProfilePic'},
-    {xmlns: 'fb', localName: 'name',         className: 'FB.XFBML.Name'},
-    {xmlns: 'fb', localName: 'login-button', className: 'FB.XFBML.LoginButton'},
-    {xmlns: 'fb', localName: 'share-button', className: 'FB.XFBML.ShareButton'}
+    { localName: 'add-to-wishlist', className: 'FB.XFBML.AddToWishList' },
+    { localName: 'comments',        className: 'FB.XFBML.Comments' },
+    { localName: 'fan',             className: 'FB.XFBML.Fan' },
+    { localName: 'like',            className: 'FB.XFBML.Like' },
+    { localName: 'live-stream',     className: 'FB.XFBML.LiveStream' },
+    { localName: 'login-button',    className: 'FB.XFBML.LoginButton' },
+    { localName: 'name',            className: 'FB.XFBML.Name' },
+    { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic' },
+    { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml' },
+    { localName: 'share-button',    className: 'FB.XFBML.ShareButton' }
   ],
 
   _list: []

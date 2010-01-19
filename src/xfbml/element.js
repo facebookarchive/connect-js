@@ -63,6 +63,23 @@ FB.Class('XFBML.Element',
   },
 
   /**
+   * Get an integer value for size in pixels.
+   *
+   * @param name {String} Name of the attribute.
+   * @param defaultValue {Object} Default value if attribute isn't set.
+   */
+  _getPxAttribute: function(name, defaultValue) {
+    return this.getAttribute(name, defaultValue, function(s) {
+      var size = parseInt(s.replace('px', ''), 10);
+      if (isNaN(size)) {
+        return defaultValue;
+      } else {
+        return size;
+      }
+    });
+  },
+
+  /**
    * Check if this node is still valid and in the document.
    *
    * @returns {Boolean} true if element is valid

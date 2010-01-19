@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides xfbml.fb:login-button
+ * @provides fb.xfbml.loginbutton
  * @layer xfbml
  * @requires fb.type fb.xfbml.element fb.auth
  */

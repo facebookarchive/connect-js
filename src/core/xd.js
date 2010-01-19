@@ -32,6 +32,7 @@ FB.provide('XD', {
   _origin    : null,
   _transport : null,
   _callbacks : {},
+  _forever   : {},
 
   /**
    * Initialize the XD layer. Native postMessage or Flash is required.
@@ -78,9 +79,10 @@ FB.provide('XD', {
    * @access private
    * @param cb       {Function} the callback function
    * @param relation {String}   parent or opener to indicate window relation
+   * @param forever  {Boolean}  indicate this handler needs to live forever
    * @return        {String}   the xd url bound to the callback
    */
-  handler: function(cb, relation) {
+  handler: function(cb, relation, forever) {
     FB.XD.init();
 
     // the ?=& tricks login.php into appending at the end instead
@@ -102,6 +104,10 @@ FB.provide('XD', {
       // because it thinks its smarter than the developer and believes it to be
       // a recusive load. the rest are explanined in the note above.
       xdProxy += '?&fb_xd_bust#?=&' + FB.XD.Fragment._magic;
+    }
+
+    if (forever) {
+      FB.XD._forever[id] = true;
     }
 
     FB.XD._callbacks[id] = cb;
@@ -126,7 +132,9 @@ FB.provide('XD', {
     }
 
     var cb = FB.XD._callbacks[data.cb];
-    delete FB.XD._callbacks[data.cb];
+    if (!FB.XD._forever[data.cb]) {
+      delete FB.XD._callbacks[data.cb];
+    }
     cb && cb(data);
   },
 

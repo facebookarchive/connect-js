@@ -102,12 +102,15 @@ FB.provide('', {
       return base.prototype[method].apply(this, args);
     };
 
-    var cls = FB.Class(name,
-     constructor ? constructor : function() {
-       this._base.apply(this, arguments);
-     },
-     proto);
-    return cls;
+    return FB.Class(
+      name,
+      constructor ? constructor : function() {
+        if (base.apply) {
+          base.apply(this, arguments);
+        }
+      },
+      proto
+    );
   },
 
   CLASSES: {}

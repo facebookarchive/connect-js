@@ -123,18 +123,15 @@ FB.provide('Dom', {
     if (!FB.Dom._browserType) {
       var
         userAgent = window.navigator.userAgent.toLowerCase(),
-        agentMap = {
-          firefox: 'mozilla',
-          gecko: 'mozilla',
-          msie: 'ie',
-          safari: 'safari'
-        };
-      FB.Dom._browserType = 'other';
-      FB.forEach(agentMap, function(value, key) {
-        if (FB.Dom._browserType == 'other' && userAgent.indexOf(key)) {
-          FB.Dom._browserType = value;
+        // list of known browser. NOTE: the order is important
+        keys = ['msie', 'firefox', 'gecko',   'safari'],
+        names = ['ie',  'mozilla', 'mozilla', 'safari'];
+      for (var i = 0; i < keys.length; i++) {
+        if (userAgent.indexOf(keys[i]) >= 0) {
+          FB.Dom._browserType = names[i];
+          break;
         }
-      });
+      }
     }
     return FB.Dom._browserType;
   }

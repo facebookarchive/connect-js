@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides xfbml.fb:share-button
+ * @provides fb.xfbml.sharebutton
  * @layer xfbml
  * @requires fb.type fb.xfbml  fb.string fb.dom fb.xfbml.element fb.ui
  *  fb.data fb.helper fb.share-button-css

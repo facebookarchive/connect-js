@@ -40,17 +40,12 @@ FB.provide('QS', {
     sep    = sep === undefined ? '&' : sep;
     encode = encode === false ? function(s) { return s; } : encodeURIComponent;
 
-    var
-      pairs = [],
-      k;
-
-    for (k in params) {
-      if (params.hasOwnProperty(k) &&
-          params[k] !== null &&
-          typeof params[k] != 'undefined') {
-        pairs.push(encode(k) + '=' + encode(params[k]));
+    var pairs = [];
+    FB.forEach(params, function(val, key) {
+      if (val !== null && typeof val != 'undefined') {
+        pairs.push(encode(key) + '=' + encode(val));
       }
-    }
+    });
     pairs.sort();
     return pairs.join(sep);
   },

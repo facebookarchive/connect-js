@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides xfbml.fb:profile-pic
+ * @provides fb.xfbml.profilepic
  * @layer xfbml
  * @requires fb.type fb.xfbml fb.string fb.dom fb.xfbml.element fb.data
  *           fb.helper

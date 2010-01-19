@@ -170,3 +170,29 @@ test(
   }
 );
 
+test(
+  'fb:fan',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex('<fb:fan name="platform"></fb:fan>', 'iframe.*connect/connect.php');
+  }
+);
+
+test(
+  'fb:live-stream',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex('<fb:live-stream></fb:live-stream>', 'iframe.*widgets/livefeed.php');
+  }
+);
+
+test(
+  'fb:serverfbml',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex('<fb:serverfbml fbml="hello world"></fb:serverfbml>', 'iframe.*render_fbml.php');
+  }
+);

@@ -87,24 +87,33 @@ FB.provide('Content', {
   /**
    * Insert a new iframe. Unfortunately, its tricker than you imagine.
    *
+   * NOTE: These iframes have no border, overflow hidden and no scrollbars.
+   *
+   * The opts can contain:
+   *   root       DOMElement  required root node (must be empty)
+   *   url        String      required iframe src attribute
+   *   className  String      optional class attribute
+   *   height     Integer     optional height in px
+   *   id         String      optional id attribute
+   *   name       String      optional name attribute
+   *   onload     Function    optional onload handler
+   *   width      Integer     optional width in px
+   *
    * @access private
-   * @param url     {String}      url for the iframe
-   * @param root    {Node}        node to insert the iframe into
-   * @param onload  {Function}    optional onload callback
+   * @param opts {Object} the options described above
    */
-  insertIframe: function(url, root, onload) {
+  insertIframe: function(opts) {
     //
     // Browsers evolved. Evolution is messy.
     //
+    opts.id = opts.id || FB.guid();
+    opts.name = opts.name || FB.guid();
 
     // Dear IE, screw you. Only works with the magical incantations.
     // Dear FF, screw you too. Needs src _after_ DOM insertion.
     // Dear Webkit, you're okay. Works either way.
-
-
     var
       guid = FB.guid(),
-      div = FB.Content.append('', root),
 
       // Since we set the src _after_ inserting the iframe node into the DOM,
       // some browsers will fire two onload events, once for the first empty
@@ -112,18 +121,29 @@ FB.provide('Content', {
       // browsers are Webkit browsers which seem to be trying to do the
       // "right thing". So we toggle this boolean right before we expect the
       // correct onload handler to get fired.
-      srcSet = false;
+      srcSet = false,
+      onloadDone = false;
     FB.Content._callbacks[guid] = function() {
-      if (srcSet) {
-        onload && onload(div.firstChild);
+      if (srcSet && !onloadDone) {
+        onloadDone = true;
+        opts.onload && opts.onload(opts.root.firstChild);
         delete FB.Content._callbacks[guid];
       }
     };
 
     if (document.attachEvent) {
       var html = (
-        '<iframe ' +
-          ' src="' + url + '"' +
+        '<iframe' +
+          ' id="' + opts.id + '"' +
+          ' name="' + opts.name + '"' +
+          (opts.className ? ' class="' + opts.className + '"' : '') +
+          ' style="border:none;' +
+                  (opts.width ? 'width:' + opts.width + 'px;' : '') +
+                  (opts.height ? 'height:' + opts.height + 'px;' : '') +
+                  '"' +
+          ' src="' + opts.url + '"' +
+          ' frameborder="0"' +
+          ' scrolling="no"' +
           ' onload="FB.Content._callbacks.' + guid + '()"' +
         '></iframe>'
       );
@@ -134,7 +154,7 @@ FB.provide('Content', {
       // because its the second load, we no longer suffer from cache sickness.
       // It must be javascript:false instead of about:blank, otherwise IE6 will
       // complain in https.
-      div.innerHTML = '<iframe src="javascript:false"></iframe>';
+      opts.root.innerHTML = '<iframe src="javascript:false"></iframe>';
 
       // Now we'll be setting the real src.
       srcSet = true;
@@ -145,20 +165,33 @@ FB.provide('Content', {
       // the innerHTML is changed right away. We need to break apart the two
       // with this setTimeout 0 which seems to fix the issue.
       window.setTimeout(function() {
-        div.innerHTML = html;
+        opts.root.innerHTML = html;
       }, 0);
     } else {
       // This block works for all non IE browsers. But it's specifically
       // designed for FF where we need to set the src after inserting the
       // iframe node into the DOM to prevent cache issues.
       var node = document.createElement('iframe');
+      node.id = opts.id;
+      node.name = opts.name;
       node.onload = FB.Content._callbacks[guid];
-      div.appendChild(node);
+      node.style.border = 'none';
+      node.style.overflow = 'hidden';
+      if (opts.className) {
+        node.className = opts.className;
+      }
+      if (opts.height) {
+        node.style.height = opts.height + 'px';
+      }
+      if (opts.width) {
+        node.style.width = opts.width + 'px';
+      }
+      opts.root.appendChild(node);
 
       // Now we'll be setting the real src.
       srcSet = true;
 
-      node.src = url;
+      node.src = opts.url;
     }
   }
 });
