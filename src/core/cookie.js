@@ -94,14 +94,14 @@ FB.provide('Cookie', {
    * Helper function to set cookie value.
    *
    * @access private
-   * @param val       {String} the string value (should already be encoded)
-   * @param timestamp {Number} a unix timestamp denoting expiry
-   * @param domain    {String} optional domain for cookie
+   * @param val    {String} the string value (should already be encoded)
+   * @param ts     {Number} a unix timestamp denoting expiry
+   * @param domain {String} optional domain for cookie
    */
-  setRaw: function(val, timestamp, domain) {
+  setRaw: function(val, ts, domain) {
     document.cookie =
       'fbs_' + FB._apiKey + '="' + val + '"' +
-      '; expires=' + new Date(timestamp * 1000).toGMTString() +
+      (val && ts == 0 ? '' : '; expires=' + new Date(ts * 1000).toGMTString()) +
       '; path=/' +
       (domain ? '; domain=.' + domain : '');
 
