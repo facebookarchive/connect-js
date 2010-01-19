@@ -24,7 +24,7 @@
  * @private
  */
 FB.Class('Obj', null,
-  FB.copy(FB.Event, {
+  FB.copy({
     /**
      * Set property on an object and fire property changed event if changed.
      *
@@ -40,5 +40,5 @@ FB.Class('Obj', null,
          this.fire(propertyName, newValue);
        }
      }
-  })
+  }, FB.EventProvider)
 );
