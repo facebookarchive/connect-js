@@ -23,19 +23,26 @@
  * @extends  FB.XFBML.Element
  * @private
  */
-FB.subclass('XFBML.Name', 'XFBML.Element', null,
-  /*
-   * Instance methods
+FB.subclass('XFBML.Name', 'XFBML.Element', null, {
+  /**
+   * Processes this tag.
    */
-  {
   process: function() {
-    this._uid = this.getAttribute('uid', null);
+    FB.copy(this, {
+      _uid           : this.getAttribute('uid'),
+      _firstnameonly : this._getBoolAttribute('firstnameonly'),
+      _lastnameonly  : this._getBoolAttribute('lastnameonly'),
+      _possessive    : this._getBoolAttribute('possessive'),
+      _reflexive     : this._getBoolAttribute('reflexive'),
+      _objective     : this._getBoolAttribute('objective'),
+      _linked        : this._getBoolAttribute('linked', true),
+      _subjectId     : this.getAttribute('subjectid')
+    });
+
     if (!this._uid) {
+      FB.log('"uid" is a required attribute for <fb:name>');
       return;
     }
-
-    this._firstnameonly = this._getBoolAttribute('firstnameonly', false);
-    this._lastnameonly = this._getBoolAttribute('lastnameonly', false);
 
     var fields = [];
     if (this._firstnameonly) {
@@ -46,11 +53,6 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
       fields.push('name');
     }
 
-    this._possessive = this._getBoolAttribute('possessive', false);
-    this._reflexive = this._getBoolAttribute('reflexive', false);
-    this._objective = this._getBoolAttribute('objective', false);
-    this._linked = this._getBoolAttribute('linked', true);
-    this._subjectId = this.getAttribute('subjectid', null);
     if (this._subjectId) {
       fields.push('sex');
 
@@ -62,18 +64,14 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
     var data;
     // Wait for status to be known
     FB.Event.monitor('auth.statusChange', this.bind(function() {
-      //Is Element still in DOM tree
+      // Is Element still in DOM tree?
       if (!this.isValid()) {
         return true; // Stop processing
       }
 
       if (FB._userStatus) {
-        if(this.getAttribute('uid', null ) == 'loggedinuser') {
-         this._uid = FB.Helper.getLoggedInUser();
-        }
-
-        if (!this._uid) {
-          return false;
+        if (this._uid == 'loggedinuser') {
+          this._uid = FB.Helper.getLoggedInUser();
         }
 
         if (FB.Helper.isUser(this._uid)) {
@@ -86,8 +84,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
           if (this._uid) {
             if (this._subjectId == this._uid) {
               this._renderPronoun(data[0]);
-            }
-            else {
+            } else {
               this._renderOther(data[0]);
             }
           }
@@ -101,8 +98,9 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
    * Given this name, figure out the proper (English) pronoun for it.
    */
   _renderPronoun: function(userInfo) {
-    var word = '';
-    var objective = this._objective;
+    var
+      word = '',
+      objective = this._objective;
     if (this._subjectId) {
       objective = true;
       if (this._subjectId === this._uid) {
@@ -114,16 +112,13 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
       if (this._possessive) {
         if (this._reflexive) {
           word = 'your own';
-        }
-        else {
+        } else {
           word = 'your';
         }
-      }
-      else {
+      } else {
         if (this._reflexive) {
           word = 'yourself';
-        }
-        else {
+        } else {
           word = 'you';
         }
       }
@@ -133,15 +128,12 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
         case 'male':
           if (this._possessive) {
             word = (this._reflexive) ? 'his own' : 'his';
-          }
-          else {
+          } else {
             if (this._reflexive) {
               word = 'himself';
-            }
-            else if (objective) {
+            } else if (objective) {
               word = 'him';
-            }
-            else {
+            } else {
               word = 'he';
             }
           }
@@ -149,15 +141,12 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
         case 'female':
           if (this._possessive) {
             word = (this._reflexive) ? 'her own' : 'her';
-          }
-          else {
+          } else {
             if (this._reflexive) {
               word = 'herself';
-            }
-            else if (objective) {
+            } else if (objective) {
               word = 'her';
-            }
-            else {
+            } else {
               word = 'she';
             }
           }
@@ -167,19 +156,15 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
             if (this._possessive) {
               if (this._reflexive) {
                 word = 'their own';
-              }
-              else {
+              } else {
                 word = 'their';
               }
-            }
-            else {
+            } else {
               if (this._reflexive) {
                 word = 'themselves';
-              }
-              else if (objective) {
+              } else if (objective) {
                 word = 'them';
-              }
-              else {
+              } else {
                 word = 'they';
               }
             }
@@ -188,19 +173,15 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
             if (this._possessive) {
               if (this._reflexive) {
                 word = 'his/her own';
-              }
-              else {
+              } else {
                 word = 'his/her';
               }
-            }
-            else {
+            } else {
               if (this._reflexive) {
                 word = 'himself/herself';
-              }
-              else if (objective) {
+              } else if (objective) {
                 word = 'him/her';
-              }
-              else {
+              } else {
                 word = 'he/she';
               }
             }
@@ -230,17 +211,14 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
       if (this._reflexive) {
         if (this._possessive) {
           name = 'your own';
-        }
-        else {
+        } else {
           name = 'yourself';
         }
-      }
-      else {
+      } else {
         //  The possessive works really nicely this way!
         if (this._possessive) {
           name = 'your';
-        }
-        else {
+        } else {
           name = 'you';
         }
       }
@@ -255,8 +233,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
       }
       if (this._firstnameonly) {
         name = userInfo.first_name;
-      }
-      else if (this._lastnameonly) {
+      } else if (this._lastnameonly) {
         name = userInfo.last_name;
       }
 
@@ -279,8 +256,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null,
       if (this._linked) {
         html = FB.Helper.getProfileLink(userInfo, name,
           this.getAttribute('href', null));
-      }
-      else {
+      } else {
         html = name;
       }
     }

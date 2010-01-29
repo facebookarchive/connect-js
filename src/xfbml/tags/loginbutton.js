@@ -31,39 +31,43 @@
  * @extends  FB.XFBML.Element
  * @private
  */
-FB.subclass('XFBML.LoginButton', 'XFBML.Element', null,
-  /*
-   * Instance methods
+FB.subclass('XFBML.LoginButton', 'XFBML.Element', null, {
+  /**
+   * Processes this tag.
    */
-  {
   process: function() {
     var
       size = this.getAttribute('size', 'medium'),
       background = this.getAttribute('background', 'light'),
       length = this.getAttribute('length', 'short'),
-      rsrc = 'http://static.ak.fbcdn.net/rsrc.php/',
-      imgMap = {
-        dark_small_short: rsrc + 'zF1W2/hash/a969rwcd.gif',
-        dark_medium_short: rsrc + 'zEF9L/hash/156b4b3s.gif',
-        dark_medium_long: rsrc + 'zBIU2/hash/85b5jlja.gif',
-        dark_large_short: rsrc + 'z1UX3/hash/a22m3ibb.gif',
-        dark_large_long: rsrc + 'z7SXD/hash/8mzymam2.gif',
-        light_small_short: rsrc + 'zDGBW/hash/8t35mjql.gif',
-        light_medium_short: rsrc + 'z38X1/hash/6ad3z8m6.gif',
-        light_medium_long: rsrc + 'zB6N8/hash/4li2k73z.gif',
-        light_large_short: rsrc + 'zA114/hash/7e3mp7ee.gif',
-        light_large_long: rsrc + 'z4Z4Q/hash/8rc0izvz.gif',
-        white_small_short: rsrc + 'z900E/hash/di0gkqrt.gif',
-        white_medium_short: rsrc + 'z10GM/hash/cdozw38w.gif',
-        white_medium_long: rsrc + 'zBT3E/hash/338d3m67.gif',
-        white_large_short: rsrc + 'zCOUP/hash/8yzn0wu3.gif',
-        white_large_long: rsrc + 'zC6AR/hash/5pwowlag.gif'
-      },
-      src = imgMap[background + '_' + size + '_' + length];
+      src = FB.XFBML.LoginButton._rsrc[background + '_' + size + '_' + length];
+
     this.dom.innerHTML = (
-      '<a onclick="FB.login(function(){});" ' +
-      'class=\"fbconnect_login_button\">' +
-      '<img src="' + src + '" alt="Connect"/></a>'
+      '<a onclick="FB.login();" class="fbconnect_login_button">' +
+      '<img src="' + src + '" alt="Connect with Facebook"/></a>'
     );
+  }
+});
+
+FB.provide('XFBML.LoginButton', {
+  /**
+   * Images for the login button.
+   */
+  _rsrc: {
+    dark_small_short   : FB._domain.cdn + 'rsrc.php/zF1W2/hash/a969rwcd.gif',
+    dark_medium_short  : FB._domain.cdn + 'rsrc.php/zEF9L/hash/156b4b3s.gif',
+    dark_medium_long   : FB._domain.cdn + 'rsrc.php/zBIU2/hash/85b5jlja.gif',
+    dark_large_short   : FB._domain.cdn + 'rsrc.php/z1UX3/hash/a22m3ibb.gif',
+    dark_large_long    : FB._domain.cdn + 'rsrc.php/z7SXD/hash/8mzymam2.gif',
+    light_small_short  : FB._domain.cdn + 'rsrc.php/zDGBW/hash/8t35mjql.gif',
+    light_medium_short : FB._domain.cdn + 'rsrc.php/z38X1/hash/6ad3z8m6.gif',
+    light_medium_long  : FB._domain.cdn + 'rsrc.php/zB6N8/hash/4li2k73z.gif',
+    light_large_short  : FB._domain.cdn + 'rsrc.php/zA114/hash/7e3mp7ee.gif',
+    light_large_long   : FB._domain.cdn + 'rsrc.php/z4Z4Q/hash/8rc0izvz.gif',
+    white_small_short  : FB._domain.cdn + 'rsrc.php/z900E/hash/di0gkqrt.gif',
+    white_medium_short : FB._domain.cdn + 'rsrc.php/z10GM/hash/cdozw38w.gif',
+    white_medium_long  : FB._domain.cdn + 'rsrc.php/zBT3E/hash/338d3m67.gif',
+    white_large_short  : FB._domain.cdn + 'rsrc.php/zCOUP/hash/8yzn0wu3.gif',
+    white_large_long   : FB._domain.cdn + 'rsrc.php/zC6AR/hash/5pwowlag.gif'
   }
 });

@@ -94,18 +94,22 @@ test(
   'fb:profile-pic',
 
   function() {
-    XTest.expect(5);
+    XTest.expect(6);
     XTest.regex('<fb:profile-pic uid="676075965"></fb:profile-pic>',
       'href="http://www.facebook.com/profile.php.id=676075965"'
-      +'.*<img src="http://profile.ak.fbcdn.net/v22942/251/17/t676075965_3615.jpg" alt="luke t shepard" .*>');
+      +'.*<img.*src="http://profile.ak.fbcdn.net/.*.jpg".*>');
+
+    XTest.regex('<fb:profile-pic uid="676075965"></fb:profile-pic>',
+      'href="http://www.facebook.com/profile.php.id=676075965"'
+      +'.*<img.*alt="luke t shepard".*>');
 
     // note that we pass in 64 x 100, but the longer one is cropped since the image is square
     XTest.regex('<fb:profile-pic uid="676075965" width="64" height="100"></fb:profile-pic>',
-      'style="width: 64px; height: 64px;"');
+      'style=.*width: ?64px;.*height: ?64px');
 
     // add the logo
     XTest.regex('<fb:profile-pic uid="676075965" facebook-logo="true"></fb:profile-pic>',
-      '<img src="http://external.ak.fbcdn.net/safe_image.php');
+      '<img.*src="http://external.ak.fbcdn.net/safe_image.php');
 
     // default pic for a non-user
     XTest.regex('<fb:profile-pic uid="2"></fb:profile-pic>',
@@ -151,7 +155,7 @@ test(
     XTest.expect(1);
 
     XTest.regex('<fb:login-button></fb:login-button>',
-               '<img src="http://static.ak.fbcdn.net/.*>');
+               '<img.*src="http://static.ak.fbcdn.net/.*>');
 
     // TODO: remaining combos of width, height, etc
   }

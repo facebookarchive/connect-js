@@ -132,16 +132,15 @@ FB.provide('XFBML', {
       element.process();
     } else {
       var processor = function() {
-         var fn = eval(tagInfo.className);
-         element = dom._element = new fn(dom);
-         element.process();
+        var fn = eval(tagInfo.className);
+        element = dom._element = new fn(dom);
+        element.process();
       };
 
       if (FB.CLASSES[tagInfo.className.substr(3)]) {
         processor();
       } else {
-        // Load necessary class on-demand if necessary. Component name is lower
-        // case className.
+        // Load on-demand if necessary. Component name is lower case className.
         var component = tagInfo.className.toLowerCase();
         FB.Loader.use(component, processor);
       }
@@ -152,44 +151,42 @@ FB.provide('XFBML', {
    * Get all the DOM elements present under a given node with a
    * given tag name.
    *
-   * @param  {Object} element
-   * @param  {String} xmlns
-   * @param  {String} localName
-   * @return  DOMElementCollection
+   * @param dom {DOMElement} element
+   * @param xmlns {String} xmlns
+   * @param localName {String} localName
+   * @return {DOMElementCollection}
    * @private
    */
   _getDomElements: function(dom, xmlns, localName) {
     // Different browsers behave slightly differently in handling tags
     // with custom namespace.
+    var fullName = xmlns + ':' + localName;
+
     switch (FB.Dom.getBrowserType()) {
     case 'mozilla':
       // Use document.body.namespaceURI as first parameter per
       // suggestion by Firefox developers.
       // See https://bugzilla.mozilla.org/show_bug.cgi?id=531662
-      return dom.getElementsByTagNameNS(document.body.namespaceURI,
-                                        xmlns + ':' + localName);
+      return dom.getElementsByTagNameNS(document.body.namespaceURI, fullName);
       break;
     case 'ie':
       var docNamespaces = document.namespaces;
       if (docNamespaces && docNamespaces[xmlns]) {
         return dom.getElementsByTagName(localName);
       } else {
-        // it seems that developer tends to forget to declare the fb namespace
-        // in the HTML tag (xmlns:fb="http://www.facebook.com/2008/fbml")
-        // IE has a stricter implementation for custom tags.
-        // If namespace is missing, custom DOM dom does not appears to be
-        // fully functional. For example, setting innerHTML on it will
-        // fail.
-        // As such, we can't tolerate the absence the namespace
-        // declaration. We can however, detect this mistake and throw an
-        // exception to help developer identify the problem and fix it.
-        // If a namespace is not declared, we can still find the
-        // element using GetElementssByTagName with namespace appended.
-        return dom.getElementsByTagName(xmlns + ':' + localName);
+        // It seems that developer tends to forget to declare the fb namespace
+        // in the HTML tag (xmlns:fb="http://www.facebook.com/2008/fbml") IE
+        // has a stricter implementation for custom tags. If namespace is
+        // missing, custom DOM dom does not appears to be fully functional. For
+        // example, setting innerHTML on it will fail.
+        //
+        // If a namespace is not declared, we can still find the element using
+        // GetElementssByTagName with namespace appended.
+        return dom.getElementsByTagName(fullName);
       }
       break;
     default:
-      return dom.getElementsByTagName(xmlns + ':' + localName);
+      return dom.getElementsByTagName(fullName);
       break;
     }
   },
@@ -212,9 +209,7 @@ FB.provide('XFBML', {
     { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic' },
     { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml' },
     { localName: 'share-button',    className: 'FB.XFBML.ShareButton' }
-  ],
-
-  _list: []
+  ]
 });
 
 /*
