@@ -46,6 +46,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.Element', null, {
       '<a onclick="FB.login();" class="fbconnect_login_button">' +
       '<img src="' + src + '" alt="Connect with Facebook"/></a>'
     );
+    this.fire('render');
   }
 });
 

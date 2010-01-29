@@ -35,11 +35,21 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
     //TODO: When we turn sharepro on, replace icon_link with button_count
     this._type = this.getAttribute('type', 'icon_link');
 
-    this._renderButton();
+    this._renderButton(true);
   },
 
-  _renderButton: function() {
+  /**
+   * Render's the button.
+   *
+   * @access private
+   * @param skipRenderEvent {Boolean} indicate if firing of the render event
+   * should be skipped. This is useful because the _renderButton() function may
+   * recursively call itself to do the final render, which is when we want to
+   * fire the render event.
+   */
+  _renderButton: function(skipRenderEvent) {
     if (!this.isValid()) {
+      this.fire('render');
       return;
     }
     var
@@ -58,9 +68,11 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
           (this._type == 'icon_link' ? share : '&nbsp;') +
         '</span>'
       );
+      skipRenderEvent = false;
       break;
     case 'link':
       contentStr = 'Share on Facebook';
+      skipRenderEvent = false;
       break;
     case 'button_count':
       contentStr = '<span class="FBConnectButton_Text">' + share +  '</span>';
@@ -94,6 +106,10 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
       contentStr,
       extra
     );
+
+    if (!skipRenderEvent) {
+      this.fire('render');
+    }
   },
 
   _getCounterMarkup: function() {
@@ -120,7 +136,7 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
         }
       }
     } else {
-      this._count.wait(this.bind(this._renderButton));
+      this._count.wait(this.bind(this._renderButton, false));
     }
 
     return '';

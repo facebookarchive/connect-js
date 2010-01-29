@@ -25,7 +25,7 @@
  * @extends FB.XFBML.Element
  * @private
  */
-FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, FB.copy({
+FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   /**
    * Indicate if the loading animation should be shown while the iframe is
    * loading.
@@ -49,11 +49,10 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, FB.copy({
   /**
    * Indicates when the widget will be made visible.
    *
-   *   instant: as soon as it is inserted into the DOM
    *   load: when the iframe's page onload event is fired
    *   resize: when the first resize message is received
    */
-  _visibleAfter: 'instant',
+  _visibleAfter: 'load',
 
   /////////////////////////////////////////////////////////////////////////////
   // Methods the implementation MUST override
@@ -163,10 +162,8 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, FB.copy({
       this._addLoader();
     }
 
-    // if it's not supposed to be instantly visible, hide it
-    if (this._visibleAfter != 'instant') {
-      FB.Dom.addCss(this.dom, 'FB_HideIframes');
-    }
+    // it's always hidden by default
+    FB.Dom.addCss(this.dom, 'FB_HideIframes');
 
     // the initial size
     var size = this.getSize() || {};
@@ -223,6 +220,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, FB.copy({
   _makeVisible: function() {
     this._removeLoader();
     FB.Dom.removeCss(this.dom, 'FB_HideIframes');
+    this.fire('render');
   },
 
   /**
@@ -276,4 +274,4 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, FB.copy({
       this._loaderDiv = null;
     }
   }
-}, FB.EventProvider));
+});

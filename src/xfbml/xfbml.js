@@ -31,6 +31,13 @@
  */
 FB.provide('XFBML', {
   /**
+   * The time allowed for all tags to finish rendering.
+   *
+   * @type Number
+   */
+  _renderTimeout: 30000,
+
+  /**
    * Dynamically set XFBML markup on a given DOM element. Use this
    * method if you want to set XFBML after the page has already loaded
    * (for example, in response to an Ajax request or API call).
@@ -47,9 +54,9 @@ FB.provide('XFBML', {
    * @param {String} markup XFBML markup. It may contain reguarl
    *         HTML markup as well.
    */
-  set: function(dom, markup) {
+  set: function(dom, markup, cb) {
     dom.innerHTML = markup;
-    FB.XFBML.parse(dom);
+    FB.XFBML.parse(dom, cb);
   },
 
   /**
@@ -67,11 +74,32 @@ FB.provide('XFBML', {
    *
    *       FB.XFBML.parse(document.getElementById('foo'));
    *
-   * @param {DOMElement} dom [Optional] Container DOM of XFBML
-   * By default, we parse document.body
+   * @access public
+   * @param dom {DOMElement} (optional) root DOM node, defaults to body
+   * @param cb {Function} (optional) invoked when elements are rendered
    */
-  parse: function(dom) {
+  parse: function(dom, cb) {
     dom = dom || document.body;
+
+    // We register this function on each tag's "render" event. This allows us
+    // to invoke the callback when we're done rendering all the found elements.
+    //
+    // We start with count=1 rather than 0, and finally call onTagDone() after
+    // we've kicked off all the tag processing. This ensures that we do not hit
+    // count=0 before we're actually done queuing up all the tags.
+    var
+      count = 1,
+      onTagDone = function() {
+        count--;
+        if (count === 0) {
+          // Invoke the user specified callback for this specific parse() run.
+          cb && cb();
+
+          // Also fire a global event. A global event is fired for each
+          // invocation to FB.XFBML.parse().
+          FB.Event.fire('xfbml.render');
+        }
+      };
 
     // First, find all tags that are present
     FB.forEach(FB.XFBML._tagInfos, function(tagInfo) {
@@ -86,12 +114,22 @@ FB.provide('XFBML', {
         tagInfo.localName
       );
       for (var i=0; i < xfbmlDoms.length; i++) {
-        FB.XFBML._processElement(xfbmlDoms[i], tagInfo);
+        count++;
+        FB.XFBML._processElement(xfbmlDoms[i], tagInfo, onTagDone);
       }
     });
 
-    // TODO: We need put functionality to detect when
-    // all rendering is completed and fire an event
+    // Setup a timer to ensure all tags render within a given timeout
+    var timeout = window.setTimeout(function() {
+      if (count != 0) {
+        FB.log(
+          count + ' XFBML tags failed to render in ' +
+          FB.XFBML._renderTimeout + 'ms'
+        );
+      }
+    }, FB.XFBML._renderTimeout);
+    // Call once to handle count=1 as described above.
+    onTagDone();
   },
 
   /**
@@ -123,9 +161,13 @@ FB.provide('XFBML', {
 
   /**
    * Process an XFBML element.
-   * @private
+   *
+   * @access private
+   * @param dom {DOMElement} the dom node
+   * @param tagInfo {Object} the tag information
+   * @param cb {Function} the function to bind to the "render" event for the tag
    */
-  _processElement: function(dom, tagInfo) {
+  _processElement: function(dom, tagInfo, cb) {
     // Check if element for the dom already exists
     var element = dom._element;
     if (element) {
@@ -134,6 +176,7 @@ FB.provide('XFBML', {
       var processor = function() {
         var fn = eval(tagInfo.className);
         element = dom._element = new fn(dom);
+        element.subscribe('render', cb);
         element.process();
       };
 
@@ -148,14 +191,13 @@ FB.provide('XFBML', {
   },
 
   /**
-   * Get all the DOM elements present under a given node with a
-   * given tag name.
+   * Get all the DOM elements present under a given node with a given tag name.
    *
-   * @param dom {DOMElement} element
-   * @param xmlns {String} xmlns
-   * @param localName {String} localName
+   * @access private
+   * @param dom {DOMElement} the root DOM node
+   * @param xmlns {String} the XML namespace
+   * @param localName {String} the unqualified tag name
    * @return {DOMElementCollection}
-   * @private
    */
   _getDomElements: function(dom, xmlns, localName) {
     // Different browsers behave slightly differently in handling tags

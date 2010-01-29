@@ -41,6 +41,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
 
     if (!this._uid) {
       FB.log('"uid" is a required attribute for <fb:name>');
+      this.fire('render');
       return;
     }
 
@@ -66,6 +67,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
     FB.Event.monitor('auth.statusChange', this.bind(function() {
       // Is Element still in DOM tree?
       if (!this.isValid()) {
+        this.fire('render');
         return true; // Stop processing
       }
 
@@ -88,6 +90,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
               this._renderOther(data[0]);
             }
           }
+          this.fire('render');
         }));
       }
       return false;

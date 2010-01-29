@@ -15,7 +15,7 @@
  *
  * @provides fb.xfbml.element
  * @layer xfbml
- * @requires fb.type
+ * @requires fb.type fb.event
  */
 
 /**
@@ -32,7 +32,7 @@ FB.Class('XFBML.Element',
     this.dom = dom;
   },
 
-  {
+  FB.copy({
   /**
    * Get the value of an attribute associated with this tag.
    *
@@ -98,4 +98,4 @@ FB.Class('XFBML.Element',
   clear: function() {
     this.dom.innerHTML = '';
   }
-});
+}, FB.EventProvider));

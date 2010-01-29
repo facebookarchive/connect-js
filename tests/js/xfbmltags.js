@@ -67,23 +67,17 @@ XTest = {
    */
   regex : function(xfbml, html_regex, case_sensitive) {
     var container = FB.Content.append('');
-    FB.XFBML.set(container, xfbml);
-
-    // we don't really have a callback yet,
-    // so just postpone a second
-    // TODO: add a legit callback/event mechanism
-    setTimeout(function() {
-                 var html = container.childNodes[0].innerHTML;
-                 if (!case_sensitive) {
-                   html = html.toLowerCase();
-                   html_regex = html_regex.toLowerCase();
-                 }
-                 var regex = RegExp(html_regex);
-                 ok(regex.test(html),
-                    "match regex " + html_regex + " with " + html);
-                 container.parentNode.removeChild(container); // clean up
-                 --XTest.remaining;
-               }, 2000);
+    FB.XFBML.set(container, xfbml, function() {
+      var html = container.childNodes[0].innerHTML;
+      if (!case_sensitive) {
+        html = html.toLowerCase();
+        html_regex = html_regex.toLowerCase();
+      }
+      var regex = RegExp(html_regex);
+      ok(regex.test(html), "match regex " + html_regex + " with " + html);
+      container.parentNode.removeChild(container); // clean up
+      --XTest.remaining;
+    });
   },
 
   remaining : 0,
@@ -96,11 +90,11 @@ test(
   function() {
     XTest.expect(6);
     XTest.regex('<fb:profile-pic uid="676075965"></fb:profile-pic>',
-      'href="http://www.facebook.com/profile.php.id=676075965"'
+      'href="' + FB._domain.www + 'profile.php.id=676075965"'
       +'.*<img.*src="http://profile.ak.fbcdn.net/.*.jpg".*>');
 
     XTest.regex('<fb:profile-pic uid="676075965"></fb:profile-pic>',
-      'href="http://www.facebook.com/profile.php.id=676075965"'
+      'href="' + FB._domain.www + 'profile.php.id=676075965"'
       +'.*<img.*alt="luke t shepard".*>');
 
     // note that we pass in 64 x 100, but the longer one is cropped since the image is square
@@ -128,7 +122,7 @@ test(
     XTest.expect(5);
 
     XTest.regex('<fb:name uid="676075965"></fb:name>',
-        'href="http://www.facebook.com/profile.php.id=676075965"'
+        'href="' + FB._domain.www + 'profile.php.id=676075965"'
         +'.*Luke T Shepard');
 
     XTest.regex('<fb:name uid="676075965" firstnameonly="true"></fb:name>',

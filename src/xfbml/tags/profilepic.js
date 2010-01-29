@@ -85,12 +85,14 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null, {
       }
       this.dom.innerHTML = html;
       FB.Dom.addCss(this.dom, 'fb_profile_pic_rendered');
+      this.fire('render');
     });
 
     // Wait for status to be known
     FB.Event.monitor('auth.statusChange', this.bind(function() {
       //Is Element still in DOM tree
       if (!this.isValid()) {
+        this.fire('render');
         return true; // Stop processing
       }
 
