@@ -18,6 +18,7 @@
 
 FILES=(
   src/third-party/json2.js
+
   src/core/prelude.js
   src/core/api.js
   src/core/auth.js
@@ -44,12 +45,25 @@ FILES=(
   src/data/query.js
   src/data/data.js
 
+  src/css/button_css.js
+  src/css/iframe_widget_css.js
+  src/css/share_button_css.js
+
   src/xfbml/element.js
   src/xfbml/xfbml.js
   src/xfbml/helper.js
+  src/xfbml/iframe_widget.js
+  src/xfbml/edge_widget.js
+
+  src/xfbml/tags/add_to_wishlist.js
+  src/xfbml/tags/comments.js
+  src/xfbml/tags/fan.js
+  src/xfbml/tags/like.js
+  src/xfbml/tags/live_stream.js
   src/xfbml/tags/loginbutton.js
   src/xfbml/tags/name.js
   src/xfbml/tags/profilepic.js
+  src/xfbml/tags/serverfbml.js
   src/xfbml/tags/sharebutton.js
 )
 
