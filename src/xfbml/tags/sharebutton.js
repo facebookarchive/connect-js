@@ -15,8 +15,15 @@
  *
  * @provides fb.xfbml.sharebutton
  * @layer xfbml
- * @requires fb.type fb.xfbml  fb.string fb.dom fb.xfbml.element fb.ui
- *  fb.data fb.helper fb.share-button-css
+ * @requires fb.type
+ *           fb.xfbml
+ *           fb.string
+ *           fb.dom
+ *           fb.xfbml.element
+ *           fb.ui
+ *           fb.data
+ *           fb.helper
+ *           fb.css.sharebutton
  */
 
 /**

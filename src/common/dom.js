@@ -79,20 +79,26 @@ FB.provide('Dom', {
    * Add CSS rules using a <style> tag.
    *
    * @param styles {String} the styles
-   * @param id {String} an identifier for this set of styles
+   * @param names {Array} the component names that the styles represent
    */
-  addCssRules: function(styles, id) {
-    //TODO idea, use the md5 of the styles as the id
+  addCssRules: function(styles, names) {
     if (!FB.Dom._cssRules) {
       FB.Dom._cssRules = {};
     }
 
-    // Check if this style sheet is already applied
-    if (id in FB.Dom._cssRules) {
+    // note, we potentially re-include CSS if it comes with other CSS that we
+    // have previously not included.
+    var allIncluded = true;
+    FB.forEach(names, function(id) {
+      if (!(id in FB.Dom._cssRules)) {
+        allIncluded = false;
+        FB.Dom._cssRules[id] = true;
+      }
+    });
+
+    if (allIncluded) {
       return;
     }
-
-    FB.Dom._cssRules[id] = true;
 
     var style;
     if (FB.Dom.getBrowserType() != 'ie') {

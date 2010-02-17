@@ -15,7 +15,7 @@
  *
  * @provides fb.xfbml.iframewidget
  * @layer xfbml
- * @requires fb.type fb.event fb.xfbml.element fb.iframe-widget-css
+ * @requires fb.type fb.event fb.xfbml.element fb.css.iframewidget
  */
 
 /**
