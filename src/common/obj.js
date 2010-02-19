@@ -14,7 +14,9 @@
  * limitations under the License.
  *
  * @provides fb.obj
- * @requires fb.type fb.json2 fb.event
+ * @requires fb.type
+ *           fb.json
+ *           fb.event
  */
 
 /**
@@ -33,11 +35,11 @@ FB.Class('Obj', null,
      * @param {Object} new value of the property
      * @private
      */
-     setProperty: function(propertyName, newValue) {
+     setProperty: function(name, value) {
        // Check if property actually changed
-       if (JSON.stringify(newValue) != JSON.stringify(this[propertyName])) {
-         this[propertyName] = newValue;
-         this.fire(propertyName, newValue);
+       if (FB.JSON.stringify(value) != FB.JSON.stringify(this[name])) {
+         this[name] = value;
+         this.fire(name, value);
        }
      }
   }, FB.EventProvider)

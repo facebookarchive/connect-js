@@ -20,7 +20,7 @@
  *           fb.qs
  *           fb.event
  *           fb.frames
- *           fb.json2
+ *           fb.json
  */
 
 /**
@@ -406,7 +406,7 @@ FB.provide('Auth', {
       //
       // TODO: Stop using try/catch in the first place!
       try {
-        session = JSON.parse(params.session);
+        session = FB.JSON.parse(params.session);
       } catch (x) {
       }
 

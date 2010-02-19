@@ -15,7 +15,14 @@
  *
  * @provides fb.data
  * @layer data
- * @requires fb.prelude fb.type fb.array fb.string fb.api fb.obj fb.data.query
+ * @requires fb.prelude
+ *           fb.type
+ *           fb.array
+ *           fb.string
+ *           fb.api
+ *           fb.obj
+ *           fb.data.query
+ *           fb.json
  */
 
 
@@ -286,7 +293,7 @@ FB.provide('Data', {
       return query.toFql();
     });
 
-    params.queries = JSON.stringify(params.queries);
+    params.queries = FB.JSON.stringify(params.queries);
 
     FB.api(params, function(result) {
       if (result.error_msg) {

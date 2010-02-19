@@ -40,8 +40,8 @@ the data layer also perform auto merge of queries</p>
         var u1 = FB.Data.query(queryTemplate, 4);
         var u2 = FB.Data.query(queryTemplate, 1160);
         FB.Data.waitOn([u1, u2], function(args) {
-          log('u1 = '+ JSON.stringify(args[0]));
-          log('u2 = '+  JSON.stringify(args[1]));
+          log('u1 = '+ FB.JSON.stringify(args[0]));
+          log('u2 = '+  FB.JSON.stringify(args[1]));
         });
       }
     });

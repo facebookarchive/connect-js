@@ -23,7 +23,7 @@
  *           fb.qs
  *           fb.flash
  *           fb.md5sum
- *           fb.json2
+ *           fb.json
  */
 
 /**
@@ -87,7 +87,7 @@ FB.provide('', {
         if (typeof value == 'string') {
           params[key] = value;
         } else {
-          params[key] = JSON.stringify(value);
+          params[key] = FB.JSON.stringify(value);
         }
       }
     }
@@ -227,7 +227,7 @@ FB.provide('RestServer', {
 
       // callback
       FB.RestServer._callbacks[reqId] = function(response) {
-        cb(JSON.parse(FB.Flash.decode(response)));
+        cb(FB.JSON.parse(FB.Flash.decode(response)));
         delete FB.RestServer._callbacks[reqId];
       };
     });

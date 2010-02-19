@@ -1,8 +1,10 @@
 /**
- * This is the stock JSON2 implementation from www.json.org, unmodified except
- * for this docblock.
+ * This is the stock JSON2 implementation from www.json.org.
  *
- * @provides fb.json2
+ * Modifications include:
+ * 1/ Removal of jslint settings
+ *
+ * @provides fb.thirdparty.json2
  */
 
 /*

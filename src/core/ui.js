@@ -19,7 +19,7 @@
  * @requires fb.prelude
  *           fb.qs
  *           fb.frames
- *           fb.json2
+ *           fb.json
  */
 
 /**
@@ -166,10 +166,10 @@ FB.provide('', {
     var
       g   = FB._apiKey && FB.guid(),
       url = FB._domain.www + 'connect/prompt_feed.php?' + FB.QS.encode({
-        action_links        : JSON.stringify(post.action_links || {}),
+        action_links        : FB.JSON.stringify(post.action_links || {}),
         actor_id            : post.actor_id,
         api_key             : FB._apiKey,
-        attachment          : JSON.stringify(post.attachment || {}),
+        attachment          : FB.JSON.stringify(post.attachment || {}),
         callback            : g && FB.Frames.xdResult(cb, g, 'opener', true),
         message             : post.message,
         preview             : 1,

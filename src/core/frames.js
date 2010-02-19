@@ -20,7 +20,7 @@
  *           fb.content
  *           fb.qs
  *           fb.xd
- *           fb.json2
+ *           fb.json
  */
 
 /**
@@ -225,7 +225,7 @@ FB.provide('Frames', {
       FB.Frames.xdHandler(function(params) {
         cb && cb(params.result &&
                  params.result != FB.Frames._resultToken &&
-                 JSON.parse(params.result));
+                 FB.JSON.parse(params.result));
       }, frame, target, isDefault) +
       '&result=' + encodeURIComponent(FB.Frames._resultToken)
     );
