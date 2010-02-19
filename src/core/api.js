@@ -125,7 +125,7 @@ FB.provide('RestServer', {
     // general api call parameters
     FB.copy(params, {
       api_key : FB._apiKey,
-      call_id : (new Date()).getTime(),
+      call_id : new Date().getTime(),
       format  : 'json',
       v       : '1.0'
     });

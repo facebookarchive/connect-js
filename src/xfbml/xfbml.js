@@ -210,7 +210,6 @@ FB.provide('XFBML', {
       // suggestion by Firefox developers.
       // See https://bugzilla.mozilla.org/show_bug.cgi?id=531662
       return dom.getElementsByTagNameNS(document.body.namespaceURI, fullName);
-      break;
     case 'ie':
       var docNamespaces = document.namespaces;
       if (docNamespaces && docNamespaces[xmlns]) {
@@ -226,10 +225,8 @@ FB.provide('XFBML', {
         // GetElementssByTagName with namespace appended.
         return dom.getElementsByTagName(fullName);
       }
-      break;
     default:
       return dom.getElementsByTagName(fullName);
-      break;
     }
   },
 
@@ -258,6 +255,6 @@ FB.provide('XFBML', {
  * For IE, we will try to detect if document.namespaces contains 'fb' already
  * and add it if it does not exist.
  */
-if (document.namespaces && !document.namespaces.item['fb']) {
+if (document.namespaces && !document.namespaces.item.fb) {
    document.namespaces.add('fb');
 }

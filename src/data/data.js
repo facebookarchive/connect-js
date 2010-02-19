@@ -116,7 +116,7 @@ FB.provide('Data', {
    * An async query object that contains query result.
    */
   query: function(template, data) {
-    var query = (new FB.Data.Query()).parse(arguments);
+    var query = new FB.Data.Query().parse(arguments);
     FB.Data.queue.push(query);
     FB.Data._waitToProcess();
     return query;

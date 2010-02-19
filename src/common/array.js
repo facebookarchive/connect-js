@@ -58,7 +58,7 @@ FB.provide('Array', {
    */
   merge: function(target, source) {
     for (var i=0; i < source.length; i++) {
-      if (FB.Array.indexOf(target, (source[i])) < 0) {
+      if (FB.Array.indexOf(target, source[i]) < 0) {
         target.push(source[i]);
       }
     }

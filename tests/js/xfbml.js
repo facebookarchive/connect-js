@@ -23,7 +23,11 @@ test(
   function() {
     // an FB.XFBML.Element can be any dom node, doesn't
     // necessarily need to be a special fb: one
-    var html = '<a href="#" text-attr="The answer" num-attr="42" bool-attr="true">Some text</a>';
+    var html = (
+      '<a href="#" text-attr="The answer" num-attr="42" bool-attr="true">' +
+        'Some text' +
+      '</a>'
+    );
 
     var dom = FB.Content.append(html).childNodes[0];
     var xe = new FB.XFBML.Element(dom);
@@ -82,7 +86,7 @@ test(
                'The answer is obviously 42');
 
         // change an attribute on the existing node and reprocess
-        domElement.attributes["answer"].nodeValue = 39;
+        domElement.attributes.answer.nodeValue = 39;
         FB.XFBML.parse(container);
 
         setTimeout(

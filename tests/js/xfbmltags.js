@@ -97,19 +97,28 @@ test(
       'href="' + FB._domain.www + 'profile.php.id=676075965"'
       +'.*<img.*alt="luke t shepard".*>');
 
-    // note that we pass in 64 x 100, but the longer one is cropped since the image is square
-    XTest.regex('<fb:profile-pic uid="676075965" width="64" height="100"></fb:profile-pic>',
-      'style=.*width: ?64px;.*height: ?64px');
+    // note that we pass in 64 x 100, but the longer one is cropped since the
+    // image is square
+    XTest.regex(
+      (
+        '<fb:profile-pic uid="676075965" width="64" height="100">' +
+        '</fb:profile-pic>'
+      ),
+      'style=.*width: ?64px;.*height: ?64px'
+    );
 
     // add the logo
-    XTest.regex('<fb:profile-pic uid="676075965" facebook-logo="true"></fb:profile-pic>',
-      '<img.*src="http://external.ak.fbcdn.net/safe_image.php');
+    XTest.regex(
+      '<fb:profile-pic uid="676075965" facebook-logo="true"></fb:profile-pic>',
+      '<img.*src="http://external.ak.fbcdn.net/safe_image.php'
+    );
 
     // default pic for a non-user
     XTest.regex('<fb:profile-pic uid="2"></fb:profile-pic>',
                 'http://static.ak.fbcdn.net/pics/t_silhouette.jpg');
 
-    // this doesn't really work if the user's not logged in but at least we see a default
+    // this doesn't really work if the user's not logged in but at least we see
+    // a default
     XTest.regex('<fb:profile-pic uid="loggedinuser"></fb:profile-pic>',
                 'http://static.ak.fbcdn.net/pics/t_silhouette.jpg');
   }
@@ -134,7 +143,8 @@ test(
     XTest.regex('<fb:name uid="676075965" linked="false"></fb:name>',
                 '^Luke T Shepard$');
 
-    // need a better test for capitalization, is there any test acct without it capped?
+    // need a better test for capitalization, is there any test acct without it
+    // capped?
     XTest.regex('<fb:name uid="676075965" capitalize="true"></fb:name>',
                 'Luke', true);
 
@@ -173,7 +183,10 @@ test(
 
   function() {
     XTest.expect(1);
-    XTest.regex('<fb:fan name="platform"></fb:fan>', 'iframe.*connect/connect.php');
+    XTest.regex(
+      '<fb:fan name="platform"></fb:fan>',
+      'iframe.*connect/connect.php'
+    );
   }
 );
 
@@ -182,7 +195,10 @@ test(
 
   function() {
     XTest.expect(1);
-    XTest.regex('<fb:live-stream></fb:live-stream>', 'iframe.*widgets/livefeed.php');
+    XTest.regex(
+      '<fb:live-stream></fb:live-stream>',
+      'iframe.*widgets/livefeed.php'
+    );
   }
 );
 
@@ -191,6 +207,9 @@ test(
 
   function() {
     XTest.expect(1);
-    XTest.regex('<fb:serverfbml fbml="hello world"></fb:serverfbml>', 'iframe.*render_fbml.php');
+    XTest.regex(
+      '<fb:serverfbml fbml="hello world"></fb:serverfbml>',
+      'iframe.*render_fbml.php'
+    );
   }
 );

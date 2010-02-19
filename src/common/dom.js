@@ -108,14 +108,15 @@ FB.provide('Dom', {
       document.getElementsByTagName('HEAD')[0].appendChild(style);
     } else {
       var
-        re = /([\w|#|\.|\\][^{]*){(.*?)}/mg,
-        a;
+        re = /([\w|#|\.|\\][^{]*)\{(.*?)\}/mg,
+        a  = re.exec(styles);
       style = document.createStyleSheet();
-      while (a = re.exec(styles)) {
+      while (a) {
         var rules = FB.Array.map(a[1].split(','), FB.String.trim);
         for (var i=0; i < rules.length; i++) {
           style.addRule(rules[i], a[2]);
         }
+        a = re.exec(styles);
       }
     }
   },

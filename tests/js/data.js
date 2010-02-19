@@ -43,7 +43,8 @@ test(
   'FB.Data.query: simple fql query',
 
   function() {
-    var pagename = FB.Data.query("select name from page where username='barackobama'");
+    var pagename = FB.Data.query(
+      "select name from page where username='barackobama'");
 
     pagename.wait(function(data) {
                     assertFQLResponse(data, [{name: 'Barack Obama'}]);
@@ -58,8 +59,13 @@ test(
   'FB.Data.query: parameterized fql query',
 
   function() {
-    var pagename = FB.Data.query("select name from page where username='{0}'", "barackobama");
-    equals(pagename.toFql(), 'select name from page where username="barackobama"'); // note the flipped quotes
+    var pagename = FB.Data.query(
+      "select name from page where username='{0}'",
+      "barackobama"
+    );
+    // note the flipped quotes
+    equals(pagename.toFql(),
+           'select name from page where username="barackobama"');
     equals(pagename.toString().substr(0,3), "#v_");
     pagename.wait(function(data) {
                     assertFQLResponse(data, [{name: 'Barack Obama'}]);
@@ -74,7 +80,8 @@ test(
   'FB.Data.query non-index',
 
   function() {
-    var query = FB.Data.query('SELECT name FROM page WHERE username IN ("barackobama", "platform")');
+    var query = FB.Data.query(
+      'SELECT name FROM page WHERE username IN ("barackobama", "platform")');
     equals(query.where.type, 'unknown');
 
     query.wait(function(data) {
@@ -91,14 +98,14 @@ test(
   'FB.Data.waitOn single query',
 
   function() {
-    var pagename = FB.Data.query("select name from page where username='barackobama'");
+    var pagename = FB.Data.query(
+      "select name from page where username='barackobama'");
 
-    FB.Data.waitOn([ pagename ],
-                   function(data) {
-                     assertFQLResponse(pagename.value, [{name : 'Barack Obama'}]);
-                     assertFQLResponse(data[0], [{name : 'Barack Obama'}]);
-                     start();
-                   });
+    FB.Data.waitOn([ pagename ], function(data) {
+      assertFQLResponse(pagename.value, [{name : 'Barack Obama'}]);
+      assertFQLResponse(data[0], [{name : 'Barack Obama'}]);
+      start();
+    });
     expect(4);
     stop();
   }
@@ -108,19 +115,20 @@ test(
   'FB.Data.waitOn multiple queries',
 
   function() {
-    var obama = FB.Data.query("select name from page where username='barackobama'");
-    var platform = FB.Data.query("select name from page where username='platform'");
+    var obama = FB.Data.query(
+      "select name from page where username='barackobama'");
+    var platform = FB.Data.query(
+      "select name from page where username='platform'");
 
-    FB.Data.waitOn([ obama, platform ],
-                   function(data) {
-                     assertFQLResponse(obama.value,     [{name : 'Barack Obama'}]);
-                     assertFQLResponse(data[0],         [{name : 'Barack Obama'}]);
+    FB.Data.waitOn([ obama, platform ], function(data) {
+      assertFQLResponse(obama.value,     [{name : 'Barack Obama'}]);
+      assertFQLResponse(data[0],         [{name : 'Barack Obama'}]);
 
-                     assertFQLResponse(platform.value,  [{name : 'Facebook Platform'}]);
-                     assertFQLResponse(data[1],         [{name : 'Facebook Platform'}]);
+      assertFQLResponse(platform.value,  [{name : 'Facebook Platform'}]);
+      assertFQLResponse(data[1],         [{name : 'Facebook Platform'}]);
 
-                     start();
-                   });
+      start();
+    });
     expect(8);
     stop();
   }
@@ -130,7 +138,8 @@ test(
   'FB.Data.waitOn with string callback',
 
   function() {
-    var obama = FB.Data.query("select username from page where username='barackobama'");
+    var obama = FB.Data.query(
+      "select username from page where username='barackobama'");
     FB.Data.waitOn([obama],
                    "same(args[0], [{username: 'barackobama'}]); start();");
     expect(1);
@@ -142,7 +151,8 @@ test(
   'FB.Data._selectByIndex',
 
   function() {
-    var obama = FB.Data._selectByIndex(['name'], 'page', 'username', 'barackobama');
+    var obama = FB.Data._selectByIndex(
+      ['name'], 'page', 'username', 'barackobama');
     equals(obama.toFql(),
            'select name from page where username="barackobama"');
 
@@ -160,8 +170,12 @@ test(
   'FB.Data.query with dependency',
 
   function() {
-    var query = FB.Data.query('select username from page where page_id = 6815841748');
-    var dependentQuery = FB.Data.query('select name from page where username in (select username from {0})', query);
+    var query = FB.Data.query(
+      'select username from page where page_id = 6815841748');
+    var dependentQuery = FB.Data.query(
+      'select name from page where username in (select username from {0})',
+      query
+    );
 
     dependentQuery.wait(function(data) {
                           assertFQLResponse(data, [{name: 'Barack Obama'}]);

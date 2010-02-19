@@ -47,7 +47,7 @@ test(
                }
              });
 
-    equals(FB.CLASSES["Test"], classDef);
+    equals(FB.CLASSES.Test, classDef);
     var c = new FB.Test("constructor");
     c.test(42);
 

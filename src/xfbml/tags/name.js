@@ -130,7 +130,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
       switch (userInfo.sex) {
         case 'male':
           if (this._possessive) {
-            word = (this._reflexive) ? 'his own' : 'his';
+            word = this._reflexive ? 'his own' : 'his';
           } else {
             if (this._reflexive) {
               word = 'himself';
@@ -143,7 +143,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
           break;
         case 'female':
           if (this._possessive) {
-            word = (this._reflexive) ? 'her own' : 'her';
+            word = this._reflexive ? 'her own' : 'her';
           } else {
             if (this._reflexive) {
               word = 'herself';
