@@ -20,4 +20,4 @@
  *   fb.xfbml.serverfbml
  *   fb.xfbml.sharebutton
  */
-0;
+void(0);
