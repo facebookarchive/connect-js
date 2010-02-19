@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @provides fb.tests.initialize
+ * @requires fb.tests.qunit
+ *           fb.init
  */
 var API_KEY = '94e09284285b2db1e0abb43a2a449f9b';
 var EXPIRED_SESSION = {

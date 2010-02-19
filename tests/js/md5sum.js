@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @provides fb.tests.md5sum
+ * @requires fb.tests.qunit
+ *           fb.md5sum
  */
 ////////////////////////////////////////////////////////////////////////////////
 module('md5sum');

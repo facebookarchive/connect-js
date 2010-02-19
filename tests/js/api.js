@@ -12,6 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @provides fb.tests.api
+ * @requires fb.tests.qunit
+ *           fb.api
  */
 // all the API functions share the signature, so we use the same test with all
 // of them. it also ensures we have parity between them.
