@@ -8,6 +8,7 @@
  *   fb.data
  *   fb.init
  *   fb.ui
+ *   fb.xfbml.activity
  *   fb.xfbml.addtowishlist
  *   fb.xfbml.comments
  *   fb.xfbml.element

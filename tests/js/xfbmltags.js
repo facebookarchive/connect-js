@@ -195,6 +195,18 @@ test(
 );
 
 test(
+  'fb:activity',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex(
+      '<fb:activity site="cnn.com"></fb:activity>',
+      'iframe.*connect/activity.php'
+    );
+  }
+);
+
+test(
   'fb:live-stream',
 
   function() {

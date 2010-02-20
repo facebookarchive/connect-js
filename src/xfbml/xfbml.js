@@ -239,6 +239,7 @@ FB.provide('XFBML', {
    * NOTE: Keep the list alpha sorted.
    */
   _tagInfos: [
+    { localName: 'activity',        className: 'FB.XFBML.Activity' },
     { localName: 'add-to-wishlist', className: 'FB.XFBML.AddToWishList' },
     { localName: 'comments',        className: 'FB.XFBML.Comments' },
     { localName: 'fan',             className: 'FB.XFBML.Fan' },

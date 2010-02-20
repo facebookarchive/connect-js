@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides fb.xfbml.fan
+ * @provides fb.xfbml.activity
  * @layer xfbml
  * @requires fb.type fb.xfbml.iframewidget
  */
 
 /**
- * Implementation for fb:fan tag.
+ * Implementation for fb:activity tag.
  *
- * @class FB.XFBML.Fan
+ * @class FB.XFBML.Activity
  * @extends FB.XFBML.IframeWidget
  * @private
  */
-FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
+FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
   _visibleAfter: 'load',
 
   /**
@@ -34,41 +34,18 @@ FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
   setupAndValidate: function() {
     this._attr = {
       api_key     : FB._apiKey,
-      connections : this.getAttribute('connections', '10'),
-      css         : this.getAttribute('css'),
-      height      : this.getAttribute('height'),
-      id          : this.getAttribute('profile_id'),
-      logobar     : this._getBoolAttribute('logobar'),
-      name        : this.getAttribute('name'),
+      header      : this._getBoolAttribute('header'),
       stream      : this._getBoolAttribute('stream', true),
-      width       : this._getPxAttribute('width', 300)
+      width       : this._getPxAttribute('width', 300),
+      height      : this._getPxAttribute('height', 300),
+      site        : this.getAttribute('site')
     };
 
-    // "id" or "name" is required
-    if (!this._attr.id && !this._attr.name) {
-      FB.log('<fb:fan> requires one of the "id" or "name" attributes.');
+    // "site" is required
+    if (!this._attr.site) {
+      FB.log('<fb:activity> requires a site attribute.');
       return false;
     }
-
-    var height = this._attr.height;
-    if (!height) {
-      if ((!this._attr.connections || this._attr.connections === '0') &&
-          !this._attr.stream) {
-        height = 65;
-      } else if (!this._attr.connections || this._attr.connections === '0') {
-        height = 375;
-      } else if (!this._attr.stream) {
-        height = 250;
-      } else {
-        height = 550;
-      }
-    }
-    // add space for logobar
-    if (this._attr.logobar) {
-      height += 25;
-    }
-
-    this._attr.height = height;
     return true;
   },
 
@@ -87,6 +64,7 @@ FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
    * @return {String} the iframe URL
    */
   getIframeUrl: function() {
-    return FB._domain.www + 'connect/connect.php?' + FB.QS.encode(this._attr);
+    return FB._domain.www + 'widgets/activity.php?' + FB.QS.encode(this._attr);
   }
 });
+
