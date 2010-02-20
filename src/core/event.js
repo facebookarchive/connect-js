@@ -94,15 +94,13 @@ FB.provide('EventProvider', {
    * @param cb {Function} the handler function
    */
   unsubscribe: function(name, cb) {
-    var subs = this.subscribers();
+    var subs = this.subscribers()[name];
 
-    if (subs[name]) {
-      for (var i=0, l=subs[name].length; i<l; i++) {
-        if (subs[name][i] == cb) {
-          subs[name][i] = null;
-        }
+    FB.forEach(subs, function(value, key) {
+      if (value == cb) {
+        subs[key] = null;
       }
-    }
+    });
   },
 
   /**
@@ -141,13 +139,7 @@ FB.provide('EventProvider', {
    * @param name    {String}   name of the event
    */
   clear: function(name) {
-    var subs = this.subscribers();
-
-    if (subs[name]) {
-      for (var i=0, l=subs[name].length; i<l; i++) {
-        subs[name][i] = null;
-      }
-    }
+    delete this.subscribers()[name];
   },
 
   /**
@@ -159,23 +151,16 @@ FB.provide('EventProvider', {
    */
   fire: function() {
     var
-      args        = Array.prototype.slice.call(arguments),
-      name        = args.shift(),
-      subscribers = this.subscribers()[name],
-      sub;
+      args = Array.prototype.slice.call(arguments),
+      name = args.shift();
 
-    // no subscribers, boo
-    if (!subscribers) {
-      return;
-    }
-
-    for (var i=0, l=subscribers.length; i<l; i++) {
-      sub = subscribers[i];
-      // this is because we null out unsubscribed rather than jiggle the array
+    FB.forEach(this.subscribers()[name], function(sub) {
+      // this is because we sometimes null out unsubscribed rather than jiggle
+      // the array
       if (sub) {
         sub.apply(this, args);
       }
-    }
+    });
   }
 });
 
