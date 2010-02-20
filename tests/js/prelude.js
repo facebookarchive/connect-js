@@ -122,3 +122,11 @@ test(
   }
 );
 
+test(
+  'forEach DOM collection',
+  function() {
+    FB.forEach(document.getElementsByTagName('title'), function(v) {
+      equals(v.innerHTML, 'Mu Tests', 'expect the title back');
+    });
+  }
+);

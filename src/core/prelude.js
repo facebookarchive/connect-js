@@ -107,22 +107,12 @@ if (!window.FB) {
     },
 
     /**
-     * Create a namespaced object
-     * This create an fullly namespaced name.
-     * TODO I dont think example is possible.
-     * Examples:
-     * FB.create('XFBML.ProfilePic') = function() {...}
-     *   create FB.XFBML.ProfilePic and assign the value of the function.
-     *   If FB.XFBML does not exist, this call
-     *   would automatically create it.
-     *
-     * FB.create('Util');
-     *   create a namespace FB.Util if it doesn't already exist;
+     * Create a namespaced object.
      *
      * @access private
-     * @param {string} name full qualified name ('Util.foo', etc.)
-     * @param {string} value value to set. Default value is {}. [Optional]
-     * @return object  The created object, or boolean if testOnly is true.
+     * @param name {String} full qualified name ('Util.foo', etc.)
+     * @param value {Object} value to set. Default value is {}. [Optional]
+     * @return {Object} The created object
      */
     create: function(name, value) {
       var node = window.FB, // We will use 'FB' as root namespace
@@ -180,11 +170,13 @@ if (!window.FB) {
       if (FB._logging) {
         //TODO what is window.Debug, and should it instead be relying on the
         //     event fired below?
+//#JSCOVERAGE_IF 0
         if (window.Debug && window.Debug.writeln) {
           window.Debug.writeln(args);
         } else if (window.console) {
           window.console.log(args);
         }
+//#JSCOVERAGE_ENDIF
       }
 
       // fire an event if the event system is available
@@ -216,7 +208,12 @@ if (!window.FB) {
      * @access private
      */
     forEach: function(item, fn, proto) {
-      if (Object.prototype.toString.apply(item) === '[object Array]') {
+      if (!item) {
+        return;
+      }
+
+      if (Object.prototype.toString.apply(item) === '[object Array]' ||
+          (!(item instanceof Function) && typeof item.length == 'number')) {
         if (item.forEach) {
           item.forEach(fn);
         } else {
