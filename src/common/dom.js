@@ -101,6 +101,7 @@ FB.provide('Dom', {
     }
 
     var style;
+//#JSCOVERAGE_IF
     if (FB.Dom.getBrowserType() != 'ie') {
       style = document.createElement('style');
       style.type = "text/css";
@@ -141,5 +142,23 @@ FB.provide('Dom', {
       }
     }
     return FB.Dom._browserType;
+  },
+
+  /**
+   * Get the viewport info. Contains size and scroll offsets.
+   *
+   * @returns {Object} with the width and height
+   */
+  getViewportInfo: function() {
+    // W3C compliant, or fallback to body
+    var root = (document.documentElement && document.compatMode == 'CSS1Compat')
+      ? document.documentElement
+      : document.body;
+    return {
+      scrollTop  : root.scrollTop,
+      scrollLeft : root.scrollLeft,
+      width      : self.innerWidth  ? self.innerWidth  : root.clientWidth,
+      height     : self.innerHeight ? self.innerHeight : root.clientHeight
+    };
   }
 });
