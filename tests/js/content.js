@@ -124,3 +124,33 @@ test(
     });
   }
 );
+
+test(
+  'iframe options',
+
+  function() {
+    expect(5);
+    stop();
+
+    // url doesnt really matter as long as the host will respond
+    var opts = {
+      url: 'http://static.ak.fbcdn.net/connect/xd_proxy.php',
+      height: 100,
+      width: 100,
+      id: 'my-id',
+      name: 'my-name',
+      className: 'my-class',
+      root: FB.Content.appendHidden(''),
+      onload: function(node) {
+        equals(node.style.height, opts.height + 'px', 'got expected height');
+        equals(node.style.width, opts.width + 'px', 'got expected width');
+        equals(node.id, opts.id, 'got expected id');
+        equals(node.name, opts.name, 'got expected name');
+        equals(node.className, opts.className, 'got expected className');
+        node.parentNode.removeChild(node);
+        start();
+      }
+    };
+    FB.Content.insertIframe(opts);
+  }
+);

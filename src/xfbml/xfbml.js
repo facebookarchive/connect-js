@@ -121,10 +121,10 @@ FB.provide('XFBML', {
 
     // Setup a timer to ensure all tags render within a given timeout
     var timeout = window.setTimeout(function() {
-      if (count != 0) {
+      if (count > 0) {
         FB.log(
           count + ' XFBML tags failed to render in ' +
-          FB.XFBML._renderTimeout + 'ms'
+          FB.XFBML._renderTimeout + 'ms.'
         );
       }
     }, FB.XFBML._renderTimeout);
@@ -171,6 +171,7 @@ FB.provide('XFBML', {
     // Check if element for the dom already exists
     var element = dom._element;
     if (element) {
+      element.subscribe('render', cb);
       element.process();
     } else {
       var processor = function() {

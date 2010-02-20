@@ -37,9 +37,9 @@ test(
     var xe = new FB.XFBML.Element(dom);
     equals(xe.isValid(), true);
 
-    equals(xe.getAttribute('text-attr'), "The answer");
+    equals(xe.getAttribute('text-attr'), 'The answer');
     equals(xe.getAttribute('num-attr'), 42);
-    equals(xe.getAttribute('bool-attr'), "true");
+    equals(xe.getAttribute('bool-attr'), 'true');
     equals(xe.getAttribute('not-an-attribute'), null);
 
     equals(xe._getBoolAttribute('bool-attr'), true);
@@ -47,63 +47,54 @@ test(
 
     xe.clear();
     equals(xe.dom.innerHTML, '');
+    dom.parentNode.parentNode.removeChild(dom.parentNode);
 
   });
 
 // register a quick class for testing
 FB.subclass('XFBML.TestElement', 'XFBML.Element', null, {
-              process: function() {
-                this.dom.innerHTML = this.render();
-              },
-              render: function() {
-                return "The answer is obviously " +
-                  this.getAttribute("answer");
-              }
-            });
+  process: function() {
+    this.dom.innerHTML = this.render();
+    this.fire('render');
+  },
+  render: function() {
+    return 'The answer is obviously ' + this.getAttribute('answer');
+  }
+});
 
 test(
-   'FB.XFBML parsing',
+   'FB.XFBML parsing and callbacks',
 
   function() {
-
     // preset
-    FB.XFBML.registerTag({xmlns:'test', localName:'answer',
-                          className:'FB.XFBML.TestElement'});
+    FB.XFBML.registerTag({
+      xmlns     : 'test',
+      localName : 'answer',
+      className : 'FB.XFBML.TestElement'
+    });
 
-    var html = '<test:answer answer="42"></test:answer>';
-
+    var fbml = '<test:answer answer="42"></test:answer>';
     var container = FB.Content.append('');
 
-    FB.XFBML.set(container, html);
+    FB.XFBML.set(container, fbml, function() {
+      var domElement = container.childNodes[0];
 
-    // use setTimeouts to wait for the rendering
-    // at least until we implement appropriate events
-    // or callbacks for when rendering is complete
-    setTimeout(
-      function () {
-        var domElement = container.childNodes[0];
+      // _element is the FB.XFBML.Element object
+      same(domElement._element.dom, domElement);
+      equals(domElement.innerHTML, 'The answer is obviously 42');
 
-        // _element is the FB.XFBML.Element object
-        same(domElement._element.dom, domElement);
+      // change an attribute on the existing node and reprocess
+      domElement.attributes['answer'].nodeValue = 39;
+      FB.XFBML.parse(container, function() {
+        equals(domElement.innerHTML, 'The answer is obviously 39');
 
-        equals(domElement.innerHTML,
-               'The answer is obviously 42');
+        domElement._element.clear();
+        equals(domElement.innerHTML, '');
 
-        // change an attribute on the existing node and reprocess
-        domElement.attributes.answer.nodeValue = 39;
-        FB.XFBML.parse(container);
-
-        setTimeout(
-          function() {
-            equals(domElement.innerHTML,
-                   'The answer is obviously 39');
-
-            domElement._element.clear();
-
-            equals(domElement.innerHTML, '');
-            start();
-          }, 1000);
-      }, 1000);
+        domElement.parentNode.parentNode.removeChild(domElement.parentNode);
+        start();
+      });
+    });
 
     expect(4);
     stop();

@@ -15,7 +15,7 @@
  *
  * @provides fb.xfbml.serverfbml
  * @layer xfbml
- * @requires fb.type fb.xfbml.iframewidget fb.auth
+ * @requires fb.type fb.content fb.xfbml.iframewidget fb.auth
  */
 
 /**
@@ -40,8 +40,8 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
       api_key     : FB._apiKey,
       channel_url : this.getChannelUrl(),
       fbml        : this.getAttribute('fbml'),
-      height      : this._getPxAttribute('iframeHeight', 1),
-      width       : this._getPxAttribute('iframeWidth', 1)
+      height      : this._getPxAttribute('iframeHeight'),
+      width       : this._getPxAttribute('iframeWidth')
     };
 
     // fbml may also be specified as a child script tag
@@ -94,20 +94,11 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
    * Will do the POST request to the iframe.
    */
   _postRequest: function() {
-    var form = document.createElement('form');
-    form.action = FB._domain.www + 'render_fbml.php';
-    form.target = this.getIframeNode().name;
-    form.method = 'POST';
-    FB.Content.appendHidden(form);
-
-    FB.forEach(this._attr, function(val, key) {
-      var input = document.createElement('input');
-      input.name = key;
-      input.value = val;
-      form.appendChild(input);
+    this._attr.js_sdk = 'joey';
+    FB.Content.postTarget({
+      url: FB._domain.www + 'render_fbml.php',
+      target: this.getIframeNode().name,
+      params: this._attr
     });
-
-    form.submit();
-    form.parentNode.removeChild(form);
   }
 });

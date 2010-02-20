@@ -127,7 +127,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   /**
    * Returns the iframe node (if it has already been created).
    *
-   * @return {DOMElemnent} the iframe DOM element
+   * @return {DOMElement} the iframe DOM element
    */
   getIframeNode: function() {
     // not caching to allow for the node to change over time without needing

@@ -131,6 +131,7 @@ FB.provide('Content', {
       }
     };
 
+//#JSCOVERAGE_IF
     if (document.attachEvent) {
       var html = (
         '<iframe' +
@@ -193,5 +194,36 @@ FB.provide('Content', {
 
       node.src = opts.url;
     }
+  },
+
+  /**
+   * Dynamically generate a <form> and POST it to the given target.
+   *
+   * The opts MUST contain:
+   *   url     String  action URL for the form
+   *   target  String  the target for the form
+   *   params  Object  the key/values to be used as POST input
+   *
+   * @access protected
+   * @param opts {Object} the options
+   */
+  postTarget: function(opts) {
+    var form = document.createElement('form');
+    form.action = opts.url;
+    form.target = opts.target;
+    form.method = 'POST';
+    FB.Content.appendHidden(form);
+
+    FB.forEach(opts.params, function(val, key) {
+      if (val !== null && val !== undefined) {
+        var input = document.createElement('input');
+        input.name = key;
+        input.value = val;
+        form.appendChild(input);
+      }
+    });
+
+    form.submit();
+    form.parentNode.removeChild(form);
   }
 });

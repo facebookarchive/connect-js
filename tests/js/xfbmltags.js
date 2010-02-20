@@ -217,3 +217,17 @@ test(
     );
   }
 );
+
+test(
+  'fb:serverfbml with >2k data',
+
+  function() {
+    XTest.expect(1);
+    var a=[];
+    for (var i=1000; i>0; i--) {
+      a.push("42 \n");
+    }
+    a = a.join('');
+    XTest.regex('<fb:serverfbml fbml="hello' + a + ' world"></fb:serverfbml>', 'iframe.*about:blank');
+  }
+);
