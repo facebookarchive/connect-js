@@ -14,7 +14,7 @@
  * limitations under the License.
  *
  * @provides fb.event
- * @requires fb.prelude
+ * @requires fb.prelude fb.array
  */
 
 /**
@@ -94,7 +94,7 @@ FB.provide('EventProvider', {
   unsubscribe: function(name, cb) {
     var subs = this.subscribers()[name];
 
-    FB.forEach(subs, function(value, key) {
+    FB.Array.forEach(subs, function(value, key) {
       if (value == cb) {
         subs[key] = null;
       }
@@ -151,7 +151,7 @@ FB.provide('EventProvider', {
       args = Array.prototype.slice.call(arguments),
       name = args.shift();
 
-    FB.forEach(this.subscribers()[name], function(sub) {
+    FB.Array.forEach(this.subscribers()[name], function(sub) {
       // this is because we sometimes null out unsubscribed rather than jiggle
       // the array
       if (sub) {

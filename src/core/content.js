@@ -16,7 +16,7 @@
  *
  *
  * @provides fb.content
- * @requires fb.prelude
+ * @requires fb.prelude fb.array
  */
 
 /**
@@ -214,7 +214,7 @@ FB.provide('Content', {
     form.method = 'POST';
     FB.Content.appendHidden(form);
 
-    FB.forEach(opts.params, function(val, key) {
+    FB.Array.forEach(opts.params, function(val, key) {
       if (val !== null && val !== undefined) {
         var input = document.createElement('input');
         input.name = key;

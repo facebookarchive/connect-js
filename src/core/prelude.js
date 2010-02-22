@@ -194,40 +194,6 @@ if (!window.FB) {
      */
     $: function(id) {
       return document.getElementById(id);
-    },
-
-    /**
-     * For looping through Arrays and Objects.
-     *
-     *
-     * @param {Object} item   an Array or an Object
-     * @param {Function} fn   the callback function for iteration.
-     *    The function will be pass (value, [index/key], item) paramters
-     * @param {Bool} proto  indicate if properties from the prototype should
-     *                      be included
-     * @access private
-     */
-    forEach: function(item, fn, proto) {
-      if (!item) {
-        return;
-      }
-
-      if (Object.prototype.toString.apply(item) === '[object Array]' ||
-          (!(item instanceof Function) && typeof item.length == 'number')) {
-        if (item.forEach) {
-          item.forEach(fn);
-        } else {
-          for (var i=0, l=item.length; i<l; i++) {
-            fn(item[i], i, item);
-          }
-        }
-      } else {
-        for (var key in item) {
-          if (proto || item.hasOwnProperty(key)) {
-            fn(item[key], key, item);
-          }
-        }
-      }
     }
   };
 }

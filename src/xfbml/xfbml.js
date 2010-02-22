@@ -15,7 +15,7 @@
  *
  * @provides fb.xfbml
  * @layer xfbml
- * @requires fb.prelude fb.loader
+ * @requires fb.prelude fb.loader fb.array
  */
 
 /**
@@ -102,7 +102,7 @@ FB.provide('XFBML', {
       };
 
     // First, find all tags that are present
-    FB.forEach(FB.XFBML._tagInfos, function(tagInfo) {
+    FB.Array.forEach(FB.XFBML._tagInfos, function(tagInfo) {
       // default the xmlns if needed
       if (!tagInfo.xmlns) {
         tagInfo.xmlns = 'fb';

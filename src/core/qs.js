@@ -16,7 +16,7 @@
  *
  *
  * @provides fb.qs
- * @requires fb.prelude
+ * @requires fb.prelude fb.array
  */
 
 /**
@@ -41,7 +41,7 @@ FB.provide('QS', {
     encode = encode === false ? function(s) { return s; } : encodeURIComponent;
 
     var pairs = [];
-    FB.forEach(params, function(val, key) {
+    FB.Array.forEach(params, function(val, key) {
       if (val !== null && typeof val != 'undefined') {
         pairs.push(encode(key) + '=' + encode(val));
       }

@@ -89,7 +89,7 @@ FB.provide('Dom', {
     // note, we potentially re-include CSS if it comes with other CSS that we
     // have previously not included.
     var allIncluded = true;
-    FB.forEach(names, function(id) {
+    FB.Array.forEach(names, function(id) {
       if (!(id in FB.Dom._cssRules)) {
         allIncluded = false;
         FB.Dom._cssRules[id] = true;

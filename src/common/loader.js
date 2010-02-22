@@ -80,7 +80,7 @@ FB.provide('Loader', {
 
   _onCompLoaded: function() {
     var completed = [];
-    FB.forEach(FB.Loader._reqs, function(req, i) {
+    FB.Array.forEach(FB.Loader._reqs, function(req, i) {
       if (req && FB.Loader._check(req.comp)){
         completed.push([i, req.cb]);
       }
@@ -88,13 +88,13 @@ FB.provide('Loader', {
 
     // First delete them from request query before calling
     // callback functions to prevent re-entrant calls
-    FB.forEach(completed, function(item) {
+    FB.Array.forEach(completed, function(item) {
       delete FB.Loader._reqs[item[0]];
     });
 
 
     // Now call the callbacks
-    FB.forEach(completed, function(item) {
+    FB.Array.forEach(completed, function(item) {
       item[1]();
     });
   },
