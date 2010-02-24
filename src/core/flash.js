@@ -151,8 +151,10 @@ FB.provide('Flash', {
         for (var m=1, n=spec.length, o=version.length; (m<n && m<o); m++) {
           if (version[m] < spec[m]) {
             // less means this major version is no good
+//#JSCOVERAGE_IF 0
             FB.Flash._hasMinVersion = false;
             continue majorVersion;
+//#JSCOVERAGE_ENDIF
           } else {
             FB.Flash._hasMinVersion = true;
             if (version[m] > spec[m]) {

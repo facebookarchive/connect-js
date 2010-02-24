@@ -114,17 +114,17 @@ test(
     // add the logo
     XTest.regex(
       '<fb:profile-pic uid="676075965" facebook-logo="true"></fb:profile-pic>',
-      '<img.*src="http://external.ak.fbcdn.net/safe_image.php'
+      '<img.*safe_image.php'
     );
 
     // default pic for a non-user
     XTest.regex('<fb:profile-pic uid="2"></fb:profile-pic>',
-                'http://static.ak.fbcdn.net/pics/t_silhouette.jpg');
+                't_silhouette.jpg');
 
     // this doesn't really work if the user's not logged in but at least we see
     // a default
     XTest.regex('<fb:profile-pic uid="loggedinuser"></fb:profile-pic>',
-                'http://static.ak.fbcdn.net/pics/t_silhouette.jpg');
+                't_silhouette.jpg');
   }
 );
 

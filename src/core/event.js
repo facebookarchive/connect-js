@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- *
- *
  * @provides fb.event
  * @requires fb.prelude
  */
@@ -119,7 +117,6 @@ FB.provide('EventProvider', {
         ctx = this,
         fn = function() {
           if (callback.apply(callback, arguments)) {
-            // unsubscribe
             ctx.unsubscribe(name, fn);
           }
         };

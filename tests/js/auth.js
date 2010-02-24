@@ -83,7 +83,7 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
-        ok(response.status == 'connected', 'should be connected');
+        equals(response.status, 'connected', 'should be connected');
         action.innerHTML = '';
         action.className = '';
         start();
@@ -103,7 +103,7 @@ test(
   function() {
     FB.getLoginStatus(function(response) {
       ok(response.session, 'should get a session');
-      ok(response.status == 'connected', 'should be connected');
+      equals(response.status, 'connected', 'should be connected');
       start();
     });
 
@@ -121,7 +121,7 @@ test(
 
     // expected log call
     var cb = function(msg) {
-      ok(msg == 'FB.login() called when user is already connected.',
+      equals(msg, 'FB.login() called when user is already connected.',
          'got expected log message');
       FB.Event.unsubscribe('fb.log', cb);
     };
@@ -129,7 +129,7 @@ test(
 
     FB.login(function(response) {
       ok(response.session, 'should get a session');
-      ok(response.status == 'connected', 'should be connected');
+      equals(response.status, 'connected', 'should be connected');
       start();
     });
   }
@@ -141,7 +141,7 @@ test(
   function() {
     FB.logout(function(response) {
       ok(!response.session, 'should not get a session');
-      ok(response.status == 'unknown', 'should be unknown');
+      equals(response.status, 'unknown', 'should be unknown');
       start();
     });
 
@@ -177,9 +177,9 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should still have the session');
-        ok(response.perms == '', 'should get no perms');
+        equals(response.perms, '', 'should get no perms');
         ok(response.session.expires != 0, 'session.expires should not be 0');
-        ok(response.status == 'connected', 'should be connected');
+        equals(response.status, 'connected', 'should be connected');
         action.innerHTML = '';
         action.className = '';
         start();
@@ -200,9 +200,9 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
-        ok(response.perms == 'offline_access',
+        equals(response.perms, 'offline_access',
            'should get offline_access perms');
-        ok(response.session.expires == 0, 'session.expires should be 0');
+        equals(response.session.expires, 0, 'session.expires should be 0');
         action.innerHTML = '';
         action.className = '';
         start();
@@ -222,7 +222,7 @@ test(
   function() {
   FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
     ok(!FB.getSession(), 'should not get a session');
-    ok(FB._userStatus == 'notConnected', 'should be notConnected');
+    equals(FB._userStatus, 'notConnected', 'should be notConnected');
     start();
   });
 
@@ -238,7 +238,7 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
-        ok(response.perms == '', 'should not get offline_access perms');
+        equals(response.perms, '', 'should not get offline_access perms');
         ok(response.session.expires != 0, 'session.expires should not be 0');
         action.innerHTML = '';
         action.className = '';
@@ -274,9 +274,9 @@ test(
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
-        ok(response.perms == 'offline_access',
+        equals(response.perms, 'offline_access',
            'should get offline_access perms');
-        ok(response.session.expires == 0, 'session.expires should be 0');
+        equals(response.session.expires, 0, 'session.expires should be 0');
         action.innerHTML = '';
         action.className = '';
         start();

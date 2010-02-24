@@ -100,25 +100,14 @@ FB.provide('Dom', {
       return;
     }
 
-    var style;
 //#JSCOVERAGE_IF
     if (FB.Dom.getBrowserType() != 'ie') {
-      style = document.createElement('style');
-      style.type = "text/css";
-      style.innerHTML = styles;
+      var style = document.createElement('style');
+      style.type = 'text/css';
+      style.textContent = styles;
       document.getElementsByTagName('HEAD')[0].appendChild(style);
     } else {
-      var
-        re = /([\w|#|\.|\\][^{]*)\{(.*?)\}/mg,
-        a  = re.exec(styles);
-      style = document.createStyleSheet();
-      while (a) {
-        var rules = FB.Array.map(a[1].split(','), FB.String.trim);
-        for (var i=0; i < rules.length; i++) {
-          style.addRule(rules[i], a[2]);
-        }
-        a = re.exec(styles);
-      }
+      document.createStyleSheet().cssText = styles;
     }
   },
 
@@ -132,8 +121,8 @@ FB.provide('Dom', {
       var
         userAgent = window.navigator.userAgent.toLowerCase(),
         // list of known browser. NOTE: the order is important
-        keys = ['msie', 'firefox', 'gecko',   'safari'],
-        names = ['ie',  'mozilla', 'mozilla', 'safari'];
+        keys  = ['msie', 'firefox', 'safari', 'gecko'],
+        names = ['ie',   'mozilla', 'safari', 'mozilla'];
       for (var i = 0; i < keys.length; i++) {
         if (userAgent.indexOf(keys[i]) >= 0) {
           FB.Dom._browserType = names[i];

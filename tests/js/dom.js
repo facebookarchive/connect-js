@@ -61,9 +61,9 @@ test(
 
   function() {
     var id = 'my-css';
-    FB.Dom.addCssRules('#id { color: #fff; }', id);
+    FB.Dom.addCssRules('#id { color: #fff; }', [id]);
     ok(FB.Dom._cssRules[id], 'expect it to be set');
-    FB.Dom.addCssRules('#id { color: #fff; }', id);
+    FB.Dom.addCssRules('#id { color: #fff; }', [id]);
     ok(FB.Dom._cssRules[id], 'expect it to be set');
   }
 );
