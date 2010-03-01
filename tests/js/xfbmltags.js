@@ -207,6 +207,18 @@ test(
 );
 
 test(
+  'fb:recommendations',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex(
+      '<fb:recommendations site="cnn.com"></fb:recommendations>',
+      'iframe.*widgets/recommendations.php'
+    );
+  }
+);
+
+test(
   'fb:live-stream',
 
   function() {

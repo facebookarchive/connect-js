@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides fb.xfbml.activity
+ * @provides fb.xfbml.recommendations
  * @layer xfbml
  * @requires fb.type fb.xfbml.iframewidget
  */
 
 /**
- * Implementation for fb:activity tag.
+ * Implementation for fb:recommendations tag.
  *
- * @class FB.XFBML.Activity
+ * @class FB.XFBML.Recommendations
  * @extends FB.XFBML.IframeWidget
  * @private
  */
-FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
+FB.subclass('XFBML.Recommendations', 'XFBML.IframeWidget', null, {
   _visibleAfter: 'load',
 
   /**
@@ -58,7 +58,9 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
    * @return {String} the iframe URL
    */
   getIframeUrl: function() {
-    return FB._domain.www + 'widgets/activity.php?' + FB.QS.encode(this._attr);
+    return FB._domain.www + 'widgets/recommendations.php?' +
+           FB.QS.encode(this._attr);
   }
 });
+
 

@@ -18,6 +18,7 @@
  *   fb.xfbml.loginbutton
  *   fb.xfbml.name
  *   fb.xfbml.profilepic
+ *   fb.xfbml.recommendations
  *   fb.xfbml.serverfbml
  *   fb.xfbml.sharebutton
  */
