@@ -247,6 +247,7 @@ FB.provide('XFBML', {
     { localName: 'login-button',    className: 'FB.XFBML.LoginButton' },
     { localName: 'name',            className: 'FB.XFBML.Name' },
     { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic' },
+    { localName: 'recommendations', className: 'FB.XFBML.Recommendations' },
     { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml' },
     { localName: 'share-button',    className: 'FB.XFBML.ShareButton' }
   ]
