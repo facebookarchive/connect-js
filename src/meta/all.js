@@ -10,7 +10,6 @@
  *   fb.ui.methods
  *   fb.compat.ui
  *   fb.xfbml.activity
- *   fb.xfbml.addtowishlist
  *   fb.xfbml.comments
  *   fb.xfbml.element
  *   fb.xfbml.fan

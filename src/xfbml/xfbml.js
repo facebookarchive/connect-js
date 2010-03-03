@@ -240,7 +240,6 @@ FB.provide('XFBML', {
    */
   _tagInfos: [
     { localName: 'activity',        className: 'FB.XFBML.Activity' },
-    { localName: 'add-to-wishlist', className: 'FB.XFBML.AddToWishList' },
     { localName: 'comments',        className: 'FB.XFBML.Comments' },
     { localName: 'fan',             className: 'FB.XFBML.Fan' },
     { localName: 'like',            className: 'FB.XFBML.Like' },
