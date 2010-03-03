@@ -87,6 +87,6 @@ FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
    * @return {String} the iframe URL
    */
   getIframeUrl: function() {
-    return FB._domain.www + 'connect/connect.php?' + FB.QS.encode(this._attr);
+    return FB._domain.www + 'widgets/fan.php?' + FB.QS.encode(this._attr);
   }
 });
