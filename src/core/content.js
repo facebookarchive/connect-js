@@ -127,7 +127,6 @@ FB.provide('Content', {
       if (srcSet && !onloadDone) {
         onloadDone = true;
         opts.onload && opts.onload(opts.root.firstChild);
-        delete FB.Content._callbacks[guid];
       }
     };
 

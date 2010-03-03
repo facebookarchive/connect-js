@@ -19,8 +19,8 @@
  * @requires fb.prelude
  *           fb.qs
  *           fb.event
- *           fb.frames
  *           fb.json
+ *           fb.ui
  */
 
 /**
@@ -131,18 +131,7 @@ FB.provide('', {
     };
 
     // finally make the call to login status
-    var
-      xdHandler = FB.Auth.xdHandler,
-      g = FB.guid(),
-      url = FB._domain.www + 'extern/login_status.php?' + FB.QS.encode({
-        api_key    : FB._apiKey,
-        no_session : xdHandler(lsCb, g, 'parent', false, 'notConnected'),
-        no_user    : xdHandler(lsCb, g, 'parent', false, 'unknown'),
-        ok_session : xdHandler(lsCb, g, 'parent', false, 'connected'),
-        session_version : 2
-      });
-
-    FB.Frames.hidden(url, g);
+    FB.ui({ method: 'auth.status', display: 'hidden' }, lsCb);
   },
 
   /**
@@ -201,50 +190,17 @@ FB.provide('', {
    *
    * @access public
    * @param cb {Function} the callback function
-   * @param options {Object} (_optional_) Options to modify login behavior.
+   * @param opts {Object} (_optional_) Options to modify login behavior.
    *
    * Name      | Type   | Description
    * --------- | ------ | -------------
    * perms     | String | comma separated list of
-   *      [extended permissions][permissions] your application requires
-   *
-   * [permissions]: http://wiki.developers.facebook.com/index.php/Extended_permissions
+   *      [[wiki:Extended permissions]] your application requires
    */
-  login: function(cb, options) {
-    options = options || {};
-
-    if (!FB._apiKey) {
-      FB.log('FB.login() called before calling FB.init().');
-      return;
-    }
-
-    // if we already have a session and permissions are not being requested, we
-    // just fire the callback
-    if (FB._session && !options.perms) {
-      FB.log('FB.login() called when user is already connected.');
-      cb && cb({ status: FB._userStatus, session: FB._session });
-      return;
-    }
-
-    var
-      xdHandler = FB.Auth.xdHandler,
-      g = FB.guid(),
-      cancel = xdHandler(cb, g, 'opener', true,  FB._userStatus, FB._session),
-      next = xdHandler(cb, g, 'opener', false, 'connected', FB._session),
-      url = FB._domain.www + 'login.php?' + FB.QS.encode({
-        api_key         : FB._apiKey,
-        cancel_url      : cancel,
-        channel_url     : window.location.toString(),
-        display         : 'popup',
-        fbconnect       : 1,
-        next            : next,
-        req_perms       : options.perms,
-        return_session  : 1,
-        session_version : 2,
-        v               : '1.0'
-      });
-
-    FB.Frames.popup(url, 450, 415, g);
+  login: function(cb, opts) {
+    // TODO this should not force popup mode
+    opts = FB.copy({ method: 'auth.login', display: 'popup' }, opts || {});
+    FB.ui(opts, cb);
   },
 
   /**
@@ -262,25 +218,7 @@ FB.provide('', {
    * @param cb {Function} the callback function
    */
   logout: function(cb) {
-    if (!FB._apiKey) {
-      FB.log('FB.logout() called before calling FB.init().');
-      return;
-    }
-
-    if (!FB._session) {
-      FB.log('FB.logout() called without a session.');
-      return;
-    }
-
-    var
-      g   = FB.guid(),
-      url = FB._domain.www + 'logout.php?' + FB.QS.encode({
-        api_key     : FB._apiKey,
-        next        : FB.Auth.xdHandler(cb, g, 'parent', false, 'unknown'),
-        session_key : FB._session.session_key
-      });
-
-    FB.Frames.hidden(url, g);
+    FB.ui({ method: 'auth.logout', display: 'hidden' }, cb);
   }
 });
 
@@ -394,23 +332,13 @@ FB.provide('Auth', {
    * @return         {String}   the xd url bound to the callback
    */
   xdHandler: function(cb, frame, target, isDefault, status, session) {
-    return FB.Frames.xdHandler(function(params) {
-      // try to extract a session
-      var response;
-
-      // Try to parse a session out of params.session.
-      // Note I moved FB.Auth.setSession out of the try
-      // catch scope. Otherwise possible unrelated exception triggered
-      // by setSession (app's codes can be invoked through events)
-      // will be caught and silently ignored.
-      //
-      // TODO: Stop using try/catch in the first place!
+    return FB.UIServer._xdNextHandler(function(params) {
       try {
         session = FB.JSON.parse(params.session);
       } catch (x) {
+        // ignore parse errors
       }
-
-      response = FB.Auth.setSession(session || null, status);
+      var response = FB.Auth.setSession(session || null, status);
 
       // incase we were granted some new permissions
       response.perms = (
@@ -419,5 +347,96 @@ FB.provide('Auth', {
       // user defined callback
       cb && cb(response);
     }, frame, target, isDefault) + '&result=xxRESULTTOKENxx';
+  }
+});
+
+FB.provide('UIServer.Methods', {
+  'auth.login': {
+    size      : { width: 450, height: 415 },
+    url       : 'login.php',
+    transform : function(call) {
+      //FIXME
+      if (!FB._apiKey) {
+        FB.log('FB.login() called before calling FB.init().');
+        return;
+      }
+
+      // if we already have a session and permissions are not being requested,
+      // we just fire the callback
+      if (FB._session && !call.params.perms) {
+        FB.log('FB.login() called when user is already connected.');
+        call.cb && call.cb({ status: FB._userStatus, session: FB._session });
+        return;
+      }
+
+      var
+        xdHandler = FB.Auth.xdHandler,
+        cb        = call.cb,
+        id        = call.id,
+        session   = FB._session,
+        cancel    = xdHandler(
+          cb,
+          id,
+          'opener',
+          true, // isDefault
+          FB._userStatus,
+          session),
+        next      = xdHandler(
+          cb,
+          id,
+          'opener',
+          false, // isDefault
+          'connected',
+          session);
+
+      FB.copy(call.params, {
+        cancel_url      : cancel,
+        channel_url     : window.location.toString(),
+        next            : next,
+        fbconnect       : 1,
+        req_perms       : call.params.perms,
+        return_session  : 1,
+        session_version : 2,
+        v               : '1.0'
+      });
+      delete call.cb;
+      delete call.params.perms; //TODO fix name to be the same on server
+
+      return call;
+    }
+  },
+
+  'auth.logout': {
+    url       : 'logout.php',
+    transform : function(call) {
+      //FIXME make generic
+      if (!FB._apiKey) {
+        FB.log('FB.logout() called before calling FB.init().');
+      } else if (!FB._session) {
+        FB.log('FB.logout() called without a session.');
+      } else {
+        call.params.next = FB.Auth.xdHandler(
+          call.cb, call.id, 'parent', false, 'unknown');
+        return call;
+      }
+    }
+  },
+
+  'auth.status': {
+    url       : 'extern/login_status.php',
+    transform : function(call) {
+      var
+        cb = call.cb,
+        id = call.id,
+        xdHandler = FB.Auth.xdHandler;
+      delete call.cb;
+      FB.copy(call.params, {
+        no_session : xdHandler(cb, id, 'parent', false, 'notConnected'),
+        no_user    : xdHandler(cb, id, 'parent', false, 'unknown'),
+        ok_session : xdHandler(cb, id, 'parent', false, 'connected'),
+        session_version : 2
+      });
+      return call;
+    }
   }
 });

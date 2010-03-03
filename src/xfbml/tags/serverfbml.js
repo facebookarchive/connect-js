@@ -94,7 +94,7 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
    * Will do the POST request to the iframe.
    */
   _postRequest: function() {
-    this._attr.js_sdk = 'joey';
+    this._attr.sdk = 'joey';
     FB.Content.postTarget({
       url: FB._domain.www + 'render_fbml.php',
       target: this.getIframeNode().name,

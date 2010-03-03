@@ -40,6 +40,9 @@ test(
   'cancel login using cancel button',
 
   function() {
+    expect(1);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(!response.session, 'should not get a session');
@@ -50,9 +53,6 @@ test(
     };
     action.innerHTML = 'Click the Cancel Button on the Login Popup';
     action.className = 'login-cancel-button';
-
-    expect(1);
-    stop();
   }
 );
 
@@ -60,6 +60,9 @@ test(
   'cancel login using OS chrome',
 
   function() {
+    expect(1);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(!response.session, 'should not get a session');
@@ -70,9 +73,6 @@ test(
     };
     action.innerHTML = 'Close the Login Popup Window using the OS Chrome';
     action.className = 'login-close-window';
-
-    expect(1);
-    stop();
   }
 );
 
@@ -80,6 +80,9 @@ test(
   'login with the "Connect" button',
 
   function() {
+    expect(2);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
@@ -91,9 +94,6 @@ test(
     };
     action.innerHTML = 'Login with the "Connect" button';
     action.className = 'login-with-connect-button';
-
-    expect(2);
-    stop();
   }
 );
 
@@ -101,14 +101,14 @@ test(
   'status should now return a session',
 
   function() {
+    expect(2);
+    stop();
+
     FB.getLoginStatus(function(response) {
       ok(response.session, 'should get a session');
       equals(response.status, 'connected', 'should be connected');
       start();
     });
-
-    expect(2);
-    stop();
   }
 );
 
@@ -139,14 +139,14 @@ test(
   'logout',
 
   function() {
+    expect(2);
+    stop();
+
     FB.logout(function(response) {
       ok(!response.session, 'should not get a session');
       equals(response.status, 'unknown', 'should be unknown');
       start();
     });
-
-    expect(2);
-    stop();
   }
 );
 
@@ -154,6 +154,9 @@ test(
   'login with email and password',
 
   function() {
+    expect(1);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
@@ -164,9 +167,6 @@ test(
     };
     action.innerHTML = 'Login with your email and password';
     action.className = 'login-with-email-pass';
-
-    expect(1);
-    stop();
   }
 );
 
@@ -174,6 +174,9 @@ test(
   'dont allow for offline_access extended permission',
 
   function() {
+    expect(4);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should still have the session');
@@ -187,9 +190,6 @@ test(
     };
     action.innerHTML = 'Click on "Don\'t Allow"';
     action.className = 'dont-allow-perms';
-
-    expect(4);
-    stop();
   }
 );
 
@@ -197,6 +197,9 @@ test(
   'allow for offline_access extended permission',
 
   function() {
+    expect(3);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
@@ -210,9 +213,6 @@ test(
     };
     action.innerHTML = 'Click on "Allow"';
     action.className = 'allow-perms';
-
-    expect(3);
-    stop();
   }
 );
 
@@ -220,26 +220,28 @@ test(
   'revoke authorization',
 
   function() {
-  FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
-    ok(!FB.getSession(), 'should not get a session');
-    equals(FB._userStatus, 'notConnected', 'should be notConnected');
-    start();
-  });
+    expect(2);
+    stop();
 
-  expect(2);
-  stop();
-}
+    FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
+      ok(!FB.getSession(), 'should not get a session');
+      equals(FB._userStatus, 'notConnected', 'should be notConnected');
+      start();
+    });
+  }
 );
 
 test(
   'connect and dont allow for offline_access extended permission',
 
   function() {
+    expect(2);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
-        ok(response.session, 'should get a session');
+        ok(!response.session, 'should not get a session');
         equals(response.perms, '', 'should not get offline_access perms');
-        ok(response.session.expires != 0, 'session.expires should not be 0');
         action.innerHTML = '';
         action.className = '';
         start();
@@ -247,30 +249,16 @@ test(
     };
     action.innerHTML = 'Click on "Connect" and then "Dont Allow"';
     action.className = 'connect-and-dont-allow';
-
-    expect(3);
-    stop();
   }
-);
-
-test(
-  'revoke authorization',
-
-  function() {
-  FB.api({method: 'Auth.revokeAuthorization'}, function(response) {
-    ok(!FB.getSession(), 'should not get a session');
-    start();
-  });
-
-  expect(1);
-  stop();
-}
 );
 
 test(
   'connect and allow for offline_access extended permission',
 
   function() {
+    expect(3);
+    stop();
+
     action.onclick = function() {
       FB.login(function(response) {
         ok(response.session, 'should get a session');
@@ -284,8 +272,5 @@ test(
     };
     action.innerHTML = 'Click on "Connect" and then "Allow"';
     action.className = 'connect-and-allow';
-
-    expect(3);
-    stop();
   }
 );

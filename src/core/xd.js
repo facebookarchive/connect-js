@@ -47,6 +47,7 @@ FB.provide('XD', {
 
     // We currently disable postMessage in IE8 because it does not work with
     // window.opener. We can probably be smarter about it.
+//#JSCOVERAGE_IF
     if (window.addEventListener && window.postMessage) {
       // The origin here is used for postMessage security. It needs to be based
       // on the URL of the current window. It is required and validated by
@@ -100,10 +101,12 @@ FB.provide('XD', {
       if (poundIndex > 0) {
         xdProxy = xdProxy.substr(0, poundIndex);
       }
+
       // fb_xd_bust changes the url to prevent firefox from refusing to load
       // because it thinks its smarter than the developer and believes it to be
       // a recusive load. the rest are explanined in the note above.
-      xdProxy += '?&fb_xd_bust#?=&' + FB.XD.Fragment._magic;
+      xdProxy += xdProxy.indexOf('?') < 0 ? '?' : '&';
+      xdProxy += 'fb_xd_bust#?=&' + FB.XD.Fragment._magic + '&';
     }
 
     if (forever) {
@@ -211,7 +214,7 @@ FB.provide('XD', {
    * @access private
    */
   Fragment: {
-    _magic: 'fb_xd_fragment;',
+    _magic: 'fb_xd_fragment',
 
     /**
      * Check if the fragment looks like a message, and dispatch if it does.

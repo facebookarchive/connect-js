@@ -31,8 +31,6 @@ test(
       FB.publish(post, function(published_post) {
         ok(published_post, 'expect a post object back');
         ok(published_post.post_id, 'expect a post_id in object');
-        ok(published_post.message == post.message,
-           'expect the message in object');
         action.innerHTML = '';
         action.className = '';
         start();
@@ -41,7 +39,7 @@ test(
     action.innerHTML = 'Publish a Post';
     action.className = 'publish-post';
 
-    expect(3);
+    expect(2);
     stop();
   }
 );

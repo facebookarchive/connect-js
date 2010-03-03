@@ -79,18 +79,7 @@ FB.provide('', {
       };
     }
 
-    // automatically JSON encode non string values
-    var params = {};
-    for (var key in user_params) {
-      if (user_params.hasOwnProperty(key)) {
-        var value = user_params[key];
-        if (typeof value == 'string') {
-          params[key] = value;
-        } else {
-          params[key] = FB.JSON.stringify(value);
-        }
-      }
-    }
+    var params = FB.JSON.flatten(user_params);
 
     try {
       FB.RestServer.jsonp(params, cb);

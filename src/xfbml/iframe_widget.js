@@ -168,11 +168,11 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     // the initial size
     var size = this.getSize() || {};
 
-    // we will append "js_sdk=joey" to the query parameters if it looks like a
+    // we will append "sdk=joey" to the query parameters if it looks like a
     // URL with query params
     var url = this.getIframeUrl();
     if (url.indexOf('http') === 0 && url.indexOf('?') > -1) {
-      url += '&js_sdk=joey';
+      url += '&sdk=joey';
     }
 
     FB.Content.insertIframe({

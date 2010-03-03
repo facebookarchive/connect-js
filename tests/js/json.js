@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides fb.tests.insights
+ * @provides fb.tests.json
  * @requires fb.tests.qunit
- *           fb.insights
+ *           fb.json
  */
 ////////////////////////////////////////////////////////////////////////////////
-module('insights');
+module('json');
 ////////////////////////////////////////////////////////////////////////////////
 
 test(
-  'FB.Insights.impression',
-  function() {
-    expect(1);
-    stop();
+  'json flatten',
 
-    var d = { api_key:'38f5faba8e463947ec51492817217574', lid:'103' };
-    FB.Insights.impression(d, function() {
-      ok(true, 'pixel embedded successfully');
-      start();
-    });
+  function() {
+    same(
+      FB.JSON.flatten({ a: 1, b: 'two', c: [1,2,3], d: {e:1,f:2} }),
+      { a: '1', b: 'two', c: '[1,2,3]', d: '{"e":1,"f":2}' },
+      'expect encoded bits'
+    );
   }
 );

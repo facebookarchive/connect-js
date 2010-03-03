@@ -7,7 +7,8 @@
  *   fb.auth
  *   fb.data
  *   fb.init
- *   fb.ui
+ *   fb.ui.methods
+ *   fb.compat.ui
  *   fb.xfbml.activity
  *   fb.xfbml.addtowishlist
  *   fb.xfbml.comments

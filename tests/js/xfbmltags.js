@@ -201,7 +201,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:activity site="cnn.com"></fb:activity>',
-      'iframe.*connect/activity.php'
+      'iframe.*widgets/activity.php'
     );
   }
 );
