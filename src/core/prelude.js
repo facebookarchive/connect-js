@@ -82,6 +82,7 @@ if (!window.FB) {
       www : window.location.protocol + '//www.facebook.com/'
     },
     _locale: null,
+    _localeIsRtl: false,
 
 
     /**

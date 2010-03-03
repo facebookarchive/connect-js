@@ -71,9 +71,9 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
     switch (this._type) {
     case 'icon':
     case 'icon_link':
-      classStr = 'FBConnectButton_Simple';
+      classStr = 'fb_button_simple';
       contentStr = (
-        '<span class="FBConnectButton_Text_Simple">' +
+        '<span class="fb_button_text">' +
           (this._type == 'icon_link' ? share : '&nbsp;') +
         '</span>'
       );
@@ -84,29 +84,29 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
       skipRenderEvent = false;
       break;
     case 'button':
-      contentStr = '<span class="FBConnectButton_Text">' + share +  '</span>';
-      classStr = 'FBConnectButton FBConnectButton_Small';
+      contentStr = '<span class="fb_button_text">' + share +  '</span>';
+      classStr = 'fb_button fb_button_small';
       break;
     case 'button_count':
-      contentStr = '<span class="FBConnectButton_Text">' + share +  '</span>';
+      contentStr = '<span class="fb_button_text">' + share +  '</span>';
       post = (
         '<span class="fb_share_count_nub_right">&nbsp;</span>' +
         '<span class="fb_share_count fb_share_count_right">'+
           this._getCounterMarkup() +
         '</span>'
       );
-      classStr = 'FBConnectButton FBConnectButton_Small';
+      classStr = 'fb_button fb_button_small';
       break;
     default:
       // box count
-      contentStr = '<span class="FBConnectButton_Text">' + share +  '</span>';
+      contentStr = '<span class="fb_button_text">' + share +  '</span>';
       pre = (
         '<span class="fb_share_count_nub_top">&nbsp;</span>' +
         '<span class="fb_share_count fb_share_count_top">' +
           this._getCounterMarkup() +
         '</span>'
       );
-      classStr = 'FBConnectButton FBConnectButton_Small';
+      classStr = 'fb_button fb_button_small';
       wrapperClass = 'fb_share_count_wrapper';
     }
     this.dom.innerHTML = FB.String.format(

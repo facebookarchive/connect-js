@@ -161,24 +161,17 @@ test(
 
   function() {
     XTest.expect(1);
-
     XTest.regex('<fb:login-button></fb:login-button>',
-               '<img.*src="http://static.ak.fbcdn.net/.*>');
-
-    // TODO: remaining combos of width, height, etc
+               'fbconnectbutton');
   }
 );
 
 test(
-  'fb:share',
+  'fb:share-button',
 
   function() {
     XTest.expect(1);
-
-    // not a real test
-    XTest.regex('<fb:share></fb:share>', '^$'); // empty
-
-    // TODO: actual share tests
+    XTest.regex('<fb:share-button></fb:share-button>', 'share');
   }
 );
 
@@ -189,7 +182,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:fan name="platform"></fb:fan>',
-      'iframe.*connect/connect.php'
+      'iframe.*widgets/fan.php'
     );
   }
 );

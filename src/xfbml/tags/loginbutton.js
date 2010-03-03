@@ -15,60 +15,81 @@
  *
  * @provides fb.xfbml.loginbutton
  * @layer xfbml
- * @requires fb.type fb.xfbml.element fb.auth
+ * @requires fb.type fb.xfbml.buttonelement fb.auth
  */
 
 /**
  * Implementation for fb:login-button tag.
- * Note this implementation does not suppport the following features
- * in Connect V1:
- *   1. i18n support
- *   2. logout button
- *   3. 'onlogin' and 'onlogout' attributes
- *   3. Validation of allowed values on attributes
  *
  * @class FB.XFBML.LoginButton
- * @extends  FB.XFBML.Element
+ * @extends  FB.XFBML.ButtonElement
  * @private
  */
-FB.subclass('XFBML.LoginButton', 'XFBML.Element', null, {
+FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
   /**
-   * Processes this tag.
+   * Do initial attribute processing.
+   *
+   * @return {Boolean} true to continue processing, false to halt it
    */
-  process: function() {
-    var
-      size = this.getAttribute('size', 'medium'),
-      background = this.getAttribute('background', 'light'),
-      length = this.getAttribute('length', 'short'),
-      src = FB.XFBML.LoginButton._rsrc[background + '_' + size + '_' + length];
-
-    this.dom.innerHTML = (
-      '<a onclick="FB.login();" class="fbconnect_login_button">' +
-      '<img src="' + src + '" alt="Connect with Facebook"/></a>'
+  setupAndValidate: function() {
+    this.autologoutlink = this._getBoolAttribute('autologoutlink');
+    this.onlogin = this.getAttribute('onlogin');
+    this.length = this._getAttributeFromList(
+      'length',         // name
+      'short',          // defaultValue
+      ['long', 'short'] // allowed
     );
-    this.fire('render');
-  }
-});
 
-FB.provide('XFBML.LoginButton', {
+    if (this.autologoutlink) {
+      FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));
+    }
+
+    return true;
+  },
+
   /**
-   * Images for the login button.
+   * Should return the button markup. The default behaviour is to return the
+   * original innerHTML of the element.
+   *
+   * @return {String} the HTML markup for the button
    */
-  _rsrc: {
-    dark_small_short   : FB._domain.cdn + 'rsrc.php/zF1W2/hash/a969rwcd.gif',
-    dark_medium_short  : FB._domain.cdn + 'rsrc.php/zEF9L/hash/156b4b3s.gif',
-    dark_medium_long   : FB._domain.cdn + 'rsrc.php/zBIU2/hash/85b5jlja.gif',
-    dark_large_short   : FB._domain.cdn + 'rsrc.php/z1UX3/hash/a22m3ibb.gif',
-    dark_large_long    : FB._domain.cdn + 'rsrc.php/z7SXD/hash/8mzymam2.gif',
-    light_small_short  : FB._domain.cdn + 'rsrc.php/zDGBW/hash/8t35mjql.gif',
-    light_medium_short : FB._domain.cdn + 'rsrc.php/z38X1/hash/6ad3z8m6.gif',
-    light_medium_long  : FB._domain.cdn + 'rsrc.php/zB6N8/hash/4li2k73z.gif',
-    light_large_short  : FB._domain.cdn + 'rsrc.php/zA114/hash/7e3mp7ee.gif',
-    light_large_long   : FB._domain.cdn + 'rsrc.php/z4Z4Q/hash/8rc0izvz.gif',
-    white_small_short  : FB._domain.cdn + 'rsrc.php/z900E/hash/di0gkqrt.gif',
-    white_medium_short : FB._domain.cdn + 'rsrc.php/z10GM/hash/cdozw38w.gif',
-    white_medium_long  : FB._domain.cdn + 'rsrc.php/zBT3E/hash/338d3m67.gif',
-    white_large_short  : FB._domain.cdn + 'rsrc.php/zCOUP/hash/8yzn0wu3.gif',
-    white_large_long   : FB._domain.cdn + 'rsrc.php/zC6AR/hash/5pwowlag.gif'
+  getButtonMarkup: function() {
+    var originalHTML = this.getOriginalHTML();
+    if (originalHTML === '') {
+      if (FB.getSession() && this.autologoutlink) {
+        return 'Facebook Logout';
+      } else {
+        return this.length == 'short' ? 'Connect' : 'Connect with Facebook';
+      }
+    } else {
+      return originalHTML;
+    }
+  },
+
+  /**
+   * The ButtonElement base class will invoke this when the button is clicked.
+   */
+  onClick: function() {
+    if (!FB.getSession() || !this.autologoutlink) {
+      FB.login(FB.bind(this._authCallback, this));
+    } else {
+      FB.logout(FB.bind(this._authCallback, this));
+    }
+  },
+
+  /**
+   * This will be invoked with the result of the FB.login() or FB.logout() to
+   * pass the result to the developer specified callback if any.
+   *
+   * @param response {Object} the auth response object
+   */
+  _authCallback: function(response) {
+    if (this.onlogin) {
+      if (this.onlogin.call) {
+        this.onlogin(response);
+      } else { // assume it is a string
+        eval(this.onlogin);
+      }
+    }
   }
 });

@@ -151,6 +151,8 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     this._done = true;
 
     if (!this.setupAndValidate()) {
+      // failure to validate means we're done rendering what we can
+      this.fire('render');
       return;
     }
 

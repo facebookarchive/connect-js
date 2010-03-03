@@ -15,7 +15,7 @@
  *
  * @provides fb.xfbml.element
  * @layer xfbml
- * @requires fb.type fb.event
+ * @requires fb.type fb.event fb.array
  */
 
 /**
@@ -75,6 +75,26 @@ FB.Class('XFBML.Element',
         return defaultValue;
       } else {
         return size;
+      }
+    });
+  },
+
+  /**
+   * Get a value if it is in the allowed list, otherwise return the default
+   * value. This function ignores case and expects you to use only lower case
+   * allowed values.
+   *
+   * @param name {String} Name of the attribute.
+   * @param defaultValue {Object} Default value
+   * @param allowed {Array} List of allowed values.
+   */
+  _getAttributeFromList: function(name, defaultValue, allowed) {
+    return this.getAttribute(name, defaultValue, function(s) {
+      var s = s.toLowerCase();
+      if (FB.Array.indexOf(allowed, s) > -1) {
+        return s;
+      } else {
+        return defaultValue;
       }
     });
   },
