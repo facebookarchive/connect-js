@@ -108,3 +108,32 @@ FB.provide('', {
     }
   }
 });
+
+// this is useful when the library is being loaded asynchronously
+//
+// we do it in a setTimeout to wait until the current event loop as finished.
+// this allows potential library code being included below this block (possible
+// when being served from an automatically combined version)
+//
+// Usage:
+//
+//  <div id="fb-root"></div>
+//  <script>
+//    window.fbAsyncInit = function() {
+//      FB.init({
+//        apiKey: '6a25de06224e9b21a2b33fcdae593daa',
+//        status: true
+//      });
+//      FB.XFBML.parse();
+//    };
+//
+//    (function() {
+//      var e = document.createElement('script');
+//      e.type = 'text/javascript';
+//      e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
+//      e.async = true;
+//      document.getElementById('fb-root').appendChild(e);
+//    }());
+//  </script>
+//
+window.setTimeout(function() { if (window.fbAsyncInit) { fbAsyncInit(); }}, 0);
