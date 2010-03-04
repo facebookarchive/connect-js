@@ -76,7 +76,6 @@
     <script src="../src/core/event.js"></script>
     <script src="../src/core/flash.js"></script>
     <script src="../src/core/insights.js"></script>
-    <script src="../src/core/md5sum.js"></script>
     <script src="../src/core/qs.js"></script>
     <script src="../src/core/ui.js"></script>
     <script src="../src/core/ui_methods.js"></script>
@@ -132,6 +131,7 @@
         if (host.substr(-13) === '.facebook.com') {
           FB._domain.www = FB._domain.cdn = 'http://' + host + '/';
           FB._domain.api = FB._domain.www.replace('www', 'api');
+          FB._domain.graph = FB._domain.www.replace('www', 'graph');
         }
 
 
@@ -155,7 +155,6 @@
     <script src="js/qs.js"></script>
     <script src="js/json.js"></script>
     <script src="js/insights.js"></script>
-    <script src="js/md5sum.js"></script>
     <script src="js/type.js"></script>
     <script src="js/waitable.js"></script>
     <script src="js/loader.js"></script>

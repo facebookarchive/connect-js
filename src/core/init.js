@@ -17,9 +17,10 @@
  *
  * JavaScript library providing Facebook Connect integration.
  *
+ * TODO: add back fb.api to requires
+ *
  * @provides fb.init
  * @requires fb.prelude
- *           fb.api
  *           fb.auth
  *           fb.cookie
  *           fb.ui

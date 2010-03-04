@@ -32,7 +32,6 @@ $JS_FILES = array(
   'src/core/insights.js',
   'src/core/intl.js',
   'src/core/json.js',
-  'src/core/md5sum.js',
   'src/core/qs.js',
   'src/core/ui.js',
   'src/core/ui_methods.js',

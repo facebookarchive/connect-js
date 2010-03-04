@@ -426,7 +426,7 @@ FB.provide('UIServer.Methods', {
         fbconnect       : 1,
         req_perms       : call.params.perms,
         return_session  : 1,
-        session_version : 2,
+        session_version : 3,
         v               : '1.0'
       });
       delete call.cb;
@@ -464,7 +464,7 @@ FB.provide('UIServer.Methods', {
         no_session : xdHandler(cb, id, 'parent', false, 'notConnected'),
         no_user    : xdHandler(cb, id, 'parent', false, 'unknown'),
         ok_session : xdHandler(cb, id, 'parent', false, 'connected'),
-        session_version : 2
+        session_version : 3
       });
       return call;
     }
