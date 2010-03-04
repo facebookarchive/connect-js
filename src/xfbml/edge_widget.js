@@ -27,19 +27,6 @@
  */
 FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   /////////////////////////////////////////////////////////////////////////////
-  // Methods the implementation MUST override.
-  /////////////////////////////////////////////////////////////////////////////
-
-  /**
-   * The edge type.
-   *
-   * @return {String} the edge type
-   */
-  getEdgeType: function() {
-    throw new Error('The inheriting class must specify the edge type.');
-  },
-
-  /////////////////////////////////////////////////////////////////////////////
   // Internal stuff.
   /////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +42,6 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     this._attr = {
       bgcolor      : this.getAttribute('bgcolor', 'white'),
       debug        : this._getBoolAttribute('debug'),
-      edge_type    : this.getEdgeType(),
       external_url : this.getAttribute('permalink', window.location.href),
       node_type    : this.getAttribute('node_type', 'page'),
       page_url     : window.location.href
@@ -72,18 +58,5 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   getSize: function() {
     // might allow this to be overridden in the future
     return { width: 580, height: 100 };
-  },
-
-  /**
-   * Get the URL for the iframe.
-   *
-   * @return {String} the iframe URL
-   */
-  getIframeUrl : function() {
-    return (
-      FB._domain.www +
-      'connect/connect_to_node.php?' +
-      FB.QS.encode(this._attr)
-    );
   }
 });
