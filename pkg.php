@@ -88,4 +88,4 @@ foreach ($CSS_FILES as $file) {
 }
 // css URLs are relative to facebook domains
 $css = preg_replace('#url\(/#', 'url(http://static.ak.fbcdn.net/', $css);
-echo 'FB.Dom.addCssRules(' . json_encode($css) . ', "pkg")';
+echo 'FB.Dom.addCssRules(' . json_encode($css) . ', ["pkg"])';
