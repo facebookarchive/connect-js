@@ -65,7 +65,9 @@ FB.provide('JSON', {
     for (var key in obj) {
       if (obj.hasOwnProperty(key)) {
         var value = obj[key];
-        if (typeof value == 'string') {
+        if (null === value || undefined === value) {
+          continue;
+        } else if (typeof value == 'string') {
           flat[key] = value;
         } else {
           flat[key] = FB.JSON.stringify(value);
