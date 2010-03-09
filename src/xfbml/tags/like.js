@@ -27,9 +27,6 @@
  */
 FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
   /**
-   * Returns the name that should be given to the iFrame being fetched and
-   * rendered on behalf of this <fb:add-to-wishlist> button.
-   *
    * @return {String} the name that should be given to the button's
    *         iFrame rendering.
    */
