@@ -32,16 +32,14 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
   _visibleAfter: 'resize',
 
   /**
-   * Notify the iframe on auth.statusChange events.
+   * Refresh the iframe on auth.statusChange events.
    */
-  _notifyOnAuthChange: true,
+  _refreshOnAuthChange: true,
 
   /**
    * Do initial attribute processing.
    */
   setupAndValidate: function() {
-    this.subscribe('xd.addComment', FB.bind(this._handleCommentMsg, this));
-
     // query parameters to the comments iframe
     var attr = {
       api_key     : FB._apiKey,
@@ -73,6 +71,13 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
     }
     this._attr = attr;
     return true;
+  },
+
+  /**
+   * Setup event handlers.
+   */
+  oneTimeSetup: function() {
+    this.subscribe('xd.addComment', FB.bind(this._handleCommentMsg, this));
   },
 
   /**
