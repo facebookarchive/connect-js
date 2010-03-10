@@ -190,7 +190,7 @@ FB.provide('RestServer', {
       // the SWF calls this global function when a HTTP response is available
       // FIXME: remove global
       window.FB_OnXdHttpResult = function(reqId, data) {
-        FB.RestServer._callbacks[reqId](FB.Flash.decode(data));
+        FB.RestServer._callbacks[reqId](decodeURIComponent(data));
       };
       FB.RestServer.flash._init = true;
     }
@@ -216,7 +216,7 @@ FB.provide('RestServer', {
 
       // callback
       FB.RestServer._callbacks[reqId] = function(response) {
-        cb(FB.JSON.parse(FB.Flash.decode(response)));
+        cb(FB.JSON.parse(response));
         delete FB.RestServer._callbacks[reqId];
       };
     });

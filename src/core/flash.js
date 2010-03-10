@@ -184,43 +184,5 @@ FB.provide('Flash', {
     } else {
       FB.Flash._callbacks.push(cb);
     }
-  },
-
-  /**
-   * Custom decoding to workaround bug in flash's ExternInterface
-   * Code is from Dojo's library.
-   *
-   * FIXME should check if encodeURIComponent can be used instead.
-   *
-   * @param  {String} data
-   * @return  String
-   */
-  decode: function(data) {
-    // wierdly enough, Flash sometimes returns the result as an
-    // 'object' that is actually an array, rather than as a String;
-    // detect this by looking for a length property; for IE
-    // we also make sure that we aren't dealing with a typeof string
-    // since string objects have length property there
-    if (data && data.length && typeof data != 'string') {
-      data = data[0];
-    }
-
-    if (!data || typeof data != 'string') {
-      return data;
-    }
-
-    // certain XMLish characters break Flash's wire serialization for
-    // ExternalInterface; these are encoded on the
-    // DojoExternalInterface side into a custom encoding, rather than
-    // the standard entity encoding, because otherwise we won't be able to
-    // differentiate between our own encoding and any entity characters
-    // that are being used in the string itself
-    data = data.replace(/\&custom_lt\;/g, '<');
-    data = data.replace(/\&custom_gt\;/g, '>');
-    data = data.replace(/\&custom_backslash\;/g, '\\');
-
-    // needed for IE; \0 is the NULL character
-    data = data.replace(/\\0/g, "\0");
-    return data;
   }
 });
