@@ -239,17 +239,18 @@ FB.provide('XFBML', {
    * NOTE: Keep the list alpha sorted.
    */
   _tagInfos: [
-    { localName: 'activity',        className: 'FB.XFBML.Activity' },
-    { localName: 'comments',        className: 'FB.XFBML.Comments' },
-    { localName: 'fan',             className: 'FB.XFBML.Fan' },
-    { localName: 'like',            className: 'FB.XFBML.Like' },
-    { localName: 'live-stream',     className: 'FB.XFBML.LiveStream' },
-    { localName: 'login-button',    className: 'FB.XFBML.LoginButton' },
-    { localName: 'name',            className: 'FB.XFBML.Name' },
-    { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic' },
+    { localName: 'activity',        className: 'FB.XFBML.Activity'        },
+    { localName: 'comments',        className: 'FB.XFBML.Comments'        },
+    { localName: 'fan',             className: 'FB.XFBML.Fan'             },
+    { localName: 'like',            className: 'FB.XFBML.Like'            },
+    { localName: 'live-stream',     className: 'FB.XFBML.LiveStream'      },
+    { localName: 'login',           className: 'FB.XFBML.Login'           },
+    { localName: 'login-button',    className: 'FB.XFBML.LoginButton'     },
+    { localName: 'name',            className: 'FB.XFBML.Name'            },
+    { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic'      },
     { localName: 'recommendations', className: 'FB.XFBML.Recommendations' },
-    { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml' },
-    { localName: 'share-button',    className: 'FB.XFBML.ShareButton' }
+    { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml'      },
+    { localName: 'share-button',    className: 'FB.XFBML.ShareButton'     }
   ]
 });
 

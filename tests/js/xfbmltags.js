@@ -167,6 +167,18 @@ test(
 );
 
 test(
+  'fb:login',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex(
+      '<fb:login></fb:login>',
+      'iframe.*widgets/login.php'
+    );
+  }
+);
+
+test(
   'fb:share-button',
 
   function() {

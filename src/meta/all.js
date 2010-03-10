@@ -15,6 +15,7 @@
  *   fb.xfbml.fan
  *   fb.xfbml.like
  *   fb.xfbml.livestream
+ *   fb.xfbml.login
  *   fb.xfbml.loginbutton
  *   fb.xfbml.name
  *   fb.xfbml.profilepic
