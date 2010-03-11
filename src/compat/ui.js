@@ -55,8 +55,9 @@ FB.provide('', {
   share: function(u) {
     FB.log('FB.share() has been deprecated. Please use FB.ui() instead.');
     FB.ui({
-      method : 'stream.share',
-      u      : u
+      display : 'popup',
+      method  : 'stream.share',
+      u       : u
     });
   },
 
@@ -143,6 +144,7 @@ FB.provide('', {
     FB.log('FB.publish() has been deprecated. Please use FB.ui() instead.');
     post = post || {};
     FB.ui(FB.copy({
+      display : 'popup',
       method  : 'stream.publish',
       preview : 1
     }, post || {}), cb);
@@ -161,8 +163,9 @@ FB.provide('', {
   addFriend: function(id, cb) {
     FB.log('FB.addFriend() has been deprecated. Please use FB.ui() instead.');
     FB.ui({
-      id     : id,
-      method : 'friend.add'
+      display : 'popup',
+      id      : id,
+      method  : 'friend.add'
     }, cb);
   }
 });
