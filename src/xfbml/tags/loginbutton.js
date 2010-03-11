@@ -34,6 +34,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
   setupAndValidate: function() {
     this.autologoutlink = this._getBoolAttribute('autologoutlink');
     this.onlogin = this.getAttribute('onlogin');
+    this.perms = this.getAttribute('perms');
     this.length = this._getAttributeFromList(
       'length',         // name
       'short',          // defaultValue
@@ -71,7 +72,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
    */
   onClick: function() {
     if (!FB.getSession() || !this.autologoutlink) {
-      FB.login(FB.bind(this._authCallback, this));
+      FB.login(FB.bind(this._authCallback, this), { perms: this.perms });
     } else {
       FB.logout(FB.bind(this._authCallback, this));
     }
