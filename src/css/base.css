@@ -49,3 +49,7 @@
   white-space: normal;
   word-spacing: normal;
 }
+
+.fb_link img {
+  border: none;
+}
