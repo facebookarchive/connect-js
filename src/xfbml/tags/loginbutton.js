@@ -15,7 +15,10 @@
  *
  * @provides fb.xfbml.loginbutton
  * @layer xfbml
- * @requires fb.type fb.xfbml.buttonelement fb.auth
+ * @requires fb.type
+ *           fb.intl
+ *           fb.xfbml.buttonelement
+ *           fb.auth
  */
 
 /**
@@ -58,9 +61,11 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
     var originalHTML = this.getOriginalHTML();
     if (originalHTML === '') {
       if (FB.getSession() && this.autologoutlink) {
-        return 'Facebook Logout';
+        return FB.Intl.tx('cs:logout');
       } else {
-        return this.length == 'short' ? 'Connect' : 'Connect with Facebook';
+        return this.length == 'short'
+          ? FB.Intl.tx('cs:connect')
+          : FB.Intl.tx('cs:connect-with-facebook');
       }
     } else {
       return originalHTML;

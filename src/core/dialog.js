@@ -15,6 +15,7 @@
  *
  * @provides fb.dialog
  * @requires fb.prelude
+ *           fb.intl
  *           fb.array
  *           fb.content
  *           fb.dom
@@ -84,7 +85,7 @@ FB.provide('Dialog', {
       FB.Dialog._loaderEl = FB.Dialog._findRoot(FB.Dialog.create({
         content: (
           '<div class="fb_dialog_loader">' +
-            'Loading...' +
+            FB.Intl.tx('sh:loading') +
             '<a id="fb_dialog_loader_close"></a>' +
           '</div>'
         )
