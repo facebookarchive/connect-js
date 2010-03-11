@@ -33,16 +33,16 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   _showLoader: true,
 
   /**
-   * Indicate if we should notify the iframe when the auth.statusChange event
-   * is fired.
+   * Indicate if the widget should be reprocessed when the user enters or
+   * leaves the "unknown" state. (Logs in/out of facebook, but not the
+   * application.)
    */
-  _notifyOnAuthChange: false,
+  _refreshOnAuthChange: false,
 
   /**
    * Indicates if the widget should be reprocessed on auth.statusChange events.
    * This is the default for XFBML Elements, but is usually undesirable for
-   * Iframe Widgets. Widgets that need to re-render on status change should
-   * ideally rely on the _notifyOnAuthChange ability.
+   * Iframe Widgets.
    */
   _allowReProcess: false,
 
@@ -84,6 +84,12 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   setupAndValidate: function() {
     return true;
   },
+
+  /**
+   * This is useful for setting up event handlers and such which should not be
+   * run again if the widget is reprocessed.
+   */
+  oneTimeSetup: function() {},
 
   /**
    * Implemented by the inheriting class to return the initial size for the
@@ -142,20 +148,26 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   /**
    * Inheriting classes should not touch the DOM directly, and are only allowed
    * to override the methods defined at the top.
+   *
+   * @param force {Boolean} force reprocessing of the node
    */
-  process: function() {
+  process: function(force) {
     // guard agains reprocessing if needed
-    if (!this._allowReProcess && this._done) {
-      return;
+    if (this._done) {
+      if (!this._allowReProcess && !force) {
+        return;
+      }
+      this.clear();
+    } else {
+      this._oneTimeSetup();
     }
     this._done = true;
 
     if (!this.setupAndValidate()) {
+      // failure to validate means we're done rendering what we can
+      this.fire('render');
       return;
     }
-
-    // do internal setup
-    this._oneTimeSetup();
 
     // show the loader if needed
     if (this._showLoader) {
@@ -189,22 +201,22 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    * Internal one time setup logic.
    */
   _oneTimeSetup: function() {
-    if (this._oneTimeSetupDone) {
-      return;
-    }
-    this._oneTimeSetupDone = true;
-
     // the XD messages we want to handle. it is safe to subscribe to these even
     // if they will not get used.
     this.subscribe('xd.resize', FB.bind(this._handleResizeMsg, this));
 
     // weak dependency on FB.Auth
     if (FB.getLoginStatus) {
-      this.subscribe('xd.refreshLoginStatus', FB.getLoginStatus);
+      this.subscribe(
+        'xd.refreshLoginStatus',
+        FB.bind(FB.getLoginStatus, FB, function(){}, true));
+      this.subscribe(
+        'xd.logout',
+        FB.bind(FB.logout, FB, function(){}));
     }
 
     // setup forwarding of auth.statusChange events
-    if (this._notifyOnAuthChange) {
+    if (this._refreshOnAuthChange) {
       this._setupAuthNotify();
     }
 
@@ -212,6 +224,9 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     if (this._visibleAfter == 'load') {
       this.subscribe('iframe.onload', FB.bind(this._makeVisible, this));
     }
+
+    // hook for subclasses
+    this.oneTimeSetup();
   },
 
   /**
@@ -224,15 +239,25 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   },
 
   /**
-   * Forward status change events to the iframe.
+   * Most iframe widgets do not tie their internal state to the "Connected"
+   * state of the application. In other words, the fan box knows who you are
+   * even if the page it contains does not. These widgets therefore only need
+   * to reload when the user signs in/out of facebook, not the application.
+   *
+   * This misses the case where the user switched logins without the
+   * application knowing about it. Unfortunately this is not possible/allowed.
    */
   _setupAuthNotify: function() {
+    var lastStatus = FB._userStatus;
     FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
       if (!this.isValid()) {
         return;
       }
-      //TODO (naitik) send doesnt exist
-      this.send({ type: 'statusChange', status: response.status });
+      // if we gained or lost a user, reprocess
+      if (lastStatus == 'unknown' || response.status == 'unknown') {
+        this.process(true);
+      }
+      lastStatus = response.status;
     }, this));
   },
 

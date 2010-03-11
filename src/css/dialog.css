@@ -143,3 +143,9 @@
   bottom: 0;
   margin-bottom: -10px;
 }
+
+/* dialogs used for iframe need this to prevent potential whitespace from
+ * showing because iframes are inline elements and not block level elements. */
+.fb_dialog_iframe {
+  line-height: 0;
+}

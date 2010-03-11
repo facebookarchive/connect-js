@@ -48,6 +48,8 @@ FB.provide('Content', {
         if (!root) {
           FB.log('The "fb-root" div has not been created.');
           return;
+        } else {
+          root.className += ' fb_reset';
         }
       } else {
         root = FB.Content._root;

@@ -252,6 +252,7 @@ FB.provide('UIServer', {
       loader: true,
       closeIcon: true
     });
+    FB.Dom.addCss(call.root, 'fb_dialog_iframe');
     FB.UIServer._insertIframe(call);
   },
 

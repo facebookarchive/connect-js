@@ -28,7 +28,17 @@ test(
     // an FB.XFBML.Element can be any dom node, doesn't
     // necessarily need to be a special fb: one
     var html = (
-      '<a href="#" text-attr="The answer" num-attr="42" bool-attr="true">' +
+      '<a' +
+        ' href="#"' +
+        ' text-attr="The answer"' +
+        ' num-attr="42"' +
+        ' bool-attr="true"' +
+        ' px-attr-one="1"' +
+        ' px-attr-two="2px"' +
+        ' px-attr-three="three"' +
+        ' list-attr-one="hello"' +
+        ' list-attr-two="world"' +
+        '>' +
         'Some text' +
       '</a>'
     );
@@ -45,11 +55,20 @@ test(
     equals(xe._getBoolAttribute('bool-attr'), true);
     equals(xe._getBoolAttribute('num-attr'), false);
 
+    equals(xe._getPxAttribute('px-attr-one'), 1, 'expect px value 1');
+    equals(xe._getPxAttribute('px-attr-two'), 2, 'expect px value 2');
+    equals(xe._getPxAttribute('px-attr-three', 3), 3, 'expect px value 3');
+
+    equals(xe._getAttributeFromList('list-attr-one', "a", ['hello']),
+           'hello', 'expect list value "hello"');
+    equals(xe._getAttributeFromList('list-attr-two', "a", ['hello']),
+           'a', 'expect list value "a"');
+
     xe.clear();
     equals(xe.dom.innerHTML, '');
     dom.parentNode.parentNode.removeChild(dom.parentNode);
-
-  });
+  }
+);
 
 // register a quick class for testing
 FB.subclass('XFBML.TestElement', 'XFBML.Element', null, {
@@ -98,4 +117,5 @@ test(
 
     expect(4);
     stop();
-});
+  }
+);

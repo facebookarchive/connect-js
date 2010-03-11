@@ -94,7 +94,7 @@ test(
   'dialog onClose with loader',
 
   function() {
-    expect(2);
+    expect(1);
     stop();
 
     var node = FB.Dialog.create({
@@ -106,7 +106,6 @@ test(
       }
     });
     var loaderClose = FB.$('fb_dialog_loader_close');
-    equals(loaderClose.innerHTML, 'x', 'expect a "x" for close');
     loaderClose.onclick();
   }
 );

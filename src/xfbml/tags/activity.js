@@ -33,11 +33,11 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      api_key     : FB._apiKey,
-      header      : this._getBoolAttribute('header'),
-      width       : this._getPxAttribute('width', 300),
-      height      : this._getPxAttribute('height', 300),
-      site        : this.getAttribute('site', location.hostname)
+      api_key : FB._apiKey,
+      header  : this._getBoolAttribute('header'),
+      width   : this._getPxAttribute('width', 300),
+      height  : this._getPxAttribute('height', 300),
+      site    : this.getAttribute('site', location.hostname)
     };
 
     return true;

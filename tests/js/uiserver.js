@@ -223,7 +223,7 @@ test(
     expect(1);
     stop();
     var cb = function(s) {
-      equals(s, '"display" must be one of "popup", "dialog" or "hidden".',
+      equals(s, '"display" must be one of "popup", "iframe" or "hidden".',
              'expect an logged message');
       FB.Event.unsubscribe('fb.log', cb);
       start();
