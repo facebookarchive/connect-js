@@ -42,9 +42,9 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     this._attr = {
       bgcolor      : this.getAttribute('bgcolor', 'white'),
       debug        : this._getBoolAttribute('debug'),
-      external_url : this.getAttribute('permalink', window.location.href),
-      node_type    : this.getAttribute('node_type', 'page'),
-      page_url     : window.location.href
+      href         : this.getAttribute('href', window.location.href),
+      is_permalink : this._getBoolAttribute('is_permalink'),
+      node_type    : this.getAttribute('node_type', 'link')
     };
 
     return true;
