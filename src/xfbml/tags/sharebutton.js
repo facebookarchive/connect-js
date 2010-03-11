@@ -87,6 +87,7 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
     case 'button':
       contentStr = '<span class="fb_button_text">' + share +  '</span>';
       classStr = 'fb_button fb_button_small';
+      skipRenderEvent = false;
       break;
     case 'button_count':
       contentStr = '<span class="fb_button_text">' + share +  '</span>';
