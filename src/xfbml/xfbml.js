@@ -21,8 +21,8 @@
 /**
  * Methods for the rendering of [[wiki:XFBML]] tags.
  *
- * To render the tags, simple use them anywhere in your page,
- * and then call:
+ * To render the tags, simply put the tags anywhere in your page, and then
+ * call:
  *
  *      FB.XFBML.parse();
  *
@@ -36,28 +36,6 @@ FB.provide('XFBML', {
    * @type Number
    */
   _renderTimeout: 30000,
-
-  /**
-   * Dynamically set XFBML markup on a given DOM element. Use this
-   * method if you want to set XFBML after the page has already loaded
-   * (for example, in response to an Ajax request or API call).
-   *
-   * Example:
-   * --------
-   * Set the innerHTML of a dom element with id "container"
-   * to some markup (fb:name + regular HTML) and render it
-   *
-   *      FB.XFBML.set(FB.$('container'),
-   *          '<fb:name uid="4"></fb:name><div>Hello</div>');
-   *
-   * @param {DOMElement} dom  DOM element
-   * @param {String} markup XFBML markup. It may contain reguarl
-   *         HTML markup as well.
-   */
-  set: function(dom, markup, cb) {
-    dom.innerHTML = markup;
-    FB.XFBML.parse(dom, cb);
-  },
 
   /**
    * Parse and render XFBML markup in the document.
@@ -146,6 +124,7 @@ FB.provide('XFBML', {
    *                  className: 'FB.XFBML.Name'},
    *       FB.XFBML.registerTag(tagInfo);
    *
+   * @access private
    * @param {Object} tagInfo
    * an object containiner the following keys:
    * - xmlns

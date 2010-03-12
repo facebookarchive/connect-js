@@ -86,11 +86,11 @@ FB.provide('', {
    * : The comma separated permissions string. This is specific to a
    *   permissions call. It is not persistent.
    *
-   * [subscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.subscribe
-   * [unsubscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.unsubscribe
-   * [getLoginStatus]: /docs/?u=facebook.jslib-alpha.FB.getLoginStatus
-   * [login]: /docs/?u=facebook.jslib-alpha.FB.login
-   * [logout]: /docs/?u=facebook.jslib-alpha.FB.logout
+   * [subscribe]: /docs/?u=facebook.joey.FB.Event.subscribe
+   * [unsubscribe]: /docs/?u=facebook.joey.FB.Event.unsubscribe
+   * [getLoginStatus]: /docs/?u=facebook.joey.FB.getLoginStatus
+   * [login]: /docs/?u=facebook.joey.FB.login
+   * [logout]: /docs/?u=facebook.joey.FB.logout
    *
    * @access public
    * @param cb {Function} the callback function

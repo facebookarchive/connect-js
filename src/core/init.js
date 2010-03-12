@@ -58,13 +58,14 @@ FB.provide('', {
    * logging  | Boolean | `false` to disable logging.      | *Optional*   | `true`
    * session  | Object  | Use specified session object.    | *Optional*   | `null`
    * status   | Boolean | `true` to fetch fresh status.    | *Optional*   | `false`
+   * xfbml    | Boolean | `true` to parse XFBML.           | *Optional*   | `false`
    *
-   * **Note**: [FB.publish][publish] and [FB.share][share] can be used without
-   * registering an application or calling this method. If you are using an API
-   * key, all methods **must** be called after this method.
+   * **Note**: Some [UI methods][FB.ui] like **stream.publish** and
+   * **stream.share** can be used without registering an application or calling
+   * this method. If you are using an API key, all methods **must** be called
+   * after this method.
    *
-   * [publish]: /docs/?u=facebook.jslib-alpha.FB.publish
-   * [share]: /docs/?u=facebook.jslib-alpha.FB.share
+   * [FB.ui]: /docs/?u=facebook.joey.FB.ui
    *
    * @access public
    * @param options {Object} options
@@ -105,6 +106,17 @@ FB.provide('', {
     // load a fresh session if requested
     if (options.status) {
       FB.getLoginStatus();
+    }
+
+    // weak dependency on XFBML
+    if (options.xfbml) {
+      // do this in a setTimeout to delay it until the current call stack has
+      // finished executing
+      window.setTimeout(function() {
+        if (FB.XFBML) {
+          FB.XFBML.parse();
+        }
+      }, 0);
     }
   }
 });

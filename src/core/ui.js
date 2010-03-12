@@ -34,30 +34,37 @@ FB.provide('', {
    * Method for triggering UI interaction with Facebook as iframe dialogs or
    * popups, like publishing to the stream, sharing links.
    *
-   * Example "stream.publish":
+   * Example **stream.publish**:
    *
-   *      var publish = {
-   *        method: 'stream.publish',
-   *        message: 'getting educated about Facebook Connect',
-   *        attachment: {
-   *          name: 'Connect',
-   *          caption: 'The Facebook Connect JavaScript SDK',
-   *          description: (
-   *            'A small JavaScript library that allows you to harness ' +
-   *            'the power of Facebook, bringing the user\'s identity, ' +
-   *            'social graph and distribution power to your site.'
-   *          ),
-   *          href: 'http://github.com/facebook/connect-js'
+   *      FB.ui(
+   *        {
+   *          method: 'stream.publish',
+   *          message: 'getting educated about Facebook Connect',
+   *          attachment: {
+   *            name: 'Connect',
+   *            caption: 'The Facebook Connect JavaScript SDK',
+   *            description: (
+   *              'A small JavaScript library that allows you to harness ' +
+   *              'the power of Facebook, bringing the user\'s identity, ' +
+   *              'social graph and distribution power to your site.'
+   *            ),
+   *            href: 'http://github.com/facebook/connect-js'
+   *          },
+   *          action_links: [
+   *            { text: 'Code', href: 'http://github.com/facebook/connect-js' }
+   *          ],
+   *          user_prompt_message: 'Share your thoughts about Connect'
    *        },
-   *        action_links: [
-   *          { text: 'Code', href: 'http://github.com/facebook/connect-js' }
-   *        ],
-   *        user_prompt_message: 'Share your thoughts about Connect'
-   *      };
+   *        function(response) {
+   *          if (response && response.post_id) {
+   *            alert('Post was published.');
+   *          } else {
+   *            alert('Post was not published.');
+   *          }
+   *        }
+   *      );
    *
-   *      FB.ui(publish, function(response) { console.log(response); });
-   *
-   * Example "stream.share":
+   * Example **stream.share**:
    *
    *      var share = {
    *        method: 'stream.share',
