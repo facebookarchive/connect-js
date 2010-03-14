@@ -45,7 +45,8 @@ FB.provide('EventProvider', {
   },
 
   /**
-   * Bind an event handler to a given event name.
+   * Subscribe to a given event name, invoking your callback function whenever
+   * the event is fired.
    *
    * For example, suppose you want to get notified whenever the session
    * changes:
@@ -55,8 +56,8 @@ FB.provide('EventProvider', {
    *     });
    *
    * @access public
-   * @param name {String} name of the event
-   * @param cb {Function} the handler function
+   * @param name {String} Name of the event.
+   * @param cb {Function} The handler function.
    */
   subscribe: function(name, cb) {
     var subs = this.subscribers();
@@ -87,8 +88,8 @@ FB.provide('EventProvider', {
    * [subscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.subscribe
    *
    * @access public
-   * @param name {String} name of the event
-   * @param cb {Function} the handler function
+   * @param name {String} Name of the event.
+   * @param cb {Function} The handler function.
    */
   unsubscribe: function(name, cb) {
     var subs = this.subscribers()[name];

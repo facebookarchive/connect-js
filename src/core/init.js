@@ -37,28 +37,52 @@ FB.provide('', {
   /**
    * Initialize the library.
    *
-   * The minimal you'll need is:
+   * Typical initialization enabling all optional features:
    *
    *      <div id="fb-root"></div>
    *      <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
    *      <script>
-   *        FB.init({ apiKey: 'YOUR API KEY' });
+   *        FB.init({
+   *          apiKey : 'YOUR API KEY',
+   *          status : true, // check login status
+   *          cookie : true, // enable cookies to allow the server to access the session
+   *          xfbml  : true  // parse XFBML
+   *        });
    *      </script>
    *
    * The best place to put this code is right before the closing
    * `</body>` tag.
    *
+   * ### Asynchronous Loading
    *
-   * **Options**:
+   * The library makes non-blocking loading of the script easy to use by
+   * providing the `fbAsyncInit` hook. If this global function is defined, it
+   * will be executed when the library is loaded:
    *
-   * Property | Type    | Description                      | Argument     | Default
-   * -------- | ------- | -------------------------------- | ------------ | -------
-   * apiKey   | String  | Your application API key.        | **Required** |
-   * cookie   | Boolean | `true` to enable cookie support. | *Optional*   | `false`
-   * logging  | Boolean | `false` to disable logging.      | *Optional*   | `true`
-   * session  | Object  | Use specified session object.    | *Optional*   | `null`
-   * status   | Boolean | `true` to fetch fresh status.    | *Optional*   | `false`
-   * xfbml    | Boolean | `true` to parse XFBML.           | *Optional*   | `false`
+   *     <div id="fb-root"></div>
+   *     <script>
+   *       window.fbAsyncInit = function() {
+   *         FB.init({
+   *           apiKey : 'YOUR API KEY',
+   *           status : true, // check login status
+   *           cookie : true, // enable cookies to allow the server to access the session
+   *           xfbml  : true  // parse XFBML
+   *         });
+   *       };
+   *
+   *       (function() {
+   *         var e = document.createElement('script');
+   *         e.type = 'text/javascript';
+   *         e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
+   *         e.async = true;
+   *         document.getElementById('fb-root').appendChild(e);
+   *       }());
+   *     </script>
+   *
+   * The best place to put the asynchronous version of the code is right after
+   * the opening `<body>` tag. This allows Facebook initialization to happen in
+   * parallel with the initialization on the rest of your page.
+   *
    *
    * **Note**: Some [UI methods][FB.ui] like **stream.publish** and
    * **stream.share** can be used without registering an application or calling
@@ -68,7 +92,16 @@ FB.provide('', {
    * [FB.ui]: /docs/?u=facebook.joey.FB.ui
    *
    * @access public
-   * @param options {Object} options
+   * @param options {Object}
+   *
+   * Property | Type    | Description                          | Argument     | Default
+   * -------- | ------- | ------------------------------------ | ------------ | -------
+   * apiKey   | String  | Your application API key.            | **Required** |
+   * cookie   | Boolean | `true` to enable cookie support.     | *Optional*   | `false`
+   * logging  | Boolean | `false` to disable logging.          | *Optional*   | `true`
+   * session  | Object  | Use specified session object.        | *Optional*   | `null`
+   * status   | Boolean | `true` to fetch fresh status.        | *Optional*   | `false`
+   * xfbml    | Boolean | `true` to parse [[wiki:XFBML]] tags. | *Optional*   | `false`
    */
   init: function(options) {
     if (!options || !options.apiKey) {

@@ -60,6 +60,38 @@ initializing ([FB.init()][FB.init]) the library with all the options turned on:
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
 [FB.init]: http://developers.facebook.com/docs/?u=facebook.joey.FB.init
 
+### Asynchronous Loading
+
+For better performance, you should load the initial script itself in a
+non-blocking manner. This will mean you have to be more conscious about how you
+invoke anything in the `FB` namespace, as asynchronously loading the script can
+cause it to arrive after your application scripts have been loaded. To make
+this more convenient, the library looks for a **global** named `fbAsyncInit`.
+If it exists, this function will be executed once the library has been loaded.
+You should trigger all `FB` related logic from here. When using this approach,
+you should put the code right *after the opening* `<body>` tag. This will allow
+Facebook to initialize in parallel with the rest of your page.
+
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          apiKey : 'YOUR API KEY',
+          status : true, // check login status
+          cookie : true, // enable cookies to allow the server to access the session
+          xfbml  : true  // parse XFBML
+        });
+      };
+
+      (function() {
+        var e = document.createElement('script');
+        e.type = 'text/javascript';
+        e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
+        e.async = true;
+        document.getElementById('fb-root').appendChild(e);
+      }());
+    </script>
+
 
 Authentication & Authorization
 ------------------------------

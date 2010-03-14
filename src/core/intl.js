@@ -22,7 +22,7 @@
  *
  * @class FB.Intl
  * @static
- * @access public
+ * @access private
  */
 FB.provide('Intl', {
   /**
@@ -136,6 +136,7 @@ FB.provide('Intl', {
   /**
    * i18n string formatting
    *
+   * @access private
    * @param str {String} the string id
    * @param args {Object} the replacement tokens
    */

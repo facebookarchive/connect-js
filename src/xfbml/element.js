@@ -99,7 +99,7 @@ FB.Class('XFBML.Element',
    */
   _getAttributeFromList: function(name, defaultValue, allowed) {
     return this.getAttribute(name, defaultValue, function(s) {
-      var s = s.toLowerCase();
+      s = s.toLowerCase();
       if (FB.Array.indexOf(allowed, s) > -1) {
         return s;
       } else {

@@ -18,8 +18,12 @@
  * @requires fb.prelude
  */
 
+// Provide Class/Type support.
+// TODO: As a temporary hack, this docblock is written as if it describes the
+// top level FB namespace. This is necessary because the current documentation
+// parser uses the description from this file for some reason.
 /**
- * Provide Class/Type support.
+ * The top level namespace exposed by the SDK.
  *
  * @class FB
  * @static

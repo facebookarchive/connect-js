@@ -74,8 +74,16 @@ FB.provide('', {
    *      FB.ui(share, function(response) { console.log(response); });
    *
    * @access public
-   * @param params {Object} the parameters
-   * @param cb {Function} optional callback function to handle the result. Not
+   * @param params {Object} The required arguments vary based on the method
+   * being used, but specifying the method itself is mandatory. If *display* is
+   * not specified, then iframe dialogs will be used when possible, and popups
+   * otherwise.
+   *
+   * Property | Type    | Description                        | Argument
+   * -------- | ------- | ---------------------------------- | ------------
+   * method   | String  | The UI dialog to invoke.           | **Required**
+   * display  | String  | Specify `"popup"` to force popups. | **Optional**
+   * @param cb {Function} Optional callback function to handle the result. Not
    * all methods may have a response.
    */
   ui: function(params, cb) {

@@ -98,7 +98,7 @@ FB.provide('XFBML', {
     });
 
     // Setup a timer to ensure all tags render within a given timeout
-    var timeout = window.setTimeout(function() {
+    window.setTimeout(function() {
       if (count > 0) {
         FB.log(
           count + ' XFBML tags failed to render in ' +
