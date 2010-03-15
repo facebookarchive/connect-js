@@ -26,7 +26,7 @@
   display: inline-block;
 }
 .FB_IframeLoader iframe {
-  min-height: 200px;
+  min-height: 32px;
   z-index: 2;
 }
 .FB_IframeLoader .FB_Loader {
