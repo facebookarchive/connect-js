@@ -37,7 +37,6 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
   setupAndValidate: function() {
     // query parameters to the comments iframe
     this._attr = {
-      api_key     : FB._apiKey,
       channel_url : this.getChannelUrl(),
       fbml        : this.getAttribute('fbml'),
       height      : this._getPxAttribute('iframeHeight'),
@@ -58,17 +57,6 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
       return false;
     }
 
-    // we use a GET request if the URL is less than 2k, otherwise we need to do
-    // a <form> POST. we prefer a GET because it prevents the "POST resend"
-    // warning browsers show on page refresh.
-    var url = FB._domain.www + 'render_fbml.php?' + FB.QS.encode(this._attr);
-    if (url.length > 2000) {
-      // we will POST the form once the empty about:blank iframe is done loading
-      this._url = 'about:blank';
-      this.subscribe('iframe.onload', FB.bind(this._postRequest, this));
-    } else {
-      this._url = url;
-    }
     return true;
   },
 
@@ -82,23 +70,11 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl: function() {
-    return this._url;
-  },
-
-  /**
-   * Will do the POST request to the iframe.
-   */
-  _postRequest: function() {
-    this._attr.sdk = 'joey';
-    FB.Content.postTarget({
-      url: FB._domain.www + 'render_fbml.php',
-      target: this.getIframeNode().name,
-      params: this._attr
-    });
+  getUrlBits: function() {
+    return { name: 'serverfbml', params: this._attr };
   }
 });

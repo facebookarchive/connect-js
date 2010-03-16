@@ -82,11 +82,11 @@ FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl: function() {
-    return FB._domain.www + 'widgets/fan.php?' + FB.QS.encode(this._attr);
+  getUrlBits: function() {
+    return { name: 'fan', params: this._attr };
   }
 });

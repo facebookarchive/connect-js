@@ -33,7 +33,6 @@ FB.subclass('XFBML.LiveStream', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      api_key        : FB._apiKey,
       height         : this._getPxAttribute('height', 500),
       hideFriendsTab : this.getAttribute('hide_friends_tab'),
       redesigned     : this._getBoolAttribute('redesigned_stream'),
@@ -54,14 +53,12 @@ FB.subclass('XFBML.LiveStream', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl: function() {
-    //TODO (naitik) should joey deprecate the redesigned attribute and default
-    //              to the new one?
-    var path = this._attr.redesigned ? 'live_feed.php' : 'livefeed.php';
-    return FB._domain.www + 'widgets/' + path + '?' + FB.QS.encode(this._attr);
+  getUrlBits: function() {
+    var name = this._attr.redesigned ? 'live_feed' : 'livefeed';
+    return { name: name, params: this._attr };
   }
 });

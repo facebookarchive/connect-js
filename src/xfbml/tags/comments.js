@@ -42,7 +42,6 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
   setupAndValidate: function() {
     // query parameters to the comments iframe
     var attr = {
-      api_key     : FB._apiKey,
       channel_url : this.getChannelUrl(),
       css         : this.getAttribute('css'),
       notify      : this.getAttribute('notify'),
@@ -90,12 +89,12 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl: function() {
-    return FB._domain.www + 'comments.php?' + FB.QS.encode(this._attr);
+  getUrlBits: function() {
+    return { name: 'comments', params: this._attr };
   },
 
   /**

@@ -15,7 +15,12 @@
  *
  * @provides fb.xfbml.iframewidget
  * @layer xfbml
- * @requires fb.type fb.event fb.xfbml.element fb.css.iframewidget
+ * @requires fb.type
+ *           fb.event
+ *           fb.xfbml.element
+ *           fb.content
+ *           fb.qs
+ *           fb.css.iframewidget
  */
 
 /**
@@ -59,12 +64,18 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   /////////////////////////////////////////////////////////////////////////////
 
   /**
-   * Implemented by the inheriting class to return the URL for the iframe.
+   * Implemented by the inheriting class to return a **name** and **params**.
    *
-   * @return {String} the iframe URL
+   * The name is the the file name in the widgets directory. So the name "fan"
+   * translates to the path "/widgets/fan.php". This enforces consistency.
+   *
+   * The params should be the query params needed for the widget. API Key,
+   * Session Key, SDK and Locale are automatically included.
+   *
+   * @return {Object} an object containing a **name** and **params**.
    */
-  getIframeUrl: function() {
-    throw new Error('Inheriting class needs to implement getIframeUrl().');
+  getUrlBits: function() {
+    throw new Error('Inheriting class needs to implement getUrlBits().');
   },
 
   /////////////////////////////////////////////////////////////////////////////
@@ -180,11 +191,18 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     // the initial size
     var size = this.getSize() || {};
 
-    // we will append "sdk=joey" to the query parameters if it looks like a
-    // URL with query params
-    var url = this.getIframeUrl();
-    if (url.indexOf('http') === 0 && url.indexOf('?') > -1) {
-      url += '&sdk=joey';
+    // we use a GET request if the URL is less than 2k, otherwise we need to do
+    // a <form> POST. we prefer a GET because it prevents the "POST resend"
+    // warning browsers shown on page refresh.
+    var url = this._getURL() + '?' + FB.QS.encode(this._getQS());
+    if (url.length > 2000) {
+      // we will POST the form once the empty about:blank iframe is done loading
+      url = 'about:blank';
+      var onload = FB.bind(function() {
+        this._postRequest();
+        this.unsubscribe('iframe.onload', onload);
+      }, this);
+      this.subscribe('iframe.onload', onload);
     }
 
     FB.Content.insertIframe({
@@ -217,7 +235,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
 
     // setup forwarding of auth.statusChange events
     if (this._refreshOnAuthChange) {
-      this._setupAuthNotify();
+      this._setupAuthRefresh();
     }
 
     // if we need to make it visible on iframe load
@@ -247,7 +265,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    * This misses the case where the user switched logins without the
    * application knowing about it. Unfortunately this is not possible/allowed.
    */
-  _setupAuthNotify: function() {
+  _setupAuthRefresh: function() {
     var lastStatus = FB._userStatus;
     FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
       if (!this.isValid()) {
@@ -298,5 +316,40 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
       this.dom.removeChild(this._loaderDiv);
       this._loaderDiv = null;
     }
+  },
+
+  /**
+   * Get's the final QS/Post Data for the iframe with automatic params added
+   * in.
+   *
+   * @return {Object} the params object
+   */
+  _getQS: function() {
+    return FB.copy({
+      api_key     : FB._apiKey,
+      locale      : FB._locale,
+      sdk         : 'joey',
+      session_key : FB._session && FB._session.session_key
+    }, this.getUrlBits().params);
+  },
+
+  /**
+   * Gets the final URL based on the name specified in the bits.
+   *
+   * @return {String} the url
+   */
+  _getURL: function() {
+    return FB._domain.www + 'widgets/' + this.getUrlBits().name + '.php';
+  },
+
+  /**
+   * Will do the POST request to the iframe.
+   */
+  _postRequest: function() {
+    FB.Content.postTarget({
+      url    : this._getURL(),
+      target : this.getIframeNode().name,
+      params : this._getQS()
+    });
   }
 });

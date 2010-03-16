@@ -33,9 +33,7 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      api_key     : FB._apiKey,
-      session_key : FB._session && FB._session.session_key,
-      channel     : this.getChannelUrl()
+      channel: this.getChannelUrl()
     };
 
     return true;
@@ -66,11 +64,11 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl: function() {
-    return FB._domain.www + 'widgets/login.php?' + FB.QS.encode(this._attr);
+  getUrlBits: function() {
+    return { name: 'login', params: this._attr };
   }
 });

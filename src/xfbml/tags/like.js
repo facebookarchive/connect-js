@@ -35,12 +35,12 @@ FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl : function() {
-    return FB._domain.www + 'widgets/like.php?' + FB.QS.encode(this._attr);
+  getUrlBits: function() {
+    return { name: 'like', params: this._attr };
   }
 });
 

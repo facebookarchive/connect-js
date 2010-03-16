@@ -241,7 +241,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:serverfbml fbml="hello world"></fb:serverfbml>',
-      'iframe.*render_fbml.php'
+      'iframe.*serverfbml.php'
     );
   }
 );
