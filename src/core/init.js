@@ -147,7 +147,7 @@ FB.provide('', {
       // finished executing
       window.setTimeout(function() {
         if (FB.XFBML) {
-          FB.XFBML.parse();
+          FB.Dom.ready(FB.XFBML.parse);
         }
       }, 0);
     }
