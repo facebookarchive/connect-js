@@ -68,16 +68,23 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
 
   /**
    * Returns the height of the widget iframe, taking into
-   * account the chosen layout, the user supplied height, and
+   * account the chosen layout, a user-supplied height, and
    * the min and max values we'll allow.  As it turns out, we
-   * don't see too much.
+   * don't see too much.  (At the moment, we ignore the any
+   * user-defined height, but that might change.)
    *
    * @return {String} the CSS-legitimate width in pixels, as
    *         with '460px'.
    */
 
   _getWidgetHeight : function() {
-    return this._getDefaultHeight();
+    var layout = this._getLayout();
+    var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
+    var layoutToDefaultHeightMap =
+      { 'standard' : {'show': 78, 'hide': 45},
+        'box' : {'show': 105, 'hide': 65},
+        'bar' : {'show': 45 , 'hide': 45}};
+    return layoutToDefaultHeightMap[layout][should_show_faces];
   },
 
   /**
@@ -93,8 +100,14 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
 
   _getWidgetWidth : function() {
     var layout = this._getLayout();
-    var width = this.getAttribute('width', this._getDefaultWidth());
-    width = parseInt(width, 10);
+    var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
+    var layoutToDefaultWidthMap =
+      { 'standard': {'show': 580, 'hide': 580},
+        'box': {'show': 400, 'hide': 400},
+        'bar': {'show': 800, 'hide': 580}};
+    var defaultWidth = layoutToDefaultWidthMap[layout][should_show_faces];
+    var width = this._getPxAttribute('width', defaultWidth)
+
     var allowedWidths =
       {'bar' : {'min' : 600, 'max' : 900 },
        'box' : {'min' : 350, 'max' : 450 },
@@ -109,46 +122,6 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Returns the default width that should be used for the
-   * button rendering, and it's influenced by the actual
-   * layout being used.
-   *
-   * @return {String} the default width that should be used to
-   *         render the button, expressed as a CSS string (as
-   *         with '580px'.
-   */
-
-  _getDefaultWidth : function() {
-    var layout = this._getLayout();
-    var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
-    var layoutToDefaultWidthMap =
-      { 'standard': {'show': '580', 'hide': '580'},
-        'box': {'show': '400', 'hide': '400'},
-        'bar': {'show': '800', 'hide': '580'}};
-    return layoutToDefaultWidthMap[layout][should_show_faces];
-  },
-
-  /**
-   * Returns the default width that should be used for the
-   * button rendering.  Note that the default height is influenced
-   * by the layout.
-   *
-   * @return {String} the default width that should be used to
-   *         render the button, expressed as a CSS string (as
-   *         with '750px'.
-   */
-
-  _getDefaultHeight : function() {
-    var layout = this._getLayout();
-    var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
-    var layoutToDefaultHeightMap =
-      { 'standard' : {'show': '78', 'hide': '42'},
-        'box' : {'show': '105', 'hide': '65'},
-        'bar' : {'show': '45' , 'hide': '45'}};
-    return layoutToDefaultHeightMap[layout][should_show_faces];
-  },
-
-  /**
    * Returns the layout provided by the user, which can be
    * any one of 'standard', 'box', or 'bar'.  If the user
    * omits a layout, or if they layout they specify is invalid,
@@ -158,30 +131,9 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    */
 
   _getLayout : function() {
-    var layout = this.getAttribute('layout', this._getDefaultLayout());
-    layout = layout.toLowerCase();
-    var supported_layouts = {
-      'standard' : true,
-      'box' : true,
-      'bar' : true
-    };
-
-    if (supported_layouts[layout] === undefined) {
-      layout = this._getDefaultLayout();
-    }
-
-    return layout;
-  },
-
-  /**
-   * Returns the layout that should be used if the user omits it,
-   * or if he/she supplies a bogus layout we can't understand.
-   *
-   * @return {String} the name of the default layout.
-   */
-
-  _getDefaultLayout : function() {
-      return 'standard';
+      return this._getAttributeFromList('layout',
+                                        'standard',
+                                        ['standard', 'box', 'bar']);
   },
 
   /**
@@ -192,7 +144,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    */
 
   _shouldShowFaces : function() {
-    return this._getBoolAttribute('show_faces', false);
+    return this._getBoolAttribute('show_faces');
   },
 
   /**
