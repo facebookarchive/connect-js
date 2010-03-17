@@ -22,12 +22,14 @@
  * A container for asynchronous data that may not be available immediately.
  * This is base type for results returned from FB.Data.query()
  * method.
+ *
  * @class FB.Waitable
  */
 FB.subclass('Waitable', 'Obj',
   /**
    * Construct a Waitable object.
    *
+   * @access private
    * @constructor
    */
   function() {},
@@ -49,6 +51,7 @@ FB.subclass('Waitable', 'Obj',
   /**
    * Fire the error event.
    *
+   * @access private
    * @param ex {Exception} the exception object
    */
   error: function(ex) {

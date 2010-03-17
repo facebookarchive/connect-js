@@ -35,7 +35,7 @@ FB.provide('', {
    * Find out the current status from the server, and get a session if the user
    * is connected.
    *
-   * The User's Status or the question of "who is the current user" is
+   * The user's status or the question of *who is the current user* is
    * the first thing you will typically start with. For the answer, we
    * ask facebook.com. Facebook will answer this question in one of
    * two ways:
@@ -53,16 +53,34 @@ FB.provide('', {
    *       }
    *     });
    *
-   * The example above will result in the callback being invoked once
-   * on load based on the session from www.facebook.com. For more
-   * advanced use, you may with to monitor for various events.
+   * The example above will result in the callback being invoked **once**
+   * on load based on the session from www.facebook.com. JavaScript applications
+   * are typically written with heavy use of events, and the SDK **encourages**
+   * this by exposing various events. These are fired by the various
+   * interactions with authentication flows, such as [FB.login()][login] or
+   * [[wiki:fb:login-button]]. Widgets such as [[wiki:fb:comments (XFBML)]]
+   * may also trigger authentication.
    *
    * **Events**
    *
-   *  - auth.login
-   *  - auth.logout
-   *  - auth.sessionChange
-   *  - auth.statusChange
+   * #### auth.login
+   * This event is fired when your application first notices the user (in other
+   * words, gets a session when it didn't already have a valid one).
+   * #### auth.logout
+   * This event is fired when your application notices that there is no longer
+   * a valid user (in other words, it had a session but can no longer validate
+   * the current user).
+   * #### auth.sessionChange
+   * This event is fired for **any** auth related change as they all affect the
+   * session: login, logout, session refresh. Sessions are refreshed over time
+   * as long as the user is active with your application.
+   * #### auth.statusChange
+   * Typically you will want to use the auth.sessionChange event. But in rare
+   * cases, you want to distinguish between these three states:
+   *
+   * - Connected
+   * - Logged into Facebook but not connected with your application
+   * - Not logged into Facebook at all.
    *
    * The [FB.Event.subscribe][subscribe] and
    * [FB.Event.unsubscribe][unsubscribe] functions are used to subscribe to
@@ -86,15 +104,15 @@ FB.provide('', {
    * : The comma separated permissions string. This is specific to a
    *   permissions call. It is not persistent.
    *
-   * [subscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.subscribe
-   * [unsubscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.unsubscribe
-   * [getLoginStatus]: /docs/?u=facebook.jslib-alpha.FB.getLoginStatus
-   * [login]: /docs/?u=facebook.jslib-alpha.FB.login
-   * [logout]: /docs/?u=facebook.jslib-alpha.FB.logout
+   * [subscribe]: /docs/?u=facebook.joey.FB.Event.subscribe
+   * [unsubscribe]: /docs/?u=facebook.joey.FB.Event.unsubscribe
+   * [getLoginStatus]: /docs/?u=facebook.joey.FB.getLoginStatus
+   * [login]: /docs/?u=facebook.joey.FB.login
+   * [logout]: /docs/?u=facebook.joey.FB.logout
    *
    * @access public
-   * @param cb {Function} the callback function
-   * @param force {Boolean} force reloading the login status (default false)
+   * @param cb {Function} The callback function.
+   * @param force {Boolean} Force reloading the login status (default `false`).
    */
   getLoginStatus: function(cb, force) {
     if (!FB._apiKey) {
@@ -135,7 +153,18 @@ FB.provide('', {
   },
 
   /**
-   * Accessor for the current Session.
+   * *Synchronous* accessor for the current Session. The **synchronous**
+   * nature of this method is what sets it apart from the other login methods.
+   * It is similar in nature to [FB.getLoginStatus()][FB.getLoginStatus], but
+   * it just **returns** the session. Many parts of your application already
+   * *assume* the user is connected with your application. In such cases, you
+   * may want to avoid the overhead of making asynchronous calls.
+   *
+   * NOTE: You should never use this method at *page load* time. Generally, it
+   * is safer to use [FB.getLoginStatus()][FB.getLoginStatus] if you are
+   * unsure.
+   *
+   * [FB.getLoginStatus]: /docs/?u=facebook.joey.FB.getLoginStatus
    *
    * @access public
    * @return {Object} the current Session if available, `null` otherwise
@@ -189,13 +218,12 @@ FB.provide('', {
    *     }, {perms:'read_stream,publish_stream,offline_access'});
    *
    * @access public
-   * @param cb {Function} the callback function
+   * @param cb {Function} The callback function.
    * @param opts {Object} (_optional_) Options to modify login behavior.
    *
-   * Name      | Type   | Description
-   * --------- | ------ | -------------
-   * perms     | String | comma separated list of
-   *      [[wiki:Extended permissions]] your application requires
+   * Name   | Type   | Description
+   * ------ | ------ | ------------------------------------------------------
+   * perms  | String | Comma separated list of [[wiki:Extended permissions]].
    */
   login: function(cb, opts) {
     // TODO this should not force popup mode
@@ -206,16 +234,18 @@ FB.provide('', {
   /**
    * Logout the user in the background.
    *
-   * Just like logging in is tied to facebook.com, so is logging out.
-   * The status shared between your site and Facebook, and logging out
-   * affects both sites. This is a simple call:
+   * Just like logging in is tied to facebook.com, so is logging out -- and
+   * this call logs the user out of both Facebook and your site. This is a
+   * simple call:
    *
    *     FB.logout(function(response) {
    *       // user is now logged out
    *     });
    *
+   * NOTE: You can only log out a user that is connected to your site.
+   *
    * @access public
-   * @param cb {Function} the callback function
+   * @param cb {Function} The callback function.
    */
   logout: function(cb) {
     FB.ui({ method: 'auth.logout', display: 'hidden' }, cb);

@@ -30,6 +30,7 @@ $JS_FILES = array(
   'src/core/flash.js',
   'src/core/init.js',
   'src/core/insights.js',
+  'src/core/intl.js',
   'src/core/json.js',
   'src/core/md5sum.js',
   'src/core/qs.js',
@@ -68,6 +69,8 @@ $JS_FILES = array(
   'src/xfbml/tags/recommendations.js',
   'src/xfbml/tags/serverfbml.js',
   'src/xfbml/tags/sharebutton.js',
+
+  'src/strings/en_US.js',
 );
 
 $CSS_FILES = array(

@@ -54,12 +54,11 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null, {
     var renderFn = this.bind(function(result) {
       var
         userInfo = result ? result[0] : null,
-        imageSrc = userInfo ? userInfo[picFieldName] : null;
+        imgSrc = userInfo ? userInfo[picFieldName] : null;
 
-      if (!imageSrc) {
+      if (!imgSrc) {
         // Create default
-        imageSrc = FB._domain.cdn + 'pics/' +
-          FB.XFBML.ProfilePic._defPicMap[picFieldName];
+        imgSrc = FB._domain.cdn + FB.XFBML.ProfilePic._defPicMap[picFieldName];
       }
       // Copy width, height style, and class name of fb:profile-pic down to the
       // image element we create
@@ -70,7 +69,7 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null, {
         ),
         html = FB.String.format(
           '<img src="{0}" alt="{1}" title="{1}" style="{2}" class="{3}" />',
-          imageSrc,
+          imgSrc,
           userInfo ? userInfo.name : '',
           styleValue,
           this.dom.className
@@ -121,16 +120,18 @@ FB.subclass('XFBML.ProfilePic', 'XFBML.Element', null, {
 FB.provide('XFBML.ProfilePic', {
   /**
    * Maps field type to placeholder/silhouette image.
+   *
+   * This dynamic data is replaced with rsrc.php backed URLs by Haste.
    */
   _defPicMap: {
-    pic                  : 's_silhouette.jpg',
-    pic_big              : 'd_silhouette.gif',
-    pic_big_with_logo    : 'd_silhouette_logo.gif',
-    pic_small            : 't_silhouette.jpg',
-    pic_small_with_logo  : 't_silhouette_logo.gif',
-    pic_square           : 'q_silhouette.gif',
-    pic_square_with_logo : 'q_silhouette_logo.gif',
-    pic_with_logo        : 's_silhouette_logo.gif'
+    pic                  : 'pics/s_silhouette.jpg',
+    pic_big              : 'pics/d_silhouette.gif',
+    pic_big_with_logo    : 'pics/d_silhouette_logo.gif',
+    pic_small            : 'pics/t_silhouette.jpg',
+    pic_small_with_logo  : 'pics/t_silhouette_logo.gif',
+    pic_square           : 'pics/q_silhouette.gif',
+    pic_square_with_logo : 'pics/q_silhouette_logo.gif',
+    pic_with_logo        : 'pics/s_silhouette_logo.gif'
   },
 
   /**

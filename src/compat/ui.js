@@ -49,7 +49,7 @@ FB.provide('', {
    * [publish]: /docs/?u=facebook.jslib-alpha.FB.publish
    * [share]: /docs/?u=facebook.jslib-alpha.FB.share
    *
-   * @access public
+   * @access private
    * @param u {String} the url (defaults to current URL)
    */
   share: function(u) {
@@ -136,7 +136,7 @@ FB.provide('', {
    *       }
    *     );
    *
-   * @access public
+   * @access private
    * @param post {Object} the post object
    * @param cb {Function} called with the result of the action
    */
@@ -155,8 +155,7 @@ FB.provide('', {
    *
    * Prompt the user to add the given id as a friend.
    *
-   * @deprecated
-   * @access public
+   * @access private
    * @param id {String} the id of the target user
    * @param cb {Function} called with the result of the action
    */

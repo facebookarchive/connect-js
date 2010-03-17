@@ -28,7 +28,6 @@ module('xfbmltags');
  * @param {Function} cb   callback, takes the html as a param
  */
 XTest = {
-
   /**
    * Define how many XFBML comparisons will be executed
    * in this test.
@@ -70,8 +69,8 @@ XTest = {
    * insensitive.
    */
   regex : function(xfbml, html_regex, case_sensitive) {
-    var container = FB.Content.append('');
-    FB.XFBML.set(container, xfbml, function() {
+    var container = FB.Content.append(xfbml);
+    FB.XFBML.parse(container, function() {
       var html = container.childNodes[0].innerHTML;
       if (!case_sensitive) {
         html = html.toLowerCase();
@@ -162,7 +161,7 @@ test(
   function() {
     XTest.expect(1);
     XTest.regex('<fb:login-button></fb:login-button>',
-               'fbconnectbutton');
+               'fb_button');
   }
 );
 

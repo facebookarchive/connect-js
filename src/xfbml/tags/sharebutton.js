@@ -16,6 +16,7 @@
  * @provides fb.xfbml.sharebutton
  * @layer xfbml
  * @requires fb.type
+ *           fb.intl
  *           fb.xfbml
  *           fb.string
  *           fb.dom
@@ -65,7 +66,7 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
       post = '',
       pre = '',
       classStr = '',
-      share = 'Share',
+      share = FB.Intl.tx('sh:share-button'),
       wrapperClass = '';
 
     switch (this._type) {
@@ -80,12 +81,13 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
       skipRenderEvent = false;
       break;
     case 'link':
-      contentStr = 'Share on Facebook';
+      contentStr = FB.Intl.tx('cs:share-on-facebook');
       skipRenderEvent = false;
       break;
     case 'button':
       contentStr = '<span class="fb_button_text">' + share +  '</span>';
       classStr = 'fb_button fb_button_small';
+      skipRenderEvent = false;
       break;
     case 'button_count':
       contentStr = '<span class="fb_button_text">' + share +  '</span>';

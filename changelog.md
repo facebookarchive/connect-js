@@ -30,3 +30,12 @@ Alpha release for an implementation of [XFBML] and an [advanced data layer].
 
 [XFBML]: http://wiki.github.com/facebook/connect-js/xfbml
 [advanced data layer]: http://wiki.github.com/facebook/connect-js/data-layer
+
+Iframe Dialogs
+-------------
+
+*Date*: 11th Match, 2010
+
+Support for iframe dialogs via [FB.ui()][FB.ui].
+
+[FB.ui]: http://developers.facebook.com/docs/?u=facebook.joey.FB.ui "UI Dialogs"

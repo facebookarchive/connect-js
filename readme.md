@@ -1,22 +1,18 @@
 Facebook Connect JavaScript SDK
 ===============================
 
-
 Facebook [Connect][Connect] is a set of APIs that make your application more
 social. With it you gain access to:
 
-1. Identity: the user's name, photo and more [User][FQL_User].
-2. The Graph: the user's friends and connections
-   [Connection][FQL_Connection].
-3. Distribution: the Stream, and the ability to communicate
-   [Publishing][Publishing].
-4. Integration: publishers, canvas pages, profile tabs.
-
+1. Identity: name, photos, events and more -- [User][FQL_User].
+2. Social Graph: friends and connections -- [Connection][FQL_Connection].
+3. Stream: activity, distribution, and integration points within Facebook, like
+   stream stories and Publishers [UI Dialogs][UI Dialogs].
 
 [Connect]: http://developers.facebook.com/connect "Facebook | Connect"
 [FQL_User]: http://wiki.developers.facebook.com/index.php/User_(FQL) "FQL User Table"
 [FQL_Connection]: http://wiki.developers.facebook.com/index.php/Connection_(FQL) "FQL Connection Table"
-[Publishing]: http://developers.facebook.com/docs/?u=facebook.jslib-alpha.FB.publish "Stream Publishing"
+[UI Dialogs]: http://developers.facebook.com/docs/?u=facebook.joey.FB.ui "UI Dialogs (to render dialogs like publish and share)"
 
 This repository contains the open source JavaScript SDK that allows you to
 utilize the above on your website. Except as otherwise noted, the Facebook
@@ -30,20 +26,12 @@ Status
 
 This is an **alpha** release. In order to guide the development of the library
 and allow you to freely inspect and use the source, we have open sourced the
-client JavaScript SDK. We do not have all the features we intend to build, but
-we will be building them incrementally in a transparent manner.
+client JavaScript SDK. At a high level, the SDK provides:
 
-Currently, we have the first iteration of the JavaScript APIs that allow you
-to:
-
-- Handle Authentication & Authorization
-- Make API calls
-- Publish to the Stream
-
-Some major aspects that are still missing are:
-
-- XFBML
-- Widgets
+- Authentication & Authorization
+- Ability to make API calls
+- Ability to show UI dialogs
+- XFBML Tags & Widgets
 - Data Access Abstractions
 
 
@@ -55,21 +43,179 @@ release. Remember, this is an **alpha** release!
 Usage
 -----
 
-The [examples][examples] are a good place to start. The minimal you'll need to
-have is:
+The [examples][examples] are a good place to start. Here's an example of
+initializing ([FB.init()][FB.init]) the library with all the options turned on:
 
     <div id="fb-root"></div>
     <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
     <script>
-      FB.init({ apiKey: 'YOUR API KEY' });
+      FB.init({
+        apiKey : 'YOUR API KEY',
+        status : true, // check login status
+        cookie : true, // enable cookies to allow the server to access the session
+        xfbml  : true  // parse XFBML
+      });
     </script>
 
-Note: For easier development, we also have a unminifed (raw code with comments)
-available using this URL:
-
-    http://static.ak.fbcdn.net/connect/en_US/core.debug.js
-
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
+[FB.init]: http://developers.facebook.com/docs/?u=facebook.joey.FB.init
+
+### Asynchronous Loading
+
+For better performance, you should load the initial script itself in a
+non-blocking manner. This will mean you have to be more conscious about how you
+invoke anything in the `FB` namespace, as asynchronously loading the script can
+cause it to arrive after your application scripts have been loaded. To make
+this more convenient, the library looks for a **global** named `fbAsyncInit`.
+If it exists, this function will be executed once the library has been loaded.
+You should trigger all `FB` related logic from here. When using this approach,
+you should put the code right *after the opening* `<body>` tag. This will allow
+Facebook to initialize in parallel with the rest of your page.
+
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          apiKey : 'YOUR API KEY',
+          status : true, // check login status
+          cookie : true, // enable cookies to allow the server to access the session
+          xfbml  : true  // parse XFBML
+        });
+      };
+
+      (function() {
+        var e = document.createElement('script');
+        e.type = 'text/javascript';
+        e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
+        e.async = true;
+        document.getElementById('fb-root').appendChild(e);
+      }());
+    </script>
+
+
+Authentication & Authorization
+------------------------------
+
+Facebook Connect provides the great benefit of removing the registration
+process by allowing the user to login to your site with their Facebook account.
+This is achieved by sharing the logged in user state between
+http://www.facebook.com/ and your site http://www.example.com/. A Connected
+user remains logged in to your site as long as they are logged in to Facebook.
+
+This means you get to skip a lot of the boring stuff when you're building your
+hot new application. You don't need to create your own registration flow, and
+your users don't have to create new profiles, upload profile pictures or
+remember a username. But not only that, you also get the user's social graph,
+and many other useful pieces of information. Facebook Connect can also be used
+with your existing user management system as many sites already do.
+
+### Status & Sessions
+
+The first step is figuring out how you identify who the current user is, and
+how to make API calls on their behalf. In fact, almost **half** of the public
+API deals directly with auth:
+
+- [FB.login()][FB.login] -- login and/or request extended permissions
+- [FB.logout()][FB.logout] -- logout (only if the user is connected with your application)
+- [FB.getLoginStatus()][FB.getLoginStatus] -- get current login status from facebook.com
+- [FB.getSession()][FB.getSession] -- **synchronous** accessor for the current session
+
+In addition, there many events that you can subscribe to using
+[FB.Event.subscribe()][FB.Event.subscribe]:
+
+- auth.statusChange
+- auth.sessionChange
+- auth.login
+- auth.logout
+
+[FB.login]: http://developers.facebook.com/docs/?u=facebook.joey.FB.login
+[FB.logout]: http://developers.facebook.com/docs/?u=facebook.joey.FB.logout
+[FB.getLoginStatus]: http://developers.facebook.com/docs/?u=facebook.joey.FB.getLoginStatus
+[FB.getSession]: http://developers.facebook.com/docs/?u=facebook.joey.FB.getSession
+[FB.Event.subscribe]: http://developers.facebook.com/docs/?u=facebook.joey.FB.Event.subscribe
+
+
+API Calls
+---------
+
+Facebook provides many server-side [APIs][API] to enable you to integrate data
+from Facebook into your site, as well as allowing you to submit data into
+Facebook. The JavaScript SDK makes all this available to you via
+[FB.api()][FB.api]:
+
+    FB.api(
+      {
+        method: 'fql.query',
+        query: 'SELECT name FROM user WHERE uid=5526183'
+      },
+      function(response) {
+        alert('Name is ' + response[0].name);
+      }
+    );
+
+[API]: http://wiki.developers.facebook.com/index.php/API
+
+
+Dialogs
+-------
+
+One of the most powerful features of the SDK is to integrate Facebook UI flows
+into your application. The most common example of this is the
+**stream.publish** dialog. [FB.ui()][FB.ui] is the method that allows you to
+trigger this and other dialogs. For example:
+
+    FB.ui(
+      {
+        method: 'stream.publish',
+        attachment: {
+          name: 'Connect',
+          caption: 'The Facebook Connect JavaScript SDK',
+          description: (
+            'A small JavaScript library that allows you to harness ' +
+            'the power of Facebook, bringing the user\'s identity, ' +
+            'social graph and distribution power to your site.'
+          ),
+          href: 'http://fbrell.com/'
+        },
+        action_links: [
+          { text: 'fbrell', href: 'http://fbrell.com/' }
+        ]
+      },
+      function(response) {
+        if (response && response.post_id) {
+          alert('Post was published.');
+        } else {
+          alert('Post was not published.');
+        }
+      }
+    );
+
+UI dialogs are documented at TODO.
+
+
+XFBML & Widgets
+---------------
+
+XFBML and Widgets provide a simple, low effort means of integrating social
+features into your site. The current set of supported tags are:
+
+- [fb:comments][fb:comments]
+- [fb:fan][fb:fan]
+- [fb:live-stream][fb:live-stream]
+- [fb:login-button][fb:login-button]
+- [fb:name][fb:name]
+- [fb:profile-pic][fb:profile-pic]
+- [fb:serverfbml][fb:serverfbml]
+- [fb:share-button][fb:share-button]
+
+[fb:comments]: http://wiki.developers.facebook.com/index.php/Fb:comments_(XFBML)
+[fb:fan]: http://wiki.developers.facebook.com/index.php/Fb:fan
+[fb:live-stream]: http://wiki.developers.facebook.com/index.php/Fb:live-stream
+[fb:login-button]: http://wiki.developers.facebook.com/index.php/Fb:login-button
+[fb:name]: http://wiki.developers.facebook.com/index.php/Fb:name
+[fb:profile-pic]: http://wiki.developers.facebook.com/index.php/Fb:profile-pic
+[fb:serverfbml]: http://wiki.developers.facebook.com/index.php/Fb:serverFbml
+[fb:share-button]: http://wiki.developers.facebook.com/index.php/Fb:share-button_(XFBML)
 
 Documentation
 -------------
@@ -90,7 +236,7 @@ SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [MooTools][MooTools], [Prototype][Prototype] and [YUI][YUI].
 
 
-[docs]: http://developers.facebook.com/docs/?u=facebook.jslib-alpha.FB "Public API Documentation"
+[docs]: http://developers.facebook.com/docs/?u=facebook.joey.FB "Public API Documentation"
 [Dojo]: http://www.dojotoolkit.org/
 [jQuery]: http://jquery.com/
 [MooTools]: http://mootools.net/
