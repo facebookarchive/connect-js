@@ -23,7 +23,10 @@
 // top level FB namespace. This is necessary because the current documentation
 // parser uses the description from this file for some reason.
 /**
- * The top level namespace exposed by the SDK.
+ * The top level namespace exposed by the SDK. Look at the [readme on
+ * **GitHub**][readme] for more information.
+ *
+ * [readme]: http://github.com/facebook/connect-js
  *
  * @class FB
  * @static
