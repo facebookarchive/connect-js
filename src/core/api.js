@@ -132,6 +132,7 @@ FB.provide('RestServer', {
       api_key : FB._apiKey,
       call_id : new Date().getTime(),
       format  : 'json',
+      sdk     : 'joey',
       v       : '1.0'
     });
 
