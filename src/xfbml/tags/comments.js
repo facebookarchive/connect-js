@@ -94,7 +94,7 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
    * @return {Object} the iframe URL bits
    */
   getUrlBits: function() {
-    return { name: 'comments', params: this._attr };
+    return { name: 'comments.php', params: this._attr };
   },
 
   /**

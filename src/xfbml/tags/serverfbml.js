@@ -74,6 +74,6 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
    * @return {Object} the iframe URL bits
    */
   getUrlBits: function() {
-    return { name: 'serverfbml', params: this._attr };
+    return { name: 'render_fbml.php', params: this._attr };
   }
 });

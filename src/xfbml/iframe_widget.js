@@ -339,7 +339,13 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    * @return {String} the url
    */
   _getURL: function() {
-    return FB._domain.www + 'widgets/' + this.getUrlBits().name + '.php';
+    //TODO (naitik) remove after March 24, 2010
+    var name = this.getUrlBits().name;
+    if (name.indexOf('.php') >= 0) {
+      return FB._domain.www + name;
+    } else {
+      return FB._domain.www + 'widgets/' + this.getUrlBits().name + '.php';
+    }
   },
 
   /**
