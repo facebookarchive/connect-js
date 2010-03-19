@@ -33,11 +33,10 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      api_key : FB._apiKey,
-      header  : this._getBoolAttribute('header'),
-      width   : this._getPxAttribute('width', 300),
-      height  : this._getPxAttribute('height', 300),
-      site    : this.getAttribute('site', location.hostname)
+      header : this._getBoolAttribute('header'),
+      width  : this._getPxAttribute('width', 300),
+      height : this._getPxAttribute('height', 300),
+      site   : this.getAttribute('site', location.hostname)
     };
 
     return true;
@@ -53,12 +52,11 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
   },
 
   /**
-   * Get the URL for the iframe.
+   * Get the URL bits for the iframe.
    *
-   * @return {String} the iframe URL
+   * @return {Object} the iframe URL bits
    */
-  getIframeUrl: function() {
-    return FB._domain.www + 'widgets/activity.php?' + FB.QS.encode(this._attr);
+  getUrlBits: function() {
+    return { name: 'activity', params: this._attr };
   }
 });
-

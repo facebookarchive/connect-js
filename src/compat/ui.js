@@ -49,14 +49,15 @@ FB.provide('', {
    * [publish]: /docs/?u=facebook.jslib-alpha.FB.publish
    * [share]: /docs/?u=facebook.jslib-alpha.FB.share
    *
-   * @access public
+   * @access private
    * @param u {String} the url (defaults to current URL)
    */
   share: function(u) {
     FB.log('FB.share() has been deprecated. Please use FB.ui() instead.');
     FB.ui({
-      method : 'stream.share',
-      u      : u
+      display : 'popup',
+      method  : 'stream.share',
+      u       : u
     });
   },
 
@@ -135,7 +136,7 @@ FB.provide('', {
    *       }
    *     );
    *
-   * @access public
+   * @access private
    * @param post {Object} the post object
    * @param cb {Function} called with the result of the action
    */
@@ -143,6 +144,7 @@ FB.provide('', {
     FB.log('FB.publish() has been deprecated. Please use FB.ui() instead.');
     post = post || {};
     FB.ui(FB.copy({
+      display : 'popup',
       method  : 'stream.publish',
       preview : 1
     }, post || {}), cb);
@@ -153,16 +155,16 @@ FB.provide('', {
    *
    * Prompt the user to add the given id as a friend.
    *
-   * @deprecated
-   * @access public
+   * @access private
    * @param id {String} the id of the target user
    * @param cb {Function} called with the result of the action
    */
   addFriend: function(id, cb) {
     FB.log('FB.addFriend() has been deprecated. Please use FB.ui() instead.');
     FB.ui({
-      id     : id,
-      method : 'friend.add'
+      display : 'popup',
+      id      : id,
+      method  : 'friend.add'
     }, cb);
   }
 });

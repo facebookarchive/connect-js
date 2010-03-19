@@ -93,9 +93,9 @@ test(
     });
 
     var fbml = '<test:answer answer="42"></test:answer>';
-    var container = FB.Content.append('');
+    var container = FB.Content.append(fbml);
 
-    FB.XFBML.set(container, fbml, function() {
+    FB.XFBML.parse(container, function() {
       var domElement = container.childNodes[0];
 
       // _element is the FB.XFBML.Element object

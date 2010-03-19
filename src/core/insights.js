@@ -22,16 +22,20 @@
  */
 
 /**
- * Analytics pixel calls.
+ * Analytics pixel calls. If you are unsure about the potential that
+ * integrating Facebook could provide your application, you can use this light
+ * weight image beacon to collect some insights.
+ *
+ * TODO: Where does one go to look at this data?
  *
  * @class FB.Insights
  * @static
- * @access public
+ * @access private
  */
 FB.provide('Insights', {
   /**
-   * This method should be called once by each page that wish to
-   * track impression.
+   * This method should be called once by each page where you want to track
+   * impressions.
    *
    *     FB.Insights.impression(
    *       {

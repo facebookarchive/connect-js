@@ -15,7 +15,10 @@
  *
  * @provides fb.xfbml.loginbutton
  * @layer xfbml
- * @requires fb.type fb.xfbml.buttonelement fb.auth
+ * @requires fb.type
+ *           fb.intl
+ *           fb.xfbml.buttonelement
+ *           fb.auth
  */
 
 /**
@@ -34,6 +37,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
   setupAndValidate: function() {
     this.autologoutlink = this._getBoolAttribute('autologoutlink');
     this.onlogin = this.getAttribute('onlogin');
+    this.perms = this.getAttribute('perms');
     this.length = this._getAttributeFromList(
       'length',         // name
       'short',          // defaultValue
@@ -57,9 +61,11 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
     var originalHTML = this.getOriginalHTML();
     if (originalHTML === '') {
       if (FB.getSession() && this.autologoutlink) {
-        return 'Facebook Logout';
+        return FB.Intl.tx('cs:logout');
       } else {
-        return this.length == 'short' ? 'Connect' : 'Connect with Facebook';
+        return this.length == 'short'
+          ? FB.Intl.tx('cs:connect')
+          : FB.Intl.tx('cs:connect-with-facebook');
       }
     } else {
       return originalHTML;
@@ -71,7 +77,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
    */
   onClick: function() {
     if (!FB.getSession() || !this.autologoutlink) {
-      FB.login(FB.bind(this._authCallback, this));
+      FB.login(FB.bind(this._authCallback, this), { perms: this.perms });
     } else {
       FB.logout(FB.bind(this._authCallback, this));
     }
