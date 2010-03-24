@@ -143,6 +143,8 @@ from Facebook into your site, as well as allowing you to submit data into
 Facebook. The JavaScript SDK makes all this available to you via
 [FB.api()][FB.api]:
 
+[FB.api]: http://developers.facebook.com/docs/?u=facebook.joey.FB.api "Server-Side API Calls"
+
     FB.api(
       {
         method: 'fql.query',
@@ -163,6 +165,8 @@ One of the most powerful features of the SDK is to integrate Facebook UI flows
 into your application. The most common example of this is the
 **stream.publish** dialog. [FB.ui()][FB.ui] is the method that allows you to
 trigger this and other dialogs. For example:
+
+[FB.ui]: http://developers.facebook.com/docs/?u=facebook.joey.FB.ui "UI Dialogs (to render dialogs like publish and share)"
 
     FB.ui(
       {
