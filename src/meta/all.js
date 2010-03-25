@@ -23,5 +23,6 @@
  *   fb.xfbml.recommendations
  *   fb.xfbml.serverfbml
  *   fb.xfbml.sharebutton
+ *   fb.xfbml.socialbar
  */
 void(0);

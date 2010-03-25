@@ -67,6 +67,27 @@ FB.provide('Dom', {
   },
 
   /**
+   * Returns the computed style for the element
+   *
+   * note: requires browser specific names to be passed
+   *
+   * @param dom {DOMElement} the element
+   * @param styleProp {String} the property name
+   */
+  getStyle: function (dom, styleProp) {
+    var y;
+    if (dom.currentStyle) {
+      y = dom.currentStyle[styleProp];
+    } else {
+      if (window.getComputedStyle) {
+        y = document.defaultView
+         .getComputedStyle(dom,null).getPropertyValue(styleProp);
+      }
+    }
+    return y;
+  },
+
+  /**
    * Dynamically add a script tag.
    *
    * @param src {String} the url for the script

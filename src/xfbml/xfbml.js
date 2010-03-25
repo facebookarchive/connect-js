@@ -229,7 +229,8 @@ FB.provide('XFBML', {
     { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic'      },
     { localName: 'recommendations', className: 'FB.XFBML.Recommendations' },
     { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml'      },
-    { localName: 'share-button',    className: 'FB.XFBML.ShareButton'     }
+    { localName: 'share-button',    className: 'FB.XFBML.ShareButton'     },
+    { localName: 'social-bar',      className: 'FB.XFBML.SocialBar'       }
   ]
 });
 
