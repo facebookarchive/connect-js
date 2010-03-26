@@ -42,8 +42,8 @@
   display: block;
   height: 16px;
   position: absolute;
-  right: 17px;
-  top: 20px;
+  right: 19px;
+  top: 18px;
   width: 14px;
   /* this rule applies to all IE browsers only because using the \9 hack */
   top: 10px\9;

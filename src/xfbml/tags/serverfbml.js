@@ -39,8 +39,7 @@ FB.subclass('XFBML.ServerFbml', 'XFBML.IframeWidget', null, {
     this._attr = {
       channel_url : this.getChannelUrl(),
       fbml        : this.getAttribute('fbml'),
-      height      : this._getPxAttribute('iframeHeight'),
-      width       : this._getPxAttribute('iframeWidth')
+      width       : this._getPxAttribute('width')
     };
 
     // fbml may also be specified as a child script tag

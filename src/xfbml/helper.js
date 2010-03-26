@@ -76,7 +76,7 @@ FB.provide('Helper', {
     href = href || (userInfo ? FB._domain.www + 'profile.php?id=' +
                     userInfo.uid : null);
     if (href) {
-      html = '<a class="FB_Link" href="' + href + '">' + html + '</a>';
+      html = '<a class="fb_link" href="' + href + '">' + html + '</a>';
     }
     return html;
   }

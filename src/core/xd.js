@@ -70,6 +70,38 @@ FB.provide('XD', {
   },
 
   /**
+   * Resolve a id back to a node. An id is a string like:
+   *   top.frames[5].frames['crazy'].parent.frames["two"].opener
+   *
+   * @param   id {String}   the string to resolve
+   * @returns    {Node}     the resolved window object
+   * @throws  SyntaxError   if the id is malformed
+   */
+
+  resolveRelation : function(id) {
+    var
+      pt,
+      matches,
+      parts = id.split('.'),
+      node = window;
+
+    for (var i=0, l=parts.length; i<l; i++) {
+      pt = parts[i];
+
+      if (pt === 'opener' || pt === 'parent' || pt === 'top') {
+        node = node[pt];
+      } else if (matches = /^frames\[['"]?([a-zA-Z0-9-_]+)['"]?\]$/.exec(pt)) {
+        // these regex has the `feature' of fixing some badly quote strings
+        node = node.frames[matches[1]];
+      } else {
+        throw new SyntaxError('Malformed id to resolve: ' + id + ', pt: ' + pt);
+      }
+    }
+
+    return node;
+  },
+
+  /**
    * Builds a url attached to a callback for xd messages.
    *
    * This is one half of the XD layer. Given a callback function, we generate
@@ -237,10 +269,8 @@ FB.provide('XD', {
 
         fragment = fragment.substr(magicIndex + FB.XD.Fragment._magic.length);
         var params = FB.QS.decode(fragment);
-        // NOTE: only supporting opener, parent or top here. if needed, the
-        // resolveRelation function from xd_proxy can be used to provide more
-        // complete support.
-        window[params.relation].FB.XD.recv(fragment);
+        var w = FB.XD.resolveRelation(params.relation);
+        w.FB.XD.recv(fragment);
       }
     }
   }

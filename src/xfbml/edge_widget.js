@@ -15,7 +15,10 @@
  *
  * @provides fb.xfbml.edgewidget
  * @layer xfbml
- * @requires fb.type fb.xfbml.iframewidget
+ * @requires fb.type
+ *           fb.dom
+ *           fb.xfbml.iframewidget
+ *           fb.xfbml.edgecommentwidget
  */
 
 /**
@@ -35,7 +38,9 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * Do initial attribute processing.
    */
   setupAndValidate : function() {
+    FB.Dom.addCss(this.dom, 'fb_edge_widget_with_comment');
     this._attr = {
+      channel_url      : this.getChannelUrl(),
       text_color       : this.getAttribute('text_color', 'black'),
       background_color : this.getAttribute('background_color', 'white'),
       debug            : this._getBoolAttribute('debug'),
@@ -48,6 +53,18 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     };
 
     return true;
+  },
+
+ /**
+  * Our edge widget needs to
+  *
+  */
+
+  oneTimeSetup : function() {
+    this.subscribe('xd.presentEdgeCommentDialog',
+                   FB.bind(this._handleEdgeCommentDialogPresentation, this));
+    this.subscribe('xd.dismissEdgeCommentDialog',
+                   FB.bind(this._handleEdgeCommentDialogDismissal, this));
   },
 
   /**
@@ -127,9 +144,9 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    */
 
   _getLayout : function() {
-      return this._getAttributeFromList('layout',
-                                        'standard',
-                                        ['standard', 'box', 'bar']);
+    return this._getAttributeFromList('layout',
+                                      'standard',
+                                      ['standard', 'box', 'bar']);
   },
 
   /**
@@ -140,7 +157,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    */
 
   _shouldShowFaces : function() {
-    return this._getBoolAttribute('show_faces');
+    return this._getBoolAttribute('show_faces', true);
   },
 
   /**
@@ -160,6 +177,61 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     }
 
     return max_faces;
-  }
+  },
 
+  /**
+   * Handles the event fired when the user actually connects to
+   * something.  The idea is to tell the host to drop in
+   * another iframe widget--an FB.XFBML.EdgeCommentWidget--
+   * and sensibly position it so it partially overlays
+   * the mother widget.
+   *
+   * @param {Object} message a dictionary of information about the
+   *        event.
+   * @return void
+   */
+
+  _handleEdgeCommentDialogPresentation : function(message) {
+    if (!this.isValid()) {
+      return;
+    }
+
+    var comment_node = document.createElement('span');
+    // TODO(jcain): auto-resizing of comment widget isn't working perfectly,
+    // so manually passing through iframe size until bug can be resolved.
+    var opts = {
+      commentNode : comment_node,
+      externalUrl : message.externalURL,
+      width : 330,
+      height : 200,
+      widgetID : message.widgetID,
+      backgroundColor : this._attr.background_color,
+      relativeHeightOffset : message.relativeHeightOffset
+    };
+
+    this._commentSlave = new FB.XFBML.EdgeCommentWidget(opts);
+    this.dom.appendChild(comment_node);
+    this._commentSlave.process();
+    this._commentWidgetNode = comment_node;
+  },
+
+  /**
+   * Handles the XD event instructing the host to
+   * remove the comment widget iframe.  The DOM node
+   * for this widget is currently carrying just one child
+   * node, which is the span representing the iframe.
+   * We just need to return that one child in order for the
+   * comment widget to disappear.
+   *
+   * @param {Object} message a dictionary of information about
+   *        the event.
+   * @return void
+   */
+
+  _handleEdgeCommentDialogDismissal : function(message) {
+    if (this._commentWidgetNode) {
+      this.dom.removeChild(this._commentWidgetNode);
+      delete this._commentWidgetNode;
+    }
+  }
 });
