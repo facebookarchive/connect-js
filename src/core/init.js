@@ -40,7 +40,7 @@ FB.provide('', {
    * Typical initialization enabling all optional features:
    *
    *      <div id="fb-root"></div>
-   *      <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
+   *      <script src="http://connect.facebook.net/en_US/all.js"></script>
    *      <script>
    *        FB.init({
    *          apiKey : 'YOUR API KEY',
@@ -72,8 +72,7 @@ FB.provide('', {
    *
    *       (function() {
    *         var e = document.createElement('script');
-   *         e.type = 'text/javascript';
-   *         e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
+   *         e.src = 'http://connect.facebook.net/en_US/all.js';
    *         e.async = true;
    *         document.getElementById('fb-root').appendChild(e);
    *       }());
@@ -83,6 +82,26 @@ FB.provide('', {
    * the opening `<body>` tag. This allows Facebook initialization to happen in
    * parallel with the initialization on the rest of your page.
    *
+   * ### Internationalization
+   *
+   * Facebook Connect features are available many locales. You can replace the
+   * `en_US` locale specifed above with one of the [supported Facebook
+   * Locales][locales]. For example, to load up the library and trigger dialogs,
+   * popups and widgets to be in Hindi (`hi_IN`), you can load the library from
+   * this URL:
+   *
+   *     http://connect.facebook.net/hi_IN/all.js
+   *
+   * [locales]: http://wiki.developers.facebook.com/index.php/Facebook_Locales
+   *
+   * ### SSL
+   *
+   * Facebook Connect is also available over SSL. You should only use this when
+   * your own page is served over `https://`. The library will rely on the
+   * current page protocol at runtime. The SSL URL is the same, only the
+   * protocol is changed:
+   *
+   *     https://connect.facebook.net/en_US/all.js
    *
    * **Note**: Some [UI methods][FB.ui] like **stream.publish** and
    * **stream.share** can be used without registering an application or calling
@@ -159,26 +178,4 @@ FB.provide('', {
 // we do it in a setTimeout to wait until the current event loop as finished.
 // this allows potential library code being included below this block (possible
 // when being served from an automatically combined version)
-//
-// Usage:
-//
-//  <div id="fb-root"></div>
-//  <script>
-//    window.fbAsyncInit = function() {
-//      FB.init({
-//        apiKey: '6a25de06224e9b21a2b33fcdae593daa',
-//        status: true
-//      });
-//      FB.XFBML.parse();
-//    };
-//
-//    (function() {
-//      var e = document.createElement('script');
-//      e.type = 'text/javascript';
-//      e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
-//      e.async = true;
-//      document.getElementById('fb-root').appendChild(e);
-//    }());
-//  </script>
-//
 window.setTimeout(function() { if (window.fbAsyncInit) { fbAsyncInit(); }}, 0);

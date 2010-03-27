@@ -24,7 +24,7 @@ Connect JavaScript SDK is licensed under the Apache Licence, Version 2.0
 Status
 ------
 
-This is an **alpha** release. In order to guide the development of the library
+This is an *beta* release. In order to guide the development of the library
 and allow you to freely inspect and use the source, we have open sourced the
 client JavaScript SDK. At a high level, the SDK provides:
 
@@ -35,11 +35,6 @@ client JavaScript SDK. At a high level, the SDK provides:
 - Data Access Abstractions
 
 
-We will be actively iterating on this, and expect to have a beta release
-shortly. Once we've worked out all the kinks, we will announce the final
-release. Remember, this is an **alpha** release!
-
-
 Usage
 -----
 
@@ -47,7 +42,7 @@ The [examples][examples] are a good place to start. Here's an example of
 initializing ([FB.init()][FB.init]) the library with all the options turned on:
 
     <div id="fb-root"></div>
-    <script src="http://static.ak.fbcdn.net/connect/en_US/core.js"></script>
+    <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
       FB.init({
         apiKey : 'YOUR API KEY',
@@ -85,12 +80,31 @@ Facebook to initialize in parallel with the rest of your page.
 
       (function() {
         var e = document.createElement('script');
-        e.type = 'text/javascript';
-        e.src = 'http://static.ak.fbcdn.net/connect/en_US/core.js';
+        e.src = 'http://connect.facebook.net/en_US/all.js';
         e.async = true;
         document.getElementById('fb-root').appendChild(e);
       }());
     </script>
+
+### Internationalization
+
+Facebook Connect features are available many locales. You can replace the
+`en_US` locale specifed above with one of the [supported Facebook
+Locales][locales]. For example, to load up the library and trigger dialogs,
+popups and widgets to be in Hindi (`hi_IN`), you can load the library from this
+URL:
+
+    http://connect.facebook.net/hi_IN/all.js
+
+[locales]: http://wiki.developers.facebook.com/index.php/Facebook_Locales
+
+### SSL
+
+Facebook Connect is also available over SSL. You should only use this when your
+own page is served over `https://`. The library will rely on the current page
+protocol at runtime. The SSL URL is the same, only the protocol is changed:
+
+    https://connect.facebook.net/en_US/all.js
 
 
 Authentication & Authorization
@@ -232,7 +246,7 @@ We have a list of [FAQs][FAQs] that detail some of the changes and provide
 information about the new SDK.
 
 We are maintaining a [changelog][changelog] as we update the SDK. Since this is
-an Alpha SDK, we might need to break compatibility between releases if the need
+an Beta SDK, we might need to break compatibility between releases if the need
 arises.
 
 The repository also contains simple [examples][examples] showing the use of the
