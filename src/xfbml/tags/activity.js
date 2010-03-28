@@ -29,6 +29,11 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
   _visibleAfter: 'load',
 
   /**
+   * Refresh the iframe on auth.statusChange events.
+   */
+  _refreshOnAuthChange: true,
+
+  /**
    * Do initial attribute processing.
    */
   setupAndValidate: function() {
@@ -36,7 +41,9 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
       header : this._getBoolAttribute('header'),
       width  : this._getPxAttribute('width', 300),
       height : this._getPxAttribute('height', 300),
-      site   : this.getAttribute('site', location.hostname)
+      site   : this.getAttribute('site', location.hostname),
+      background :
+        this._getAttributeFromList('background', 'light', ['light', 'dark'])
     };
 
     return true;
