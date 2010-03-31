@@ -41,25 +41,19 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     FB.Dom.addCss(this.dom, 'fb_edge_widget_with_comment');
     this._attr = {
       channel_url      : this.getChannelUrl(),
-      text_color       : this.getAttribute('text_color', 'black'),
-      background_color : this.getAttribute('background_color', 'white'),
       debug            : this._getBoolAttribute('debug'),
       href             : this.getAttribute('href', window.location.href),
       is_permalink     : this._getBoolAttribute('is_permalink'),
       node_type        : this.getAttribute('node_type', 'link'),
       layout           : this._getLayout(),
-      show_faces       : this._shouldShowFaces(),
-      max_faces        : this._getMaxFacesToShow()
+      show_faces       : this._shouldShowFaces()
     };
 
     return true;
   },
 
- /**
-  * Our edge widget needs to
-  *
-  */
-
+  // TODO(jcain): update so that master iframe controls everything,
+  // including commenting
   oneTimeSetup : function() {
     this.subscribe('xd.presentEdgeCommentDialog',
                    FB.bind(this._handleEdgeCommentDialogPresentation, this));
@@ -86,10 +80,13 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * don't see too much.  (At the moment, we ignore the any
    * user-defined height, but that might change.)
    *
+   * This logic is replicated in html/widgets/like.php and
+   * lib/external_node/param_validation.php, and must be replicated
+   * because it helps size the client's iframe.
+   *
    * @return {String} the CSS-legitimate width in pixels, as
    *         with '460px'.
    */
-
   _getWidgetHeight : function() {
     var layout = this._getLayout();
     var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
@@ -107,10 +104,13 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * flexibility in how wide the widget is, so a user-supplied
    * width just needs to fall within a certain range.
    *
+   * This logic is replicated in html/widgets/like.php and
+   * lib/external_node/param_validation.php, and must be replicated
+   * because it helps size the client's iframe.
+   *
    * @return {String} the CSS-legitimate width in pixels, as
    *         with '460px'.
    */
-
   _getWidgetWidth : function() {
     var layout = this._getLayout();
     var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
@@ -140,9 +140,12 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * omits a layout, or if they layout they specify is invalid,
    * then we just go with 'standard'.
    *
+   * This logic is replicated in html/widgets/like.php and
+   * lib/external_node/param_validation.php, and must be replicated
+   * because it helps size the client's iframe.
+   *
    * @return {String} the layout of the Connect Widget.
    */
-
   _getLayout : function() {
     return this._getAttributeFromList('layout',
                                       'standard',
@@ -153,30 +156,14 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * Returns true if and only if we should be showing faces in the
    * widget, and false otherwise.
    *
+   * This logic is replicated in html/widgets/like.php and
+   * lib/external_node/param_validation.php, and must be replicated
+   * because it helps size the client's iframe.
+   *
    * @return {String} described above.
    */
-
   _shouldShowFaces : function() {
     return this._getBoolAttribute('show_faces', true);
-  },
-
-  /**
-   * Returns the maximum number of profiles pictures
-   * that should be displayed in the widget.
-   *
-   * @return {Integer} the maximum number of profile pictures
-   *         we're willing to show inside a connect widget.
-   */
-
-  _getMaxFacesToShow : function() {
-    var max_faces = this.getAttribute('max_faces', 24);
-    if (max_faces < 3) {
-      max_faces = 3;
-    } else if (max_faces > 36) {
-      max_faces = 36;
-    }
-
-    return max_faces;
   },
 
   /**
@@ -190,7 +177,6 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    *        event.
    * @return void
    */
-
   _handleEdgeCommentDialogPresentation : function(message) {
     if (!this.isValid()) {
       return;
@@ -227,7 +213,6 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    *        the event.
    * @return void
    */
-
   _handleEdgeCommentDialogDismissal : function(message) {
     if (this._commentWidgetNode) {
       this.dom.removeChild(this._commentWidgetNode);
