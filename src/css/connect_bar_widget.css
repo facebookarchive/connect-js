@@ -1,0 +1,71 @@
+/**
+ * Copyright Facebook Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * @author alpjor
+ * @provides fb.css.connectbarwidget
+ * @requires fb.css.base
+ * @layer xfbml
+ */
+
+.fb_connect_bar_container {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  height: 34px;
+  padding: 0px;
+  margin: 0px;
+  vertical-align: middle;
+  border-bottom: 1px solid #000;
+  background: #3a5798;
+  color: #fff;
+  font-size: 14px;
+}
+
+.fb_connect_bar {
+  position: relative;
+  margin: auto;
+  height: 100%;
+  width: 835px;
+  padding: 3px 0px;
+}
+
+.fb_connect_bar img {
+  height: 28px;
+  width: 28px;
+  vertical-align: middle;
+  margin: 0px 10px 0px 0px;
+  border: none;
+}
+
+.fb_connect_bar div a,
+.fb_connect_bar span,
+.fb_connect_bar span a {
+  color: #acd;
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.fb_connect_bar .fb_okay {
+  background: #5C7589;
+  padding: 5px;
+  border: 1px solid black;
+  margin-left: 10px;
+  color: #fff;
+}
+
+.fb_connect_bar .fb_buttons {
+  float: right;
+  margin-top: 5px;
+}

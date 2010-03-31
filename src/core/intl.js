@@ -124,8 +124,7 @@ FB.provide('Intl', {
             } else {
               regexp = new RegExp('\{' + key + '\}', 'g');
             }
-            // We add the '+' here to provide context for phonological rules.
-            str = str.replace(regexp, '\x01'+args[key]+'\x01');
+            str = str.replace(regexp, args[key]);
           }
         }
       }

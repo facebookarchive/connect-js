@@ -67,3 +67,31 @@ test(
     ok(FB.Dom._cssRules[id], 'expect it to be set');
   }
 );
+
+test(
+  'getStyle',
+
+  function() {
+    var el = document.createElement('div');
+    el.id = 'chocolateTacosForeverMan';
+    FB.Dom.addCssRules(
+      '#chocolateTacosForeverMan { color: white; min-width: 100px; opacity: 50; -moz-opacity: 0.5; filters: alpha(50); margin: 10px; }',
+      ['chocolateTacosForeverMan']
+    );
+    document.body.appendChild(el);
+    var minWidth = FB.Dom.getStyle(el, 'minWidth');
+    var min_width = FB.Dom.getStyle(el, 'min-width');
+    var color = FB.Dom.getStyle(el, 'color');
+    var margin = FB.Dom.getStyle(el, 'marginTop');
+    ok(minWidth, 'expect a value to be returned');
+    ok(minWidth == '100px', 'expect min-width to be 100px: ' + minWidth);
+    ok(minWidth == min_width,
+       'expect both method camelCase and dash-case to work');
+    ok(color == 'rgb(255, 255, 255)' || color == '#fff' || color == 'white',
+       'expect color to be white: ' + color);
+    ok(margin == '10px', 'expect top-margin to be 10px: ' + margin);
+    // TODO(alpjor) readd once getStyle supports opacity
+    //ok(FB.Dom.getStyle(el, 'opacity') == '50', 'expect value to be 50');
+    el.parentNode.removeChild(el);
+  }
+);

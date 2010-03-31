@@ -69,16 +69,24 @@ FB.provide('Dom', {
   /**
    * Returns the computed style for the element
    *
-   * note: requires browser specific names to be passed
+   * note: requires browser specific names to be passed for specials
+   *       opacity -> ('-moz-opacity', 'opacity', 'filters.alpha')
+   *       border-radius -> ('-moz-border-radius', 'border-radius')
    *
    * @param dom {DOMElement} the element
    * @param styleProp {String} the property name
    */
   getStyle: function (dom, styleProp) {
-    var y;
-    if (dom.currentStyle) {
+    var y = false;
+    if (dom.currentStyle) { // camelCase (e.g. 'marginTop')
+      FB.Array.forEach(/\-([a-z])/.exec(styleProp), function(match) {
+        styleProp = styleProp.replace('-' + match, match.toUpperCase());
+      });
       y = dom.currentStyle[styleProp];
-    } else {
+    } else { // dashes (e.g. 'margin-top')
+      FB.Array.forEach(/([A-Z])/.exec(styleProp), function(match) {
+        styleProp = styleProp.replace(match, '-'+ match.toLowerCase());
+      });
       if (window.getComputedStyle) {
         y = document.defaultView
          .getComputedStyle(dom,null).getPropertyValue(styleProp);

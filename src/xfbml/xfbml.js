@@ -230,7 +230,8 @@ FB.provide('XFBML', {
     { localName: 'recommendations', className: 'FB.XFBML.Recommendations' },
     { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml'      },
     { localName: 'share-button',    className: 'FB.XFBML.ShareButton'     },
-    { localName: 'social-bar',      className: 'FB.XFBML.SocialBar'       }
+    { localName: 'social-bar',      className: 'FB.XFBML.SocialBar'       },
+    { localName: 'connect-bar',     className: 'FB.XFBML.ConnectBar'      }
   ]
 });
 

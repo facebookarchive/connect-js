@@ -24,5 +24,6 @@
  *   fb.xfbml.serverfbml
  *   fb.xfbml.sharebutton
  *   fb.xfbml.socialbar
+ *   fb.xfbml.connectbar
  */
 void(0);
