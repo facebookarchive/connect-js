@@ -72,7 +72,7 @@ FB.provide('', {
    *
    *       (function() {
    *         var e = document.createElement('script');
-   *         e.src = 'http://connect.facebook.net/en_US/all.js';
+   *         e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
    *         e.async = true;
    *         document.getElementById('fb-root').appendChild(e);
    *       }());
