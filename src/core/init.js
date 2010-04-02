@@ -43,7 +43,7 @@ FB.provide('', {
    *      <script src="http://connect.facebook.net/en_US/all.js"></script>
    *      <script>
    *        FB.init({
-   *          apiKey : 'YOUR API KEY',
+   *          appId  : 'YOUR APP ID',
    *          status : true, // check login status
    *          cookie : true, // enable cookies to allow the server to access the session
    *          xfbml  : true  // parse XFBML
@@ -63,7 +63,7 @@ FB.provide('', {
    *     <script>
    *       window.fbAsyncInit = function() {
    *         FB.init({
-   *           apiKey : 'YOUR API KEY',
+   *           appId  : 'YOUR APP ID',
    *           status : true, // check login status
    *           cookie : true, // enable cookies to allow the server to access the session
    *           xfbml  : true  // parse XFBML
@@ -115,7 +115,7 @@ FB.provide('', {
    *
    * Property | Type    | Description                          | Argument     | Default
    * -------- | ------- | ------------------------------------ | ------------ | -------
-   * apiKey   | String  | Your application API key.            | **Required** |
+   * appId    | String  | Your application ID.                 | **Required** |
    * cookie   | Boolean | `true` to enable cookie support.     | *Optional*   | `false`
    * logging  | Boolean | `false` to disable logging.          | *Optional*   | `true`
    * session  | Object  | Use specified session object.        | *Optional*   | `null`
@@ -123,8 +123,8 @@ FB.provide('', {
    * xfbml    | Boolean | `true` to parse [[wiki:XFBML]] tags. | *Optional*   | `false`
    */
   init: function(options) {
-    if (!options || !options.apiKey) {
-      FB.log('FB.init() called without an apiKey.');
+    if (!options || (!options.apiKey && !options.appId)) {
+      FB.log('FB.init() called without an appId.');
       return;
     }
 
@@ -134,7 +134,7 @@ FB.provide('', {
       logging: true
     });
 
-    FB._apiKey = options.apiKey;
+    FB._apiKey = options.appId || options.apiKey;
 
     // disable logging if told to do so, but only if the url doesnt have the
     // token to turn it on. this allows for easier debugging of third party

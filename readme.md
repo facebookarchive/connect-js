@@ -45,7 +45,7 @@ initializing ([FB.init()][FB.init]) the library with all the options turned on:
     <script src="http://connect.facebook.net/en_US/all.js"></script>
     <script>
       FB.init({
-        apiKey : 'YOUR API KEY',
+        appId  : 'YOUR APP ID',
         status : true, // check login status
         cookie : true, // enable cookies to allow the server to access the session
         xfbml  : true  // parse XFBML
@@ -71,7 +71,7 @@ Facebook to initialize in parallel with the rest of your page.
     <script>
       window.fbAsyncInit = function() {
         FB.init({
-          apiKey : 'YOUR API KEY',
+          appId  : 'YOUR APP ID',
           status : true, // check login status
           cookie : true, // enable cookies to allow the server to access the session
           xfbml  : true  // parse XFBML
