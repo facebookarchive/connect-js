@@ -45,6 +45,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       href             : this.getAttribute('href', window.location.href),
       is_permalink     : this._getBoolAttribute('is_permalink'),
       node_type        : this.getAttribute('node_type', 'link'),
+      font             : this.getAttribute('font'),
       layout           : this._getLayout(),
       show_faces       : this._shouldShowFaces()
     };
@@ -91,7 +92,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     var layout = this._getLayout();
     var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
     var layoutToDefaultHeightMap =
-      { 'standard' : {'show': 78, 'hide': 45},
+      { 'standard' : {'show': 80, 'hide': 45},
         'box' : {'show': 105, 'hide': 65},
         'bar' : {'show': 45 , 'hide': 45}};
     return layoutToDefaultHeightMap[layout][should_show_faces];
@@ -190,8 +191,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       externalUrl : message.externalURL,
       width : 330,
       height : 200,
-      widgetID : message.widgetID,
-      backgroundColor : this._attr.background_color,
+      masterFrameName : message.masterFrameName,
       relativeHeightOffset : message.relativeHeightOffset
     };
 

@@ -23,8 +23,7 @@
 }
 
 .fb_edge_comment_widget {
-  background-color: transparent;
-  left: 0px;
+  left: -4px;
   position: absolute;
 }
 

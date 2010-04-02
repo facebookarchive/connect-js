@@ -32,10 +32,7 @@ FB.subclass('XFBML.EdgeCommentWidget', 'XFBML.IframeWidget',
     this._iframeWidth = opts.width;
     this._iframeHeight = opts.height;
     this._attr = {
-      external_url: opts.externalUrl,
-      channel_url: this.getChannelUrl(),
-      widget_id: opts.widgetID,
-      background_color : opts.backgroundColor
+      master_frame_name: opts.masterFrameName
     };
     this.dom = opts.commentNode;
     this.dom.style.top = opts.relativeHeightOffset;
@@ -49,7 +46,7 @@ FB.subclass('XFBML.EdgeCommentWidget', 'XFBML.IframeWidget',
   /**
    * Make the iframe visible only when it has finished loading.
    */
-  _visibleAfter: 'resize',
+  _visibleAfter: 'load',
   _showLoader: false,
 
   /**
@@ -65,11 +62,11 @@ FB.subclass('XFBML.EdgeCommentWidget', 'XFBML.IframeWidget',
   },
 
   /**
-   * Get the URL bits for the iframe.
+   * Get there URL bits for the iframe.
    *
-   * @return {Object} the iframe URL bits
+   * @return {Object} the iframe URL bits.
    */
   getUrlBits: function() {
-    return { name: 'likecomment', params: this._attr };
+    return { name: 'comment_widget_shell', params: this._attr };
   }
 });

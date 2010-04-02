@@ -26,13 +26,6 @@
  * @private
  */
 FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
-  /**
-   * @return {String} the name that should be given to the button's
-   *         iFrame rendering.
-   */
-  getIframeName : function() {
-    return 'fbLikeIFrame_' + FB.XFBML.Like._iframeIdCount++;
-  },
 
   /**
    * Get the URL bits for the iframe.
@@ -42,12 +35,4 @@ FB.subclass('XFBML.Like', 'XFBML.EdgeWidget', null, {
   getUrlBits: function() {
     return { name: 'like', params: this._attr };
   }
-});
-
-/**
- * Defines the collection of class-level directives needed to help control of
- * <fb:like> buttons.
- */
-FB.provide('XFBML.Like', {
-  _iframeIdCount : 0
 });
