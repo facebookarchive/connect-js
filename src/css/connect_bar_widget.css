@@ -15,7 +15,7 @@
  *
  * @author alpjor
  * @provides fb.css.connectbarwidget
- * @requires fb.css.base
+ * @requires fb.css.base fb.css.button
  * @layer xfbml
  */
 
@@ -23,49 +23,55 @@
   position: absolute;
   left: 0px;
   right: 0px;
-  height: 34px;
+  height: 42px;
   padding: 0px;
   margin: 0px;
   vertical-align: middle;
-  border-bottom: 1px solid #000;
-  background: #3a5798;
+  border-bottom: 1px solid #333;
+  background: #3b5998;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .fb_connect_bar {
   position: relative;
   margin: auto;
   height: 100%;
-  width: 835px;
-  padding: 3px 0px;
+  width: 900px;
+  padding: 7px 0 0 0;
+}
+
+.fb_connect_bar a:hover {
+  color: #fff;
 }
 
 .fb_connect_bar img {
-  height: 28px;
-  width: 28px;
+  height: 30px;
+  width: 30px;
   vertical-align: middle;
-  margin: 0px 10px 0px 0px;
+  margin: 0px 6px 5px 0px;
   border: none;
 }
 
 .fb_connect_bar div a,
 .fb_connect_bar span,
 .fb_connect_bar span a {
-  color: #acd;
+  color: #bac6da;
   font-size: 11px;
   text-decoration: none;
 }
 
-.fb_connect_bar .fb_okay {
-  background: #5C7589;
-  padding: 5px;
-  border: 1px solid black;
-  margin-left: 10px;
-  color: #fff;
-}
-
 .fb_connect_bar .fb_buttons {
   float: right;
-  margin-top: 5px;
+  margin-top: 7px;
+}
+
+.fb_connect_bar .fb_button {
+  margin-left: 10px;
+  background: #29447E;
+}
+
+.fb_connect_bar .fb_button_text {
+  margin: 1px 1px 0 0;
+  padding: 2px 8px 6px;
 }

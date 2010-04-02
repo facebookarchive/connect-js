@@ -37,6 +37,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   _initialHeight: null,
   _initTopMargin: 0,
   _picFieldName: 'pic_square',
+  _page: null, // the external site's content parent node
 
   /**
    * Processes this tag.
@@ -82,11 +83,14 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     container.appendChild(bar);
     this.dom.appendChild(container);
     this._initialHeight = parseInt(FB.Dom.getStyle(container, 'height'), 10);
+    bar.style.width = this._getPxAttribute('width', 900) + 'px';
     container.style.top = (-1*this._initialHeight) + 'px';
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
         '<a href="#" class="fb_no_thanks">{0}</a>' +
-        '<a href="#" class="fb_okay">{1}</a>' +
+        '<span class="fb_button">' +
+          '<a href="#" class="fb_button_text">{1}</a>' +
+        '</span>' +
       '</div>' +
       '<a href="{7}" class="fb_profile" target="_blank">' +
         '<img src="{2}" alt="{3}" title="{3}" />' +
@@ -113,11 +117,25 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     FB.Array.forEach(bar.getElementsByTagName('a'), function(el) {
       el.onclick = FB.bind(_this._clickHandler, _this);
     });
+    this._page = document.body.parentNode;
+    // TODO(naitik) When FB.Dom.UA is fixed correct these checks
+    if (!window.XMLHttpRequest) { // ie6
+      this._page = document.body;
+      // ie6 just won't show the container @ 100%, this was the best I could do
+      // to make it ful width, but this makes the hoz scroll bar appear
+      container.style.width = '102%';
+    }
+    if (!window.XMLHttpRequest ||
+        navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
+      FB.Anim.ate(document.body, {
+        backgroundPositionY: this._initialHeight
+      });
+    }
     var top_margin =
-      parseInt(FB.Dom.getStyle(document.body, 'marginTop'), 10);
+      parseInt(FB.Dom.getStyle(this._page, 'marginTop'), 10);
     top_margin = isNaN(top_margin) ? 0 : top_margin;
     this._initTopMargin = top_margin;
-    FB.Anim.ate(document.body, {
+    FB.Anim.ate(this._page, {
       marginTop: this._initTopMargin + this._initialHeight
     });
     FB.Anim.ate(container, { top: 0 });
@@ -131,11 +149,18 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     e = e || window.event;
     var el = e.target || e.srcElement;
     switch (el.className) {
-      case 'fb_okay':
+      case 'fb_button_text':
         // TODO(alpjor) mark seen
-        FB.Anim.ate(document.body, {
+        FB.Anim.ate(this._page, {
           marginTop: this._initTopMargin
         }, 300);
+        // TODO(naitik) When FB.Dom.UA is fixed correct these checks
+        if (!window.XMLHttpRequest ||
+            navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
+          FB.Anim.ate(document.body, {
+            backgroundPositionY: 0
+          }, 300);
+        }
         FB.Anim.ate(this.dom.firstChild, {
           top: -1 * this._initialHeight
         }, 300, function(el) {
