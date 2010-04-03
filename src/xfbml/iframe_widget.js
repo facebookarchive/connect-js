@@ -266,16 +266,18 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    * application knowing about it. Unfortunately this is not possible/allowed.
    */
   _setupAuthRefresh: function() {
-    var lastStatus = FB._userStatus;
-    FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
-      if (!this.isValid()) {
-        return;
-      }
-      // if we gained or lost a user, reprocess
-      if (lastStatus == 'unknown' || response.status == 'unknown') {
-        this.process(true);
-      }
-      lastStatus = response.status;
+    FB.getLoginStatus(FB.bind(function(response) {
+      var lastStatus = response.status;
+      FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
+        if (!this.isValid()) {
+          return;
+        }
+        // if we gained or lost a user, reprocess
+        if (lastStatus == 'unknown' || response.status == 'unknown') {
+          this.process(true);
+        }
+        lastStatus = response.status;
+      }, this));
     }, this));
   },
 
