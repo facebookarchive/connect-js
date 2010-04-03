@@ -191,20 +191,26 @@ FB.provide('XFBML', {
       // See https://bugzilla.mozilla.org/show_bug.cgi?id=531662
       return dom.getElementsByTagNameNS(document.body.namespaceURI, fullName);
     case 'ie':
-      var docNamespaces = document.namespaces;
-      if (docNamespaces && docNamespaces[xmlns]) {
-        return dom.getElementsByTagName(localName);
-      } else {
-        // It seems that developer tends to forget to declare the fb namespace
-        // in the HTML tag (xmlns:fb="http://www.facebook.com/2008/fbml") IE
-        // has a stricter implementation for custom tags. If namespace is
-        // missing, custom DOM dom does not appears to be fully functional. For
-        // example, setting innerHTML on it will fail.
-        //
-        // If a namespace is not declared, we can still find the element using
-        // GetElementssByTagName with namespace appended.
-        return dom.getElementsByTagName(fullName);
+      // accessing document.namespaces when the library is being loaded
+      // asynchronously can cause an error if the document is not yet ready
+      try {
+        var docNamespaces = document.namespaces;
+        if (docNamespaces && docNamespaces[xmlns]) {
+          return dom.getElementsByTagName(localName);
+        }
+      } catch(e) {
+        // introspection doesn't yield any identifiable information to scope
       }
+
+      // It seems that developer tends to forget to declare the fb namespace
+      // in the HTML tag (xmlns:fb="http://www.facebook.com/2008/fbml") IE
+      // has a stricter implementation for custom tags. If namespace is
+      // missing, custom DOM dom does not appears to be fully functional. For
+      // example, setting innerHTML on it will fail.
+      //
+      // If a namespace is not declared, we can still find the element using
+      // GetElementssByTagName with namespace appended.
+      return dom.getElementsByTagName(fullName);
     default:
       return dom.getElementsByTagName(fullName);
     }
@@ -239,6 +245,14 @@ FB.provide('XFBML', {
  * For IE, we will try to detect if document.namespaces contains 'fb' already
  * and add it if it does not exist.
  */
-if (document.namespaces && !document.namespaces.item.fb) {
-   document.namespaces.add('fb');
-}
+// wrap in a try/catch because it can throw an error if the library is loaded
+// asynchronously and the document is not ready yet
+(function() {
+  try {
+    if (document.namespaces && !document.namespaces.item.fb) {
+       document.namespaces.add('fb');
+    }
+  } catch(e) {
+    // introspection doesn't yield any identifiable information to scope
+  }
+}());
