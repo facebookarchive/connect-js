@@ -17,19 +17,25 @@
  * @provides fb.css.iframewidget
  * @layer xfbml
  */
-.FB_HideIframes iframe {
+.fb_iframe_widget iframe {
+  /* this is necessary for IE. without it, once hidden, it wont become visible
+   * again */
+  position: relative;
+}
+.fb_hide_iframes iframe {
   position: relative;
   left: -10000px;
 }
-.FB_IframeLoader {
+.fb_iframe_widget_loader {
   position: relative;
   display: inline-block;
 }
-.FB_IframeLoader iframe {
+.fb_iframe_widget_loader iframe {
   min-height: 32px;
   z-index: 2;
+  zoom: 1;
 }
-.FB_IframeLoader .FB_Loader {
+.fb_iframe_widget_loader .FB_Loader {
   background: url(/images/loaders/indicator_blue_large.gif) no-repeat;
   height: 32px;
   width: 32px;

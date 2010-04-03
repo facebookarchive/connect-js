@@ -186,7 +186,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     }
 
     // it's always hidden by default
-    FB.Dom.addCss(this.dom, 'FB_HideIframes');
+    FB.Dom.addCss(this.dom, 'fb_iframe_widget fb_hide_iframes');
 
     // the initial size
     var size = this.getSize() || {};
@@ -252,7 +252,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    */
   _makeVisible: function() {
     this._removeLoader();
-    FB.Dom.removeCss(this.dom, 'FB_HideIframes');
+    FB.Dom.removeCss(this.dom, 'fb_hide_iframes');
     this.fire('render');
   },
 
@@ -302,7 +302,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    */
   _addLoader: function() {
     if (!this._loaderDiv) {
-      FB.Dom.addCss(this.dom, 'FB_IframeLoader');
+      FB.Dom.addCss(this.dom, 'fb_iframe_widget_loader');
       this._loaderDiv = document.createElement('div');
       this._loaderDiv.className = 'FB_Loader';
       this.dom.appendChild(this._loaderDiv);
@@ -314,7 +314,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    */
   _removeLoader: function() {
     if (this._loaderDiv) {
-      FB.Dom.removeCss(this.dom, 'FB_IframeLoader');
+      FB.Dom.removeCss(this.dom, 'fb_iframe_widget_loader');
       this.dom.removeChild(this._loaderDiv);
       this._loaderDiv = null;
     }
