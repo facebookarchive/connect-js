@@ -186,7 +186,10 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     }
 
     // it's always hidden by default
-    FB.Dom.addCss(this.dom, 'fb_iframe_widget fb_hide_iframes');
+    FB.Dom.addCss(this.dom, 'fb_iframe_widget');
+    if (this._visibleAfter != 'immediate') {
+      FB.Dom.addCss(this.dom, 'fb_hide_iframes');
+    }
 
     // the initial size
     var size = this.getSize() || {};

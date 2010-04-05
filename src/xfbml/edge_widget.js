@@ -32,7 +32,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   /**
    * Make the iframe visible only when it has finished loading.
    */
-  _visibleAfter: 'load',
+  _visibleAfter: 'immediate',
+  _showLoader: false,
 
   /**
    * Do initial attribute processing.
