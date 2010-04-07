@@ -131,6 +131,26 @@ FB.provide('UIServer', {
   _resultToken   : '"xxRESULTTOKENxx"',
 
   /**
+   * Serves as a generic transform for UI Server dialogs. Once all dialogs are
+   * built on UI Server, this will just become the default behavior.
+   *
+   * Current transforms:
+   * 1) display=dialog -> display=iframe. Most of the old Connect stuff uses
+   *    dialog, but UI Server uses iframe.
+   * 2) Renaming of channel_url parameter to channel.
+   */
+  genericTransform: function(call) {
+    if (call.params.display == 'dialog') {
+      call.params.display = 'iframe';
+      call.params.channel = FB.UIServer._xdChannelHandler(
+        call.id,
+        'parent.parent'
+      );
+    }
+    return call;
+  },
+
+  /**
    * Prepares a generic UI call.
    *
    * @access private
