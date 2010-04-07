@@ -146,6 +146,7 @@ FB.provide('Content', {
           ' src="' + opts.url + '"' +
           ' frameborder="0"' +
           ' scrolling="no"' +
+          ' allowtransparency="true"' +
           ' onload="FB.Content._callbacks.' + guid + '()"' +
         '></iframe>'
       );
