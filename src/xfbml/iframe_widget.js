@@ -189,6 +189,8 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
     FB.Dom.addCss(this.dom, 'fb_iframe_widget');
     if (this._visibleAfter != 'immediate') {
       FB.Dom.addCss(this.dom, 'fb_hide_iframes');
+    } else {
+      this.subscribe('iframe.onload', FB.bind(this.fire, this, 'render'));
     }
 
     // the initial size
