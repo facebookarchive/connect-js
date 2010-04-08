@@ -55,6 +55,17 @@ FB.provide('EventProvider', {
    *       // do something with response.session
    *     });
    *
+   * Global Events:
+   *
+   * - auth.login -- fired when the user logs in
+   * - auth.logout -- fired when the user logs out
+   * - auth.sessionChange -- fired when the session changes
+   * - auth.statusChange -- fired when the status changes
+   * - xfbml.render -- fired when a call to FB.XFBML.parse() completes
+   * - edge.create -- fired when the user likes something (fb:like)
+   * - comments.add -- fired when the user adds a comment (fb:comments)
+   * - fb.log -- fired on log message
+   *
    * @access public
    * @param name {String} Name of the event.
    * @param cb {Function} The handler function.
