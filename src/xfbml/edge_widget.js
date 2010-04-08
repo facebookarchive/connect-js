@@ -48,6 +48,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       node_type        : this.getAttribute('node_type', 'link'),
       font             : this.getAttribute('font'),
       layout           : this._getLayout(),
+      colorscheme      : this.getAttribute('colorscheme'),
+      action           : this.getAttribute('action'),
       show_faces       : this._shouldShowFaces()
     };
 
