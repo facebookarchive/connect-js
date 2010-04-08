@@ -16,6 +16,7 @@
  * @provides fb.tests.xfbmltest
  * @requires fb.tests.qunit
  *           fb.xfbml
+ *           fb.content
  */
 
 /**

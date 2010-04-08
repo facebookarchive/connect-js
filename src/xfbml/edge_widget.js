@@ -17,6 +17,8 @@
  * @layer xfbml
  * @requires fb.type
  *           fb.dom
+ *           fb.event
+ *           fb.helper
  *           fb.xfbml.iframewidget
  *           fb.xfbml.edgecommentwidget
  */
@@ -59,6 +61,10 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   // TODO(jcain): update so that master iframe controls everything,
   // including commenting
   oneTimeSetup : function() {
+    // for now, showing the comment dialog also implies the user created an
+    // edge to the thing, so we alias it.
+    this.subscribe('xd.presentEdgeCommentDialog',
+                   FB.bind(this._onEdgeCreate, this));
     this.subscribe('xd.presentEdgeCommentDialog',
                    FB.bind(this._handleEdgeCommentDialogPresentation, this));
     this.subscribe('xd.dismissEdgeCommentDialog',
@@ -221,5 +227,16 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       this.dom.removeChild(this._commentWidgetNode);
       delete this._commentWidgetNode;
     }
+  },
+
+  /**
+   * Invoked when the user likes/recommends/whatever the thing to create an
+   * edge.
+   */
+  _onEdgeCreate: function() {
+    this.fire('edge.create', this._attr.href); // dynamically attached
+    FB.Event.fire('edge.create', this._attr.href, this); // global
+    FB.Helper.invokeHandler(
+      this.getAttribute('oncreate'), this, [this._attr.href]); // inline
   }
 });

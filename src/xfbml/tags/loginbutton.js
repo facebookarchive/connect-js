@@ -18,6 +18,7 @@
  * @requires fb.type
  *           fb.intl
  *           fb.xfbml.buttonelement
+ *           fb.helper
  *           fb.auth
  */
 
@@ -90,12 +91,6 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
    * @param response {Object} the auth response object
    */
   _authCallback: function(response) {
-    if (this.onlogin) {
-      if (this.onlogin.call) {
-        this.onlogin(response);
-      } else { // assume it is a string
-        eval(this.onlogin);
-      }
-    }
+    FB.Helper.invokeHandler(this.onlogin, this, [response]);
   }
 });

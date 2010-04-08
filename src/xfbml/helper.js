@@ -79,5 +79,23 @@ FB.provide('Helper', {
       html = '<a class="fb_link" href="' + href + '">' + html + '</a>';
     }
     return html;
+  },
+
+  /**
+   * Convenienve function to fire an event handler attribute value. This is a
+   * no-op for falsy values, eval for strings and invoke for functions.
+   *
+   * @param handler {Object}
+   * @param scope {Object}
+   * @param args {Array}
+   */
+  invokeHandler: function(handler, scope, args) {
+    if (handler) {
+      if (typeof handler === 'string') {
+        eval(handler);
+      } else if (handler.apply) {
+        handler.apply(scope, args || []);
+      }
+    }
   }
 });
