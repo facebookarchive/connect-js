@@ -39,7 +39,7 @@ FB.provide('Insights', {
    *
    *     FB.Insights.impression(
    *       {
-   *         api_key: 'YOUR_API_KEY',
+   *         api_key: 'API_KEY',
    *         lid: 'EVENT_TYPE'
    *       }
    *     );
@@ -51,11 +51,14 @@ FB.provide('Insights', {
   impression: function(params, cb) {
     // no http or https so browser will use protocol of current page
     // see http://www.faqs.org/rfcs/rfc1808.html
-    var g = FB.guid();
-    var u = "//ah8.facebook.com/impression.php/" + g + "/";
-    var i = new Image(1, 1);
-    var s = [];
+    var g = FB.guid(),
+        u = "//ah8.facebook.com/impression.php/" + g + "/",
+        i = new Image(1, 1),
+        s = [];
 
+    if (!params.api_key && FB._apikey) {
+      params.api_key = FB._apikey;
+    }
     for (var k in params) {
       s.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
     }

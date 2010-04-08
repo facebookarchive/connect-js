@@ -27,6 +27,7 @@
  *           fb.auth
  *           fb.intl
  *           fb.event
+ *           fb.insights
  */
 
 /**
@@ -53,41 +54,66 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         // Is Element still in DOM tree? are we connected?
         if (this.isValid() && FB._userStatus == 'connected') {
           this._uid = FB.Helper.getLoggedInUser();
-          // TODO(alpjor) check if marked seen / current seen count
-          var q1 = FB.Data._selectByIndex(['first_name', 'profile_url',
-                                            this._picFieldName],
-                                          'user', 'uid', this._uid);
-          var q2 = FB.Data._selectByIndex(['display_name'], 'application',
-                                          'api_key', FB._apiKey);
-          FB.Data.waitOn([q1, q2], this.bind(function(data) {
-            data[0][0].site_name = data[1][0].display_name;
-            if (!this._displayed) {
-              this._displayed = true;
-              this._notDisplayed = false;
-              this._renderConnectBar(data[0][0]);
-              this.fire('render');
-              // TODO(alpjor) increment seen count
-              this.fire('connectbar.ondisplay');
-              FB.Event.fire('connectbar.ondisplay', this);
-              FB.Helper.invokeHandler(this.getAttribute('ondisplay'), this);
+          FB.api({ // check if marked seen / current seen count
+            method: 'Connect.shouldShowConnectBar'
+          }, this.bind(function(showBar) {
+            if (showBar == true) {
+              this._showBar();
+            } else {
+              this._noRender();
             }
           }));
         } else {
-          if (this._displayed) {
-            this._displayed = false;
-            this._closeConnectBar();
-          }
-          if (!this._notDisplayed) {
-            this._notDisplayed = true;
-            this.fire('render');
-            this.fire('connectbar.onnotdisplay');
-            FB.Event.fire('connectbar.onnotdisplay', this);
-            FB.Helper.invokeHandler(this.getAttribute('onnotdisplay'), this);
-          }
+          this._noRender();
         }
         return false; // continue monitoring
       }));
     }));
+  },
+
+  /**
+   * load the data for the bar and render it firing all the events in the
+   * process
+   */
+  _showBar: function() {
+    var q1 = FB.Data._selectByIndex(['first_name', 'profile_url',
+                                      this._picFieldName],
+                                    'user', 'uid', this._uid);
+    var q2 = FB.Data._selectByIndex(['display_name'], 'application',
+                                    'api_key', FB._apiKey);
+    FB.Data.waitOn([q1, q2], FB.bind(function(data) {
+      data[0][0].site_name = data[1][0].display_name;
+      if (!this._displayed) {
+        this._displayed = true;
+        this._notDisplayed = false;
+        this._renderConnectBar(data[0][0]);
+        this.fire('render');
+        FB.Insights.impression({
+          lid: 104,
+          name: 'widget_load'
+        });
+        this.fire('connectbar.ondisplay');
+        FB.Event.fire('connectbar.ondisplay', this);
+        FB.Helper.invokeHandler(this.getAttribute('ondisplay'), this);
+      }
+    }, this));
+  },
+
+  /**
+   * If the bar is rendered, hide it and fire the no render events
+   */
+  _noRender: function() {
+    if (this._displayed) {
+      this._displayed = false;
+      this._closeConnectBar();
+    }
+    if (!this._notDisplayed) {
+      this._notDisplayed = true;
+      this.fire('render');
+      this.fire('connectbar.onnotdisplay');
+      FB.Event.fire('connectbar.onnotdisplay', this);
+      FB.Helper.invokeHandler(this.getAttribute('onnotdisplay'), this);
+    }
   },
 
   /**
@@ -127,7 +153,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         siteName: info.site_name,
         logoUrl: FB._domain.cdn + FB.XFBML.ConnectBar.imgs.logoUrl
       }),
-      FB.Intl.tx('connect-bar:not-first-name', { firstName: info.first_name }),
+      FB.Intl.tx('connect-bar:learn-more'),
       info.profile_url,
       '#' // TODO(alpjor) learn_more url
     );
@@ -173,13 +199,26 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     var el = e.target || e.srcElement;
     switch (el.className) {
       case 'fb_bar_close':
-        // TODO(alpjor) mark seen
+        FB.api({ // mark seen
+          method: 'Connect.connectBarMarkAcknowledged'
+        });
+        FB.Insights.impression({
+          lid: 104,
+          name: 'widget_user_closed'
+        });
         this._closeConnectBar();
         break;
       case 'fb_learn_more':
       case 'fb_profile':
         return true;
       case 'fb_no_thanks':
+        FB.api({ // mark seen
+          method: 'Connect.connectBarMarkAcknowledged'
+        });
+        FB.Insights.impression({
+          lid: 104,
+          name: 'widget_user_no_thanks'
+        });
         FB.api({ method: 'auth.revokeAuthorization'}, this.bind(function() {
           this.fire('connectbar.ondeauth');
           FB.Event.fire('connectbar.ondeauth', this);
