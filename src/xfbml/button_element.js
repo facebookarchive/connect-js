@@ -117,11 +117,8 @@ FB.subclass('XFBML.ButtonElement', 'XFBML.Element', null, {
       '</a>'
     );
 
-    if (!this._onClickSetup) {
-      // the firstChild is the anchor tag we just setup above
-      this.dom.firstChild.onclick = FB.bind(this.onClick, this);
-      this._onClickSetup = true;
-    }
+    // the firstChild is the anchor tag we just setup above
+    this.dom.firstChild.onclick = FB.bind(this.onClick, this);
 
     this.fire('render');
   }
