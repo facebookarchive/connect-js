@@ -199,7 +199,7 @@ FB.provide('Data', {
   waitOn: function(dependencies, callback) {
     var
       result = new FB.Waitable(),
-      c = dependencies.length;
+      count = dependencies.length;
 
     // For developer convenience, we allow the callback
     // to be a string of javascript expression
@@ -214,10 +214,10 @@ FB.provide('Data', {
       item.monitor('value', function() {
         var done = false;
         if (FB.Data._getValue(item) !== undefined) {
-          c--;
+          count--;
           done = true;
         }
-        if (c === 0) {
+        if (count === 0) {
           var value = callback(FB.Array.map(dependencies, FB.Data._getValue));
           result.set(value !== undefined ? value : true);
         }
