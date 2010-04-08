@@ -36,6 +36,7 @@ FB.subclass('XFBML.EdgeCommentWidget', 'XFBML.IframeWidget',
     };
     this.dom = opts.commentNode;
     this.dom.style.top = opts.relativeHeightOffset;
+    this.dom.style.zIndex = FB.XFBML.EdgeCommentWidget.NextZIndex++;
     FB.Dom.addCss(this.dom, 'fb_edge_comment_widget');
   }, {
 
@@ -69,4 +70,8 @@ FB.subclass('XFBML.EdgeCommentWidget', 'XFBML.IframeWidget',
   getUrlBits: function() {
     return { name: 'comment_widget_shell', params: this._attr };
   }
+});
+
+FB.provide('XFBML.EdgeCommentWidget', {
+  NextZIndex : 10000
 });
