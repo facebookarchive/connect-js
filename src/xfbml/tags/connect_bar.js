@@ -26,6 +26,7 @@
  *           fb.string
  *           fb.auth
  *           fb.intl
+ *           fb.event
  */
 
 /**
@@ -38,21 +39,19 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   _initTopMargin: 0,
   _picFieldName: 'pic_square',
   _page: null, // the external site's content parent node
+  _displayed: false, // is the bar currently displayed
+  _notDisplayed: false, // is the bar currently not displayed
 
   /**
    * Processes this tag.
    */
   process: function() {
     // Wait for status to be known
-    FB.Event.monitor('auth.statusChange', this.bind(function() {
-      // Is Element still in DOM tree? are we connected?
-      if (!this.isValid() || FB._userStatus == 'notConnected') {
-        this.fire('render');
-        return true; // Stop processing
-      }
-      if (FB._userStatus == 'connected') {
-        this._uid = FB.Helper.getLoggedInUser();
-        if (this._uid) {
+    FB.getLoginStatus(this.bind(function(resp) {
+      FB.Event.monitor('auth.statusChange', this.bind(function() {
+        // Is Element still in DOM tree? are we connected?
+        if (this.isValid() && FB._userStatus == 'connected') {
+          this._uid = FB.Helper.getLoggedInUser();
           // TODO(alpjor) check if marked seen / current seen count
           var q1 = FB.Data._selectByIndex(['first_name', 'profile_url',
                                             this._picFieldName],
@@ -61,13 +60,32 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
                                           'api_key', FB._apiKey);
           FB.Data.waitOn([q1, q2], this.bind(function(data) {
             data[0][0].site_name = data[1][0].display_name;
-            this._renderConnectBar(data[0][0]);
-            this.fire('render');
-            // TODO(alpjor) increment seen count
+            if (!this._displayed) {
+              this._displayed = true;
+              this._notDisplayed = false;
+              this._renderConnectBar(data[0][0]);
+              this.fire('render');
+              // TODO(alpjor) increment seen count
+              this.fire('connectbar.ondisplay');
+              FB.Event.fire('connectbar.ondisplay', this);
+              FB.Helper.invokeHandler(this.getAttribute('ondisplay'), this);
+            }
           }));
-          return false;
+        } else {
+          if (this._displayed) {
+            this._displayed = false;
+            this._closeConnectBar();
+          }
+          if (!this._notDisplayed) {
+            this._notDisplayed = true;
+            this.fire('render');
+            this.fire('connectbar.onnotdisplay');
+            FB.Event.fire('connectbar.onnotdisplay', this);
+            FB.Helper.invokeHandler(this.getAttribute('onnotdisplay'), this);
+          }
         }
-      }
+        return false; // continue monitoring
+      }));
     }));
   },
 
@@ -83,14 +101,10 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     container.appendChild(bar);
     this.dom.appendChild(container);
     this._initialHeight = parseInt(FB.Dom.getStyle(container, 'height'), 10);
-    bar.style.width = this._getPxAttribute('width', 900) + 'px';
     container.style.top = (-1*this._initialHeight) + 'px';
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
-        '<a href="#" class="fb_no_thanks">{0}</a>' +
-        '<span class="fb_button">' +
-          '<a href="#" class="fb_button_text">{1}</a>' +
-        '</span>' +
+        '<a href="#" class="fb_no_thanks close">{1}</a>' +
       '</div>' +
       '<a href="{7}" class="fb_profile" target="_blank">' +
         '<img src="{2}" alt="{3}" title="{3}" />' +
@@ -98,10 +112,10 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       '{4}' +
       ' <span>( ' +
         '<a href="{8}" class="fb_learn_more" target="_blank">{5}</a> | ' +
-        '<a class="fb_not_me" href="#">{6}</a>' +
+        '<a href="#" class="fb_no_thanks">{0}</a>' +
       ' )</span>',
       FB.Intl.tx('connect-bar:no-thanks'),
-      FB.Intl.tx('sh:ok-button'),
+      FB.Intl.tx('connect-bar:close'),
       info[this._picFieldName],
       info.first_name,
       FB.Intl.tx('connect-bar:sentence', {
@@ -149,39 +163,46 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     e = e || window.event;
     var el = e.target || e.srcElement;
     switch (el.className) {
-      case 'fb_button_text':
+      case 'fb_no_thanks close':
         // TODO(alpjor) mark seen
-        FB.Anim.ate(this._page, {
-          marginTop: this._initTopMargin
-        }, 300);
-        // TODO(naitik) When FB.Dom.UA is fixed correct these checks
-        if (!window.XMLHttpRequest ||
-            navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
-          FB.Anim.ate(document.body, {
-            backgroundPositionY: 0
-          }, 300);
-        }
-        FB.Anim.ate(this.dom.firstChild, {
-          top: -1 * this._initialHeight
-        }, 300, function(el) {
-          el.parentNode.removeChild(el);
-        });
+        this._closeConnectBar();
         break;
       case 'fb_learn_more':
       case 'fb_profile':
         return true;
       case 'fb_no_thanks':
-        FB.api({ method: 'auth.revokeAuthorization'}, function() {
-          window.location.reload();
-        });
-        break;
-      case 'fb_not_me':
-        // TODO(alpjor) decrement seen count
-        FB.logout(function() {
-          window.location.reload();
-        });
+        FB.api({ method: 'auth.revokeAuthorization'}, this.bind(function() {
+          this.fire('connectbar.ondeauth');
+          FB.Event.fire('connectbar.ondeauth', this);
+          FB.Helper.invokeHandler(this.getAttribute('ondeauth'), this);
+          if (this.getAttribute('autorefresh', true)) {
+            window.location.reload();
+          }
+        }));
         break;
     }
     return false;
+  },
+
+  _closeConnectBar: function() {
+    FB.Anim.ate(this._page, {
+      marginTop: this._initTopMargin
+    }, 300);
+    // TODO(naitik) When FB.Dom.UA is fixed correct these checks
+    if (!window.XMLHttpRequest ||
+        navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
+      FB.Anim.ate(document.body, {
+        backgroundPositionY: 0
+      }, 300);
+    }
+    this._notDisplayed = true;
+    FB.Anim.ate(this.dom.firstChild, {
+      top: -1 * this._initialHeight
+    }, 300, function(el) {
+      el.parentNode.removeChild(el);
+    });
+    this.fire('connectbar.onclose');
+    FB.Event.fire('connectbar.onclose', this);
+    FB.Helper.invokeHandler(this.getAttribute('onclose'), this);
   }
 });

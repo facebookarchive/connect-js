@@ -20,24 +20,25 @@
  */
 
 .fb_connect_bar_container {
-  position: absolute;
+  position: fixed;
   left: 0px;
   right: 0px;
   height: 42px;
-  padding: 0px;
+  padding: 0px 15px;
   margin: 0px;
   vertical-align: middle;
   border-bottom: 1px solid #333;
   background: #3b5998;
   color: #fff;
   font-size: 13px;
+  z-index: 99999999;
 }
 
 .fb_connect_bar {
   position: relative;
   margin: auto;
   height: 100%;
-  width: 900px;
+  width: 100%;
   padding: 7px 0 0 0;
 }
 
