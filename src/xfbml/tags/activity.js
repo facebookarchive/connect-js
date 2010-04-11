@@ -38,13 +38,14 @@ FB.subclass('XFBML.Activity', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      background  : this.getAttribute('background'),
-      border_color: this.getAttribute('border_color'),
-      font        : this.getAttribute('font'),
-      header      : this._getBoolAttribute('header'),
-      height      : this._getPxAttribute('height', 300),
-      site        : this.getAttribute('site', location.hostname),
-      width       : this._getPxAttribute('width', 300)
+      border_color    : this.getAttribute('border_color'),
+      colorscheme     : this.getAttribute('colorscheme'),
+      font            : this.getAttribute('font'),
+      header          : this._getBoolAttribute('header'),
+      height          : this._getPxAttribute('height', 300),
+      recommendations : this._getBoolAttribute('recommendations'),
+      site            : this.getAttribute('site', location.hostname),
+      width           : this._getPxAttribute('width', 300)
     };
 
     return true;
