@@ -110,10 +110,10 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         '<img src="{2}" alt="{3}" title="{3}" />' +
       '</a>' +
       '{4}' +
-      ' <span>( ' +
-        '<a href="{8}" class="fb_learn_more" target="_blank">{5}</a> | ' +
+      ' <span>' +
+        '<a href="{8}" class="fb_learn_more" target="_blank">{5}</a> &mdash; ' +
         '<a href="#" class="fb_no_thanks">{0}</a>' +
-      ' )</span>',
+      '</span>',
       FB.Intl.tx('connect-bar:no-thanks'),
       FB.Intl.tx('connect-bar:close'),
       info[this._picFieldName],
