@@ -103,7 +103,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
     var layoutToDefaultHeightMap =
       { 'standard' : {'show': 80, 'hide': 35},
-        'bar' : {'show': 45 , 'hide': 35}};
+        'bar' : {'show': 45 , 'hide': 35},
+        'button_count' : {'show': 23, 'hide': 23}};
     return layoutToDefaultHeightMap[layout][should_show_faces];
   },
 
@@ -126,13 +127,15 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
     var layoutToDefaultWidthMap =
       { 'standard': {'show': 450, 'hide': 450},
-        'bar': {'show': 700, 'hide': 450}};
+        'bar': {'show': 700, 'hide': 450},
+        'button_count': {'show': 90, 'hide': 90}};
     var defaultWidth = layoutToDefaultWidthMap[layout][should_show_faces];
     var width = this._getPxAttribute('width', defaultWidth)
 
     var allowedWidths =
       { 'bar' : {'min' : 600, 'max' : 900 },
-        'standard' : {'min' : 225, 'max' : 900}};
+        'standard' : {'min' : 225, 'max' : 900},
+        'button_count' : {'min' : 90, 'max' : 900}};
     if (width < allowedWidths[layout].min) {
       width = allowedWidths[layout].min;
     } else if (width > allowedWidths[layout].max) {
@@ -157,7 +160,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   _getLayout : function() {
     return this._getAttributeFromList('layout',
                                       'standard',
-                                      ['standard', 'bar']);
+                                      ['standard', 'bar', 'button_count']);
   },
 
   /**
@@ -171,7 +174,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * @return {String} described above.
    */
   _shouldShowFaces : function() {
-    return this._getBoolAttribute('show_faces', true);
+    return this._getLayout() !== 'button_count' &&
+           this._getBoolAttribute('show_faces', true);
   },
 
   /**
