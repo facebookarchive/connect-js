@@ -41,6 +41,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   _page: null, // the external site's content parent node
   _displayed: false, // is the bar currently displayed
   _notDisplayed: false, // is the bar currently not displayed
+  _container: null,
 
   /**
    * Processes this tag.
@@ -99,9 +100,9 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     bar.className = 'fb_connect_bar';
     container.className = 'fb_reset fb_connect_bar_container';
     container.appendChild(bar);
-    this.dom.appendChild(container);
+    document.body.appendChild(container);
+    this._container = container;
     this._initialHeight = parseInt(FB.Dom.getStyle(container, 'height'), 10);
-    container.style.top = (-1*this._initialHeight) + 'px';
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
         '<a href="#" class="fb_no_thanks close">{1}</a>' +
@@ -139,20 +140,25 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       // to make it ful width, but this makes the hoz scroll bar appear
       container.style.width = '102%';
     }
+    var top_margin =
+      parseInt(FB.Dom.getStyle(this._page, 'marginTop'), 10);
+    top_margin = isNaN(top_margin) ? 0 : top_margin;
+    this._initTopMargin = top_margin;
     if (!window.XMLHttpRequest ||
         navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
       FB.Anim.ate(document.body, {
         backgroundPositionY: this._initialHeight
       });
     }
-    var top_margin =
-      parseInt(FB.Dom.getStyle(this._page, 'marginTop'), 10);
-    top_margin = isNaN(top_margin) ? 0 : top_margin;
-    this._initTopMargin = top_margin;
+    if (!window.XMLHttpRequest) { // ie6
+      container.className += " fb_connect_bar_container_ie6";
+    } else {
+      container.style.top = (-1*this._initialHeight) + 'px';
+      FB.Anim.ate(container, { top: 0 });
+    }
     FB.Anim.ate(this._page, {
       marginTop: this._initTopMargin + this._initialHeight
     });
-    FB.Anim.ate(container, { top: 0 });
   },
 
   /**
@@ -196,7 +202,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       }, 300);
     }
     this._notDisplayed = true;
-    FB.Anim.ate(this.dom.firstChild, {
+    FB.Anim.ate(this._container, {
       top: -1 * this._initialHeight
     }, 300, function(el) {
       el.parentNode.removeChild(el);

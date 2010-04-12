@@ -34,6 +34,11 @@
   z-index: 99999999;
 }
 
+.fb_connect_bar_container_ie6 {
+  position: absolute;
+  top: expression(document.compatMode=="CSS1Compat"? document.documentElement.scrollTop+"px" : body.scrollTop+"px");
+}
+
 .fb_connect_bar {
   position: relative;
   margin: auto;
