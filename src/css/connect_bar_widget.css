@@ -15,7 +15,7 @@
  *
  * @author alpjor
  * @provides fb.css.connectbarwidget
- * @requires fb.css.base fb.css.button
+ * @requires fb.css.base
  * @layer xfbml
  */
 
@@ -24,7 +24,7 @@
   left: 0px;
   right: 0px;
   height: 42px;
-  padding: 0px 15px;
+  padding: 0px 25px;
   margin: 0px;
   vertical-align: middle;
   border-bottom: 1px solid #333;
@@ -44,19 +44,21 @@
   margin: auto;
   height: 100%;
   width: 100%;
-  padding: 7px 0 0 0;
+  padding: 6px 0 0 0;
 }
 
 .fb_connect_bar a:hover {
   color: #fff;
 }
-
 .fb_connect_bar img {
+  border: none;
+}
+
+.fb_connect_bar .fb_profile img {
   height: 30px;
   width: 30px;
   vertical-align: middle;
   margin: 0px 6px 5px 0px;
-  border: none;
 }
 
 .fb_connect_bar div a,
@@ -70,14 +72,4 @@
 .fb_connect_bar .fb_buttons {
   float: right;
   margin-top: 7px;
-}
-
-.fb_connect_bar .fb_button {
-  margin-left: 10px;
-  background: #29447E;
-}
-
-.fb_connect_bar .fb_button_text {
-  margin: 1px 1px 0 0;
-  padding: 2px 8px 6px;
 }

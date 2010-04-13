@@ -105,25 +105,28 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     this._initialHeight = parseInt(FB.Dom.getStyle(container, 'height'), 10);
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
-        '<a href="#" class="fb_no_thanks close">{1}</a>' +
+        '<a href="#" class="fb_bar_close">' +
+          '<img src="{1}" alt="{2}" title="{2}" class="fb_bar_close"/>' +
+        '</a>' +
       '</div>' +
       '<a href="{7}" class="fb_profile" target="_blank">' +
-        '<img src="{2}" alt="{3}" title="{3}" />' +
+        '<img src="{3}" alt="{4}" title="{4}" />' +
       '</a>' +
-      '{4}' +
+      '{5}' +
       ' <span>' +
-        '<a href="{8}" class="fb_learn_more" target="_blank">{5}</a> &mdash; ' +
+        '<a href="{8}" class="fb_learn_more" target="_blank">{6}</a> &ndash; ' +
         '<a href="#" class="fb_no_thanks">{0}</a>' +
       '</span>',
       FB.Intl.tx('connect-bar:no-thanks'),
+      FB._domain.cdn + FB.XFBML.ConnectBar.imgs.buttonUrl,
       FB.Intl.tx('connect-bar:close'),
       info[this._picFieldName],
       info.first_name,
       FB.Intl.tx('connect-bar:sentence', {
         firstName: info.first_name,
-        siteName: info.site_name
+        siteName: info.site_name,
+        logoUrl: FB._domain.cdn + FB.XFBML.ConnectBar.imgs.logoUrl
       }),
-      FB.Intl.tx('connect-bar:learn-more'),
       FB.Intl.tx('connect-bar:not-first-name', { firstName: info.first_name }),
       info.profile_url,
       '#' // TODO(alpjor) learn_more url
@@ -169,7 +172,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     e = e || window.event;
     var el = e.target || e.srcElement;
     switch (el.className) {
-      case 'fb_no_thanks close':
+      case 'fb_bar_close':
         // TODO(alpjor) mark seen
         this._closeConnectBar();
         break;
@@ -181,7 +184,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
           this.fire('connectbar.ondeauth');
           FB.Event.fire('connectbar.ondeauth', this);
           FB.Helper.invokeHandler(this.getAttribute('ondeauth'), this);
-          if (this.getAttribute('autorefresh', true)) {
+          if (this._getBoolAttribute('autorefresh', true)) {
             window.location.reload();
           }
         }));
@@ -210,5 +213,12 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     this.fire('connectbar.onclose');
     FB.Event.fire('connectbar.onclose', this);
     FB.Helper.invokeHandler(this.getAttribute('onclose'), this);
+  }
+});
+
+FB.provide('XFBML.ConnectBar', {
+  imgs: {
+   logoUrl: '/images/facebook-widgets/fb_logo.png',
+   buttonUrl: '/images/facebook-widgets/close_btn.png'
   }
 });
