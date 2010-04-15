@@ -22,6 +22,15 @@
    * again */
   position: relative;
 }
+
+.fb_iframe_widget span {
+  /* this is necessary for IE as well. without it, the content of the iframe would be
+   * totally off when resizing the parent window.
+   * probably related to this bug http://friendlybit.com/css/ie6-resize-bug/
+   */
+   position: relative;
+}
+
 .fb_hide_iframes iframe {
   position: relative;
   left: -10000px;
