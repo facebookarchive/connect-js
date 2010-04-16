@@ -109,7 +109,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     var layoutToDefaultHeightMap =
       { 'standard' : {'show': 80, 'hide': 35},
         'bar' : {'show': 45 , 'hide': 35},
-        'button_count' : {'show': 23, 'hide': 23}};
+        'button_count' : {'show': 21, 'hide': 21}};
     return layoutToDefaultHeightMap[layout][should_show_faces];
   },
 
