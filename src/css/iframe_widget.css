@@ -17,6 +17,11 @@
  * @provides fb.css.iframewidget
  * @layer xfbml
  */
+.fb_iframe_widget {
+  position: relative;
+  display: -moz-inline-block; /* ff2 */
+  display: inline-block;
+}
 .fb_iframe_widget iframe {
   /* this is necessary for IE. without it, once hidden, it wont become visible
    * again */

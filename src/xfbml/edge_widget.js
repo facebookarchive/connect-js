@@ -201,7 +201,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       width : 330,
       height : 200,
       masterFrameName : message.masterFrameName,
-      relativeHeightOffset : message.relativeHeightOffset
+      relativeHeightOffset : '21px'
     };
 
     this._commentSlave = new FB.XFBML.EdgeCommentWidget(opts);
