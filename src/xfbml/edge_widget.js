@@ -70,6 +70,11 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
                    FB.bind(this._handleEdgeCommentDialogPresentation, this));
     this.subscribe('xd.dismissEdgeCommentDialog',
                    FB.bind(this._handleEdgeCommentDialogDismissal, this));
+    this.subscribe('xd.hideEdgeCommentDialog',
+                   FB.bind(this._handleEdgeCommentDialogHide, this));
+    this.subscribe('xd.showEdgeCommentDialog',
+                   FB.bind(this._handleEdgeCommentDialogShow, this));
+
   },
 
   /**
@@ -226,6 +231,26 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     if (this._commentWidgetNode) {
       this.dom.removeChild(this._commentWidgetNode);
       delete this._commentWidgetNode;
+    }
+  },
+
+  /**
+   * Handles the XD event instructing the hose to hide the comment
+   * widget iframe.
+   */
+  _handleEdgeCommentDialogHide: function() {
+    if (this._commentWidgetNode) {
+      this._commentWidgetNode.style.display="none";
+    }
+  },
+
+  /**
+   * Handles the XD event instructing the hose to show the comment
+   * widget iframe.
+   */
+  _handleEdgeCommentDialogShow: function() {
+    if (this._commentWidgetNode) {
+      this._commentWidgetNode.style.display="block";
     }
   },
 
