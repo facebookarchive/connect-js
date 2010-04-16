@@ -16,6 +16,7 @@
  * @author alpjor
  * @provides fb.css.connectbarwidget
  * @requires fb.css.base
+ * @nolint
  * @layer xfbml
  */
 .fb_connect_bar_container div,
@@ -43,6 +44,7 @@
   visibility: visible;
   white-space: normal;
   word-spacing: normal;
+  vertical-align: baseline;
 }
 
 .fb_connect_bar_container {
