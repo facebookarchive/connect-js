@@ -106,7 +106,7 @@ FB.provide('', {
    *
    * **Note**: Some [UI methods][FB.ui] like **stream.publish** and
    * **stream.share** can be used without registering an application or calling
-   * this method. If you are using an API key, all methods **must** be called
+   * this method. If you are using an appId, all methods **must** be called
    * after this method.
    *
    * [FB.ui]: /docs/?u=facebook.joey.FB.ui
@@ -114,21 +114,16 @@ FB.provide('', {
    * @access public
    * @param options {Object}
    *
-   * Property | Type    | Description                          | Argument     | Default
-   * -------- | ------- | ------------------------------------ | ------------ | -------
-   * appId    | String  | Your application ID.                 | **Required** |
-   * cookie   | Boolean | `true` to enable cookie support.     | *Optional*   | `false`
-   * logging  | Boolean | `false` to disable logging.          | *Optional*   | `true`
-   * session  | Object  | Use specified session object.        | *Optional*   | `null`
-   * status   | Boolean | `true` to fetch fresh status.        | *Optional*   | `false`
-   * xfbml    | Boolean | `true` to parse [[wiki:XFBML]] tags. | *Optional*   | `false`
+   * Property | Type    | Description                          | Argument   | Default
+   * -------- | ------- | ------------------------------------ | ---------- | -------
+   * appId    | String  | Your application ID.                 | *Optional* | `null`
+   * cookie   | Boolean | `true` to enable cookie support.     | *Optional* | `false`
+   * logging  | Boolean | `false` to disable logging.          | *Optional* | `true`
+   * session  | Object  | Use specified session object.        | *Optional* | `null`
+   * status   | Boolean | `true` to fetch fresh status.        | *Optional* | `false`
+   * xfbml    | Boolean | `true` to parse [[wiki:XFBML]] tags. | *Optional* | `false`
    */
   init: function(options) {
-    if (!options || (!options.apiKey && !options.appId)) {
-      FB.log('FB.init() called without an appId.');
-      return;
-    }
-
     // only need to list values here that do not already have a falsy default.
     // this is why cookie/session/status are not listed here.
     FB.copy(options, {
@@ -145,20 +140,22 @@ FB.provide('', {
       FB._logging = false;
     }
 
-    // enable cookie support if told to do so
-    FB.Cookie.setEnabled(options.cookie);
+    if (FB._apiKey) {
+      // enable cookie support if told to do so
+      FB.Cookie.setEnabled(options.cookie);
 
-    // if an explicit session was not given, try to _read_ an existing cookie.
-    // we dont enable writing automatically, but we do read automatically.
-    options.session = options.session || FB.Cookie.load();
+      // if an explicit session was not given, try to _read_ an existing cookie.
+      // we dont enable writing automatically, but we do read automatically.
+      options.session = options.session || FB.Cookie.load();
 
-    // set the session
-    FB.Auth.setSession(options.session,
-                       options.session ? 'connected' : 'unknown');
+      // set the session
+      FB.Auth.setSession(options.session,
+                         options.session ? 'connected' : 'unknown');
 
-    // load a fresh session if requested
-    if (options.status) {
-      FB.getLoginStatus();
+      // load a fresh session if requested
+      if (options.status) {
+        FB.getLoginStatus();
+      }
     }
 
     // weak dependency on XFBML
