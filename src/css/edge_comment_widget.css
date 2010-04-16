@@ -22,8 +22,7 @@
   position: relative;
 }
 
-.fb_edge_comment_widget {
+.fb_edge_widget_with_comment span.fb_edge_comment_widget {
   left: -4px;
   position: absolute;
 }
-
