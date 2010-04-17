@@ -226,7 +226,6 @@ FB.provide('', {
    * perms  | String | Comma separated list of [[wiki:Extended permissions]].
    */
   login: function(cb, opts) {
-    // TODO this should not force popup mode
     opts = FB.copy({ method: 'auth.login', display: 'popup' }, opts || {});
     FB.ui(opts, cb);
   },
@@ -420,14 +419,16 @@ FB.provide('UIServer.Methods', {
           session);
 
       FB.copy(call.params, {
-        cancel_url      : cancel,
-        channel_url     : window.location.toString(),
-        next            : next,
-        fbconnect       : 1,
-        req_perms       : call.params.perms,
-        return_session  : 1,
-        session_version : 3,
-        v               : '1.0'
+        cancel_url              : cancel,
+        channel_url             : window.location.toString(),
+        next                    : next,
+        fbconnect               : 1,
+        req_perms               : call.params.perms,
+        enable_profile_selector : call.params.enable_profile_selector,
+        profile_selector_ids    : call.params.profile_selector_ids,
+        return_session          : 1,
+        session_version         : 3,
+        v                       : '1.0'
       });
       delete call.cb;
       delete call.params.perms; //TODO fix name to be the same on server

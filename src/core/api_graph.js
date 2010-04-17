@@ -263,9 +263,9 @@ FB.provide('ApiServer', {
   oauthRequest: function(domain, path, method, params, cb) {
     // add oauth token if we have one
     if (FB._session &&
-        FB._session.oauth_access_token &&
-        !params.access_token) {
-      params.access_token = FB._session.oauth_access_token;
+        FB._session.oauth_token &&
+        !params.oauth_token) {
+      params.oauth_token = FB._session.oauth_token;
     }
     params.sdk = 'joey';
 
