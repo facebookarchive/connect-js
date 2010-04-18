@@ -48,7 +48,7 @@
 }
 
 .fb_connect_bar_container {
-  position: fixed !important;
+  position: fixed;
   left: 0px !important;
   right: 0px !important;
   height: 42px !important;
@@ -58,6 +58,7 @@
   border-bottom: 1px solid #333 !important;
   background: #3b5998 !important;
   z-index: 99999999 !important;
+  overflow: hidden !important;
 }
 
 .fb_connect_bar_container_ie6 {

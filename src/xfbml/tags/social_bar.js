@@ -55,7 +55,7 @@ FB.subclass('XFBML.SocialBar', 'XFBML.IframeWidget', null, {
       message.resetWidth = true;
       message.width      = page_width;
     }
-    FB.Anim.ate(iframe, { width: message.width }, 300, function(el) {
+    FB.Anim.ate(iframe, { width: message.width + 'px' }, 300, function(el) {
       if (message.resetWidth) {
         el.style.width = '100%';
       }
@@ -70,15 +70,15 @@ FB.subclass('XFBML.SocialBar', 'XFBML.IframeWidget', null, {
         frame._origHeight = parseInt(FB.Dom.getStyle(frame, 'height'), 10);
         frame._origWidth  = parseInt(FB.Dom.getStyle(frame, 'width'), 10);
         FB.Anim.ate(frame, {
-          height  : 0,
-          width   : 0,
+          height  : '0px',
+          width   : '0px',
           opacity : 0
         }, 300);
         frame._isHidden = true;
       } else {
         FB.Anim.ate(frame, {
-          height  : frame._origHeight,
-          width   : frame._origWidth,
+          height  : frame._origHeight + 'px',
+          width   : frame._origWidth + 'px',
           opacity : 100
         });
         frame._isHidden = false;
@@ -109,7 +109,7 @@ FB.subclass('XFBML.SocialBar', 'XFBML.IframeWidget', null, {
         el.style[_this._attr.position] = _this._initialHeight + 'px';
         el.style.right                 = pos + 'px';
         el.style.zIndex                = ++_this._currentZ;
-        FB.Anim.ate(el, { height: message.height, opacity: 100 });
+        FB.Anim.ate(el, { height: message.height + 'px', opacity: 100 });
       }
     });
     this._currentChildRight += parseInt(message.width, 10);
@@ -130,12 +130,12 @@ FB.subclass('XFBML.SocialBar', 'XFBML.IframeWidget', null, {
         var width_removed = parseInt(FB.Dom.getStyle(frame, 'width'), 10);
         removed += width_removed;
         this._currentChildRight -= width_removed;
-        FB.Anim.ate(frame, { height: 0, opacity: 0 }, 300, function(el) {
+        FB.Anim.ate(frame, { height: '0px', opacity: 0 }, 300, function(el) {
           el.parentNode.parentNode.removeChild(el.parentNode);
         });
       } else {
         FB.Anim.ate(frame, {
-          right: parseInt(FB.Dom.getStyle(frame, 'right'), 10) - removed
+          right: parseInt(FB.Dom.getStyle(frame, 'right'), 10) - removed + 'px'
         }, 300);
       }
     }
@@ -166,7 +166,7 @@ FB.subclass('XFBML.SocialBar', 'XFBML.IframeWidget', null, {
       // initial position
       container.style[this._attr.position] = (-1*this._initialHeight) + 'px';
       // fade and slide in
-      move[this._attr.position] = 0;
+      move[this._attr.position] = '0px';
     }
     FB.Anim.ate(container, move);
 

@@ -185,7 +185,7 @@ FB.provide('RestServer', {
 
     // this is the JSONP callback invoked by the response from restserver.php
     FB.RestServer._callbacks[g] = function(response) {
-      cb(response);
+      if (cb) { cb(response); }
       delete FB.RestServer._callbacks[g];
       script.parentNode.removeChild(script);
     };

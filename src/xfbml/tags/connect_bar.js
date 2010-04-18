@@ -161,33 +161,24 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     FB.Array.forEach(bar.getElementsByTagName('a'), function(el) {
       el.onclick = FB.bind(_this._clickHandler, _this);
     });
-    this._page = document.body.parentNode;
-    // TODO(naitik) When FB.Dom.UA is fixed correct these checks
-    if (!window.XMLHttpRequest) { // ie6
-      this._page = document.body;
-      // ie6 just won't show the container @ 100%, this was the best I could do
-      // to make it ful width, but this makes the hoz scroll bar appear
-      container.style.width = '102%';
-    }
+    this._page = document.body;
     var top_margin =
       parseInt(FB.Dom.getStyle(this._page, 'marginTop'), 10);
     top_margin = isNaN(top_margin) ? 0 : top_margin;
     this._initTopMargin = top_margin;
-    if (!window.XMLHttpRequest ||
-        navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
-      FB.Anim.ate(document.body, {
-        backgroundPositionY: this._initialHeight
-      });
-    }
     if (!window.XMLHttpRequest) { // ie6
       container.className += " fb_connect_bar_container_ie6";
     } else {
       container.style.top = (-1*this._initialHeight) + 'px';
-      FB.Anim.ate(container, { top: 0 });
+      FB.Anim.ate(container, { top: '0px' });
     }
-    FB.Anim.ate(this._page, {
-      marginTop: this._initTopMargin + this._initialHeight
-    });
+    var move = { marginTop: this._initTopMargin + this._initialHeight + 'px' }
+    if (FB.Dom.getBrowserType() == 'ie') { // for ie
+      move.backgroundPositionY = this._initialHeight + 'px'
+    } else { // for others
+      move.backgroundPosition = '? ' + this._initialHeight + 'px'
+    }
+    FB.Anim.ate(this._page, move);
   },
 
   /**
@@ -233,19 +224,16 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   },
 
   _closeConnectBar: function() {
-    FB.Anim.ate(this._page, {
-      marginTop: this._initTopMargin
-    }, 300);
-    // TODO(naitik) When FB.Dom.UA is fixed correct these checks
-    if (!window.XMLHttpRequest ||
-        navigator.appVersion.indexOf('MSIE 7.')!=-1) { // ie6 && ie7
-      FB.Anim.ate(document.body, {
-        backgroundPositionY: 0
-      }, 300);
-    }
     this._notDisplayed = true;
+    var move = { marginTop: this._initTopMargin + 'px' }
+    if (FB.Dom.getBrowserType() == 'ie') { // for ie
+      move.backgroundPositionY = '0px'
+    } else { // for others
+      move.backgroundPosition = '? 0px'
+    }
+    FB.Anim.ate(this._page, move, 300);
     FB.Anim.ate(this._container, {
-      top: -1 * this._initialHeight
+      top: (-1 * this._initialHeight) + 'px'
     }, 300, function(el) {
       el.parentNode.removeChild(el);
     });

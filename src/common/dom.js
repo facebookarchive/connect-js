@@ -70,29 +70,65 @@ FB.provide('Dom', {
    * Returns the computed style for the element
    *
    * note: requires browser specific names to be passed for specials
-   *       opacity -> ('-moz-opacity', 'opacity', 'filters.alpha')
    *       border-radius -> ('-moz-border-radius', 'border-radius')
    *
    * @param dom {DOMElement} the element
    * @param styleProp {String} the property name
    */
   getStyle: function (dom, styleProp) {
-    var y = false;
-    if (dom.currentStyle) { // camelCase (e.g. 'marginTop')
-      FB.Array.forEach(/\-([a-z])/.exec(styleProp), function(match) {
-        styleProp = styleProp.replace('-' + match, match.toUpperCase());
-      });
-      y = dom.currentStyle[styleProp];
-    } else { // dashes (e.g. 'margin-top')
-      FB.Array.forEach(/([A-Z])/.exec(styleProp), function(match) {
-        styleProp = styleProp.replace(match, '-'+ match.toLowerCase());
-      });
-      if (window.getComputedStyle) {
-        y = document.defaultView
-         .getComputedStyle(dom,null).getPropertyValue(styleProp);
+    var y = false, s = dom.style;
+    if (styleProp == 'opacity') {
+      if (s.opacity) { return s.opacity * 100; }
+      if (s.MozOpacity) { return s.MozOpacity * 100; }
+      if (s.KhtmlOpacity) { return s.KhtmlOpacity * 100; }
+      if (s.filters) { return s.filters.alpha.opacity; }
+      return 0; // TODO(alpjor) fix default opacity
+    } else {
+      if (dom.currentStyle) { // camelCase (e.g. 'marginTop')
+        FB.Array.forEach(/\-([a-z])/.exec(styleProp), function(match) {
+          styleProp = styleProp.replace('-' + match, match.toUpperCase());
+        });
+        y = dom.currentStyle[styleProp];
+      } else { // dashes (e.g. 'margin-top')
+        FB.Array.forEach(/([A-Z])/.exec(styleProp), function(match) {
+          styleProp = styleProp.replace(match, '-'+ match.toLowerCase());
+        });
+        if (window.getComputedStyle) {
+          y = document.defaultView
+           .getComputedStyle(dom,null).getPropertyValue(styleProp);
+          // special handling for IE
+          // for some reason it doesn't return '0%' for defaults. so needed to
+          // translate 'top' and 'left' into '0px'
+          if (styleProp == 'background-position-y' ||
+              styleProp == 'background-position-x') {
+            if (y == 'top' || y == 'left') { y = '0px'; }
+          }
+        }
       }
     }
     return y;
+  },
+
+  /**
+   * Sets the style for the element to value
+   *
+   * note: requires browser specific names to be passed for specials
+   *       border-radius -> ('-moz-border-radius', 'border-radius')
+   *
+   * @param dom {DOMElement} the element
+   * @param styleProp {String} the property name
+   * @param value {String} the css value to set this property to
+   */
+  setStyle: function(dom, styleProp, value) {
+    var s = dom.style;
+    if (styleProp == 'opacity') {
+      if (value >= 100) { value = 99.999; } // fix for Mozilla < 1.5b2
+      if (value < 0) { value = 0; }
+      s.opacity = value/100;
+      s.MozOpacity = value/100;
+      s.KhtmlOpacity = value/100;
+      if (s.filters) { s.filters.alpha.opacity = value; }
+    } else { s[styleProp] = value; }
   },
 
   /**

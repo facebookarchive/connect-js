@@ -19,7 +19,7 @@
  */
 
 /**
- * This provides helper methods related to animation.
+ * This provides helper methods related to basic animation.
  *
  * @class FB.Anim
  * @static
@@ -29,55 +29,97 @@ FB.provide('Anim', {
   /**
    * Animate Transformable Element
    *
-   * Note: only pixel, opactity values are animatable
+   * Note: only pixel, point, %, and opactity values are animate-able
    *
-   * @param dom {DOMElement} the element
-   * @param props {Object} an object with the properties of the destination
-   * @param duration {Number} the number of miliseconds over which the animation
-   *                          should happen
+   * @param dom {DOMElement} the element to be animated
+   * @param props {Object} an object with the properties of the animation
+   *                       destination
+   * @param duration {Number} the number of milliseconds over which the
+   *                          animation should happen.
    * @param callback {Function} the callback function to call after the
-   *                                 animcation is complete
+   *                            animation is complete
    */
   ate: function(dom, props, duration, callback) {
-    duration = duration ? duration : 500;
+    duration = duration ? duration : 750;
     var
       frame_speed = 40,
-      step        = 0,
-      total_steps = Math.round(duration / frame_speed),
-      start       = {},
-      _this       = this,
+      from        = {},
+      to          = {},
+      begin       = null,
       s           = dom.style,
-      timer       = setInterval(function() {
-        FB.Array.forEach(props, function(value, property) {
-          if (step == 0) {
-            if (property === 'opacity') {
-              if (s.opacity) { start[property] = (s.opacity * 100); }
-              if (s.MozOpacity) { start[property] = (s.MozOpacity * 100); }
-              if (s.KhtmlOpacity) { start[property] = (s.KhtmlOpacity * 100); }
-              if (s.filters) { start[property] = s.filters.alpha.opacity; }
-            } else {
-              start[property] = parseInt(FB.Dom.getStyle(dom, property), 10);
-            }
+      timer       = setInterval(FB.bind(function() {
+        if (!begin) { begin = new Date().getTime(); }
+        // percent done
+        var pd = Math.min((new Date().getTime() - begin) / duration, 1);
+        FB.Array.forEach(props, FB.bind(function(value, prop) {
+          if (!from[prop]) { // parse from CSS
+            var style = FB.Dom.getStyle(dom, prop);
+            // check for can't animate this, bad prop for this browser
+            if (!style) { return; }
+            from[prop] = this._parseCSS(style);
           }
-          var got_property =
-            (!isNaN(start[property]) && start[property] != null);
-          var st = got_property ? start[property] : 0;
-          var pos = parseInt(FB.Dom.getStyle(dom, property), 10);
-          var next = st +
-           Math.ceil((value - st) * Math.sin(Math.PI/2 * (step / total_steps)));
-          if (property == 'opacity') {
-            if (next >= 100) { next = 99.999; } // fix for Mozilla < 1.5b2
-            if (next < 0) { next = 0; }
-            s.opacity = next/100;
-            s.MozOpacity = next/100;
-            s.KhtmlOpacity = next/100;
-            if (s.filters) { s.filters.alpha.opacity = next; }
-          } else { s[property] = next + 'px'; }
-        });
-        if (step++ >= total_steps) {
+          if (!to[prop]) { // parse to CSS
+            to[prop] = this._parseCSS(value.toString());
+          }
+          var next = ''; // the next value to set
+          FB.Array.forEach(from[prop], function(pair, i) {
+            /* check for user overide not animating this part via special symbol
+             * , "?". This is best used for animating properties with multiple
+             * parts, such as backgroundPositon, where you only want to animate
+             * one part and not the other.
+             *
+             * e.g.
+             *   backgroundPosition: '8px 10px' => moves x and y to 8, 10
+             *   backgroundPosition: '? 4px' => moves y to 4 and leaves x alone
+             *   backgroundPosition: '7px ?' => moves x to 7 and leaves y alone
+             */
+            if (isNaN(to[prop][i].numPart) && to[prop][i].textPart == '?') {
+              next = pair.numPart + pair.textPart;
+            /* check for a non animate-able part
+             * this includes colors (for now), positions, anything with out a #,
+             * etc.
+             */
+            } else if (isNaN(pair.numPart)) {
+              next = pair.textPart;
+            // yay it's animate-able!
+            } else {
+              next +=
+                (pair.numPart + // orig value
+                 Math.ceil((to[prop][i].numPart - pair.numPart) *
+                            Math.sin(Math.PI/2 * pd))) +
+                to[prop][i].textPart + ' '; // text part and trailing space
+            }
+          });
+          // update with new value
+          FB.Dom.setStyle(dom, prop, next);
+        }, this));
+        if (pd == 1) { // are we done? clear the timer, call the callback
           clearInterval(timer);
           if (callback) { callback(dom); }
         }
-      }, frame_speed);
+      }, this), frame_speed);
+  },
+
+  /*
+   * Parses a CSS statment into it's parts
+   *
+   * e.g. "1px solid black" =>
+   *        [[numPart: 1,   textPart: 'px'],
+   *         [numPart: NaN, textPart: 'solid'],
+   *         [numPart: NaN, textPart: 'black']]
+   *  or
+   *      "5px 0% 2em none" =>
+   *        [[numPart: 5,   textPart: 'px'],
+   *         [numPart: 0,   textPart: '%'],
+   *         [numPart: 2,   textPart: 'em'],
+   *         [numPart: NaN, textPart: 'none']]
+   */
+  _parseCSS: function(css) {
+    var ret = [];
+    FB.Array.forEach(css.split(' '), function(peice) {
+      var num = parseInt(peice, 10);
+      ret.push({numPart: num, textPart: peice.replace(num,'')});
+    });
+    return ret;
   }
 });
