@@ -11,7 +11,10 @@
  *   fb.compat.ui
  *   fb.compat.xfbml
  *   fb.xfbml.activity
+ *   fb.xfbml.addprofiletab
+ *   fb.xfbml.bookmark
  *   fb.xfbml.comments
+ *   fb.xfbml.connectbar
  *   fb.xfbml.element
  *   fb.xfbml.fan
  *   fb.xfbml.like
@@ -24,6 +27,5 @@
  *   fb.xfbml.serverfbml
  *   fb.xfbml.sharebutton
  *   fb.xfbml.socialbar
- *   fb.xfbml.connectbar
  */
 void(0);

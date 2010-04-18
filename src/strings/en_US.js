@@ -38,6 +38,8 @@ FB.provide('FB.Intl', {
     'cs:share-on-facebook': 'Share on Facebook',
     'cs:connect': 'Connect',
     'cs:connect-with-facebook': 'Connect with Facebook',
-    'cs:logout': 'Facebook Logout'
+    'cs:logout': 'Facebook Logout',
+    'cs:bookmark-on-facebook': 'Bookmark on Facebook',
+    'cs:add-profile-tab-on-facebook': 'Add Profile Tab on Facebook'
   }
 });

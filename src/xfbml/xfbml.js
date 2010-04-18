@@ -225,7 +225,10 @@ FB.provide('XFBML', {
    */
   _tagInfos: [
     { localName: 'activity',        className: 'FB.XFBML.Activity'        },
+    { localName: 'add-profile-tab', className: 'FB.XFBML.AddProfileTab'   },
+    { localName: 'bookmark',        className: 'FB.XFBML.Bookmark'        },
     { localName: 'comments',        className: 'FB.XFBML.Comments'        },
+    { localName: 'connect-bar',     className: 'FB.XFBML.ConnectBar'      },
     { localName: 'fan',             className: 'FB.XFBML.Fan'             },
     { localName: 'like',            className: 'FB.XFBML.Like'            },
     { localName: 'live-stream',     className: 'FB.XFBML.LiveStream'      },
@@ -236,8 +239,7 @@ FB.provide('XFBML', {
     { localName: 'recommendations', className: 'FB.XFBML.Recommendations' },
     { localName: 'serverfbml',      className: 'FB.XFBML.ServerFbml'      },
     { localName: 'share-button',    className: 'FB.XFBML.ShareButton'     },
-    { localName: 'social-bar',      className: 'FB.XFBML.SocialBar'       },
-    { localName: 'connect-bar',     className: 'FB.XFBML.ConnectBar'      }
+    { localName: 'social-bar',      className: 'FB.XFBML.SocialBar'       }
   ]
 });
 
