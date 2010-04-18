@@ -94,7 +94,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         });
         this.fire('connectbar.ondisplay');
         FB.Event.fire('connectbar.ondisplay', this);
-        FB.Helper.invokeHandler(this.getAttribute('ondisplay'), this);
+        FB.Helper.invokeHandler(this.getAttribute('on-display'), this);
       }
     }, this));
   },
@@ -112,7 +112,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       this.fire('render');
       this.fire('connectbar.onnotdisplay');
       FB.Event.fire('connectbar.onnotdisplay', this);
-      FB.Helper.invokeHandler(this.getAttribute('onnotdisplay'), this);
+      FB.Helper.invokeHandler(this.getAttribute('on-not-display'), this);
     }
   },
 
@@ -222,8 +222,8 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         FB.api({ method: 'auth.revokeAuthorization'}, this.bind(function() {
           this.fire('connectbar.ondeauth');
           FB.Event.fire('connectbar.ondeauth', this);
-          FB.Helper.invokeHandler(this.getAttribute('ondeauth'), this);
-          if (this._getBoolAttribute('autorefresh', true)) {
+          FB.Helper.invokeHandler(this.getAttribute('on-deauth'), this);
+          if (this._getBoolAttribute('auto-refresh', true)) {
             window.location.reload();
           }
         }));
@@ -251,7 +251,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     });
     this.fire('connectbar.onclose');
     FB.Event.fire('connectbar.onclose', this);
-    FB.Helper.invokeHandler(this.getAttribute('onclose'), this);
+    FB.Helper.invokeHandler(this.getAttribute('on-close'), this);
   }
 });
 

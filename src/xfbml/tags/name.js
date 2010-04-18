@@ -30,13 +30,13 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
   process: function() {
     FB.copy(this, {
       _uid           : this.getAttribute('uid'),
-      _firstnameonly : this._getBoolAttribute('firstnameonly'),
-      _lastnameonly  : this._getBoolAttribute('lastnameonly'),
+      _firstnameonly : this._getBoolAttribute('first-name-only'),
+      _lastnameonly  : this._getBoolAttribute('last-name-only'),
       _possessive    : this._getBoolAttribute('possessive'),
       _reflexive     : this._getBoolAttribute('reflexive'),
       _objective     : this._getBoolAttribute('objective'),
       _linked        : this._getBoolAttribute('linked', true),
-      _subjectId     : this.getAttribute('subjectid')
+      _subjectId     : this.getAttribute('subject-id')
     });
 
     if (!this._uid) {
@@ -111,7 +111,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
       }
     }
     if (this._uid == FB.Connect.get_loggedInUser() &&
-        this._getBoolAttribute('useyou', true)) {
+        this._getBoolAttribute('use-you', true)) {
       if (this._possessive) {
         if (this._reflexive) {
           word = 'your own';
@@ -155,7 +155,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
           }
           break;
         default:
-          if (this._getBoolAttribute('usethey', true)) {
+          if (this._getBoolAttribute('use-they', true)) {
             if (this._possessive) {
               if (this._reflexive) {
                 word = 'their own';
@@ -210,7 +210,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
       name = '',
       html = '';
     if (this._uid == FB.Helper.getLoggedInUser() &&
-        this._getBoolAttribute('useyou', true)) {
+        this._getBoolAttribute('use-you', true)) {
       if (this._reflexive) {
         if (this._possessive) {
           name = 'your own';
@@ -250,7 +250,7 @@ FB.subclass('XFBML.Name', 'XFBML.Element', null, {
     }
 
     if (!name) {
-      name = this.getAttribute('ifcantsee', 'Facebook User');
+      name = this.getAttribute('if-cant-see', 'Facebook User');
     }
     if (name) {
       if (this._getBoolAttribute('capitalize', false)) {

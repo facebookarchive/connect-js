@@ -46,12 +46,12 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       channel_url      : this.getChannelUrl(),
       debug            : this._getBoolAttribute('debug'),
       href             : this.getAttribute('href', window.location.href),
-      is_permalink     : this._getBoolAttribute('is_permalink'),
-      node_type        : this.getAttribute('node_type', 'link'),
+      is_permalink     : this._getBoolAttribute('is-permalink'),
+      node_type        : this.getAttribute('node-type', 'link'),
       width            : this._getWidgetWidth(),
       font             : this.getAttribute('font'),
       layout           : this._getLayout(),
-      colorscheme      : this.getAttribute('colorscheme'),
+      colorscheme      : this.getAttribute('color-scheme'),
       action           : this.getAttribute('action'),
       show_faces       : this._shouldShowFaces()
     };
@@ -180,7 +180,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    */
   _shouldShowFaces : function() {
     return this._getLayout() !== 'button_count' &&
-           this._getBoolAttribute('show_faces', true);
+           this._getBoolAttribute('show-faces', true);
   },
 
   /**
@@ -262,6 +262,6 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
     this.fire('edge.create', this._attr.href); // dynamically attached
     FB.Event.fire('edge.create', this._attr.href, this); // global
     FB.Helper.invokeHandler(
-      this.getAttribute('oncreate'), this, [this._attr.href]); // inline
+      this.getAttribute('on-create'), this, [this._attr.href]); // inline
   }
 });

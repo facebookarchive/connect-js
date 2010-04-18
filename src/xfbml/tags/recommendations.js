@@ -39,8 +39,8 @@ FB.subclass('XFBML.Recommendations', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      border_color : this.getAttribute('border_color'),
-      colorscheme  : this.getAttribute('colorscheme'),
+      border_color : this.getAttribute('border-color'),
+      colorscheme  : this.getAttribute('color-scheme'),
       font         : this.getAttribute('font'),
       header       : this._getBoolAttribute('header'),
       height       : this._getPxAttribute('height', 300),

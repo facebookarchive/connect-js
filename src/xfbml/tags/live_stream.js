@@ -34,8 +34,8 @@ FB.subclass('XFBML.LiveStream', 'XFBML.IframeWidget', null, {
   setupAndValidate: function() {
     this._attr = {
       height         : this._getPxAttribute('height', 500),
-      hideFriendsTab : this.getAttribute('hide_friends_tab'),
-      redesigned     : this._getBoolAttribute('redesigned_stream'),
+      hideFriendsTab : this.getAttribute('hide-friends-tab'),
+      redesigned     : this._getBoolAttribute('redesigned-stream'),
       width          : this._getPxAttribute('width', 400),
       xid            : this.getAttribute('xid', 'default')
     };

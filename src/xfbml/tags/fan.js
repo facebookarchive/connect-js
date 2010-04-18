@@ -37,8 +37,8 @@ FB.subclass('XFBML.Fan', 'XFBML.IframeWidget', null, {
       connections : this.getAttribute('connections', '10'),
       css         : this.getAttribute('css'),
       height      : this.getAttribute('height'),
-      id          : this.getAttribute('profile_id'),
-      logobar     : this._getBoolAttribute('logobar'),
+      id          : this.getAttribute('profile-id'),
+      logobar     : this._getBoolAttribute('logo-bar'),
       name        : this.getAttribute('name'),
       stream      : this._getBoolAttribute('stream', true),
       width       : this._getPxAttribute('width', 300)

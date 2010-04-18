@@ -45,7 +45,7 @@ FB.subclass('XFBML.Comments', 'XFBML.IframeWidget', null, {
       channel_url : this.getChannelUrl(),
       css         : this.getAttribute('css'),
       notify      : this.getAttribute('notify'),
-      numposts    : this.getAttribute('numposts', 10),
+      numposts    : this.getAttribute('num-posts', 10),
       quiet       : this.getAttribute('quiet'),
       reverse     : this.getAttribute('reverse'),
       simple      : this.getAttribute('simple'),

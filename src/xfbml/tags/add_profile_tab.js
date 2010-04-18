@@ -46,7 +46,7 @@ FB.subclass('XFBML.AddProfileTab', 'XFBML.ButtonElement', null, {
   onClick: function() {
     FB.ui({ method: 'profile.addtab' }, this.bind(function(result) {
       if (result.tab_added) {
-        FB.Helper.invokeHandler(this.getAttribute('onadd'), this);
+        FB.Helper.invokeHandler(this.getAttribute('on-add'), this);
       }
     }));
   }

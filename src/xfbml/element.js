@@ -51,7 +51,11 @@ FB.Class('XFBML.Element',
    * @return {Object} final value
    */
   getAttribute: function(name, defaultValue, transform) {
-    var value = this.dom.getAttribute(name);
+    var value = (
+      this.dom.getAttribute(name) ||
+      this.dom.getAttribute(name.replace(/-/g, '_')) ||
+      this.dom.getAttribute(name.replace(/-/g, ''))
+    );
     return value ? (transform ? transform(value) : value) : defaultValue;
   },
 

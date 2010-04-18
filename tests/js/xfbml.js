@@ -38,6 +38,8 @@ test(
         ' px-attr-three="three"' +
         ' list-attr-one="hello"' +
         ' list-attr-two="world"' +
+        ' under_score="42"' +
+        ' joinword="42"' +
         '>' +
         'Some text' +
       '</a>'
@@ -63,6 +65,9 @@ test(
            'hello', 'expect list value "hello"');
     equals(xe._getAttributeFromList('list-attr-two', "a", ['hello']),
            'a', 'expect list value "a"');
+
+    equals(xe.getAttribute('under-score'), 42, 'got under_score attr value');
+    equals(xe.getAttribute('join-word'), 42, 'got joinword attr value');
 
     xe.clear();
     equals(xe.dom.innerHTML, '');

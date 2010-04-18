@@ -46,7 +46,7 @@ FB.subclass('XFBML.Bookmark', 'XFBML.ButtonElement', null, {
   onClick: function() {
     FB.ui({ method: 'bookmark.add' }, this.bind(function(result) {
       if (result.bookmarked) {
-        FB.Helper.invokeHandler(this.getAttribute('onadd'), this);
+        FB.Helper.invokeHandler(this.getAttribute('on-add'), this);
       }
     }));
   }
