@@ -96,7 +96,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * don't see too much.  (At the moment, we ignore the any
    * user-defined height, but that might change.)
    *
-   * This logic is replicated in html/widgets/like.php and
+   * This logic is replicated in html/plugins/like.php and
    * lib/external_node/param_validation.php, and must be replicated
    * because it helps size the client's iframe.
    *
@@ -120,7 +120,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * flexibility in how wide the widget is, so a user-supplied
    * width just needs to fall within a certain range.
    *
-   * This logic is replicated in html/widgets/like.php and
+   * This logic is replicated in html/plugins/like.php and
    * lib/external_node/param_validation.php, and must be replicated
    * because it helps size the client's iframe.
    *
@@ -156,7 +156,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * omits a layout, or if they layout they specify is invalid,
    * then we just go with 'standard'.
    *
-   * This logic is replicated in html/widgets/like.php and
+   * This logic is replicated in html/plugins/like.php and
    * lib/external_node/param_validation.php, and must be replicated
    * because it helps size the client's iframe.
    *
@@ -172,7 +172,7 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
    * Returns true if and only if we should be showing faces in the
    * widget, and false otherwise.
    *
-   * This logic is replicated in html/widgets/like.php and
+   * This logic is replicated in html/plugins/like.php and
    * lib/external_node/param_validation.php, and must be replicated
    * because it helps size the client's iframe.
    *

@@ -88,7 +88,7 @@ FB.provide('', {
    * Facebook Connect features are available many locales. You can replace the
    * `en_US` locale specifed above with one of the [supported Facebook
    * Locales][locales]. For example, to load up the library and trigger dialogs,
-   * popups and widgets to be in Hindi (`hi_IN`), you can load the library from
+   * popups and plugins to be in Hindi (`hi_IN`), you can load the library from
    * this URL:
    *
    *     http://connect.facebook.net/hi_IN/all.js

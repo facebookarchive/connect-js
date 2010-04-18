@@ -107,7 +107,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:login></fb:login>',
-      'iframe.*widgets/login.php'
+      'iframe.*plugins/login.php'
     );
   }
 );
@@ -128,7 +128,19 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:fan name="platform"></fb:fan>',
-      'iframe.*widgets/fan.php'
+      'iframe.*plugins/fan.php'
+    );
+  }
+);
+
+test(
+  'fb:like-box',
+
+  function() {
+    XTest.expect(1);
+    XTest.regex(
+      '<fb:fan name="platform"></fb:fan>',
+      'iframe.*plugins/likebox.php'
     );
   }
 );
@@ -140,7 +152,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:activity site="cnn.com"></fb:activity>',
-      'iframe.*widgets/activity.php'
+      'iframe.*plugins/activity.php'
     );
   }
 );
@@ -152,7 +164,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:recommendations site="cnn.com"></fb:recommendations>',
-      'iframe.*widgets/recommendations.php'
+      'iframe.*plugins/recommendations.php'
     );
   }
 );
@@ -164,7 +176,7 @@ test(
     XTest.expect(1);
     XTest.regex(
       '<fb:live-stream></fb:live-stream>',
-      'iframe.*widgets/livefeed.php'
+      'iframe.*plugins/livefeed.php'
     );
   }
 );

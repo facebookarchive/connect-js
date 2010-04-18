@@ -18,6 +18,7 @@
  *   fb.xfbml.element
  *   fb.xfbml.fan
  *   fb.xfbml.like
+ *   fb.xfbml.likebox
  *   fb.xfbml.livestream
  *   fb.xfbml.login
  *   fb.xfbml.loginbutton

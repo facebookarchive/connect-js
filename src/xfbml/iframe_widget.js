@@ -66,8 +66,8 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   /**
    * Implemented by the inheriting class to return a **name** and **params**.
    *
-   * The name is the the file name in the widgets directory. So the name "fan"
-   * translates to the path "/widgets/fan.php". This enforces consistency.
+   * The name is the the file name in the plugins directory. So the name "fan"
+   * translates to the path "/plugins/fan.php". This enforces consistency.
    *
    * The params should be the query params needed for the widget. API Key,
    * Session Key, SDK and Locale are automatically included.
@@ -262,9 +262,9 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   },
 
   /**
-   * Most iframe widgets do not tie their internal state to the "Connected"
+   * Most iframe plugins do not tie their internal state to the "Connected"
    * state of the application. In other words, the fan box knows who you are
-   * even if the page it contains does not. These widgets therefore only need
+   * even if the page it contains does not. These plugins therefore only need
    * to reload when the user signs in/out of facebook, not the application.
    *
    * This misses the case where the user switched logins without the
@@ -346,7 +346,7 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
    * @return {String} the url
    */
   _getURL: function() {
-    return FB._domain.www + 'widgets/' + this.getUrlBits().name + '.php';
+    return FB._domain.www + 'plugins/' + this.getUrlBits().name + '.php';
   },
 
   /**

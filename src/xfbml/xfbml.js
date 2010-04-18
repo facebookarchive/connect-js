@@ -247,6 +247,7 @@ FB.provide('XFBML', {
     { localName: 'connect-bar',     className: 'FB.XFBML.ConnectBar'      },
     { localName: 'fan',             className: 'FB.XFBML.Fan'             },
     { localName: 'like',            className: 'FB.XFBML.Like'            },
+    { localName: 'like-box',        className: 'FB.XFBML.LikeBox'         },
     { localName: 'live-stream',     className: 'FB.XFBML.LiveStream'      },
     { localName: 'login',           className: 'FB.XFBML.Login'           },
     { localName: 'login-button',    className: 'FB.XFBML.LoginButton'     },
