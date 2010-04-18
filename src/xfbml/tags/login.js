@@ -33,7 +33,8 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
    */
   setupAndValidate: function() {
     this._attr = {
-      channel: this.getChannelUrl()
+      channel: this.getChannelUrl(),
+      max_friends: this.getAttribute('max-friends', 6)
     };
 
     return true;
@@ -57,10 +58,12 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
   /**
    * Get the initial size.
    *
+   * By default, shows one row of 6 profiles
+   *
    * @return {Object} the size
    */
   getSize: function() {
-    return { width: 300, height: 300 };
+    return { width: 305, height: 97 };
   },
 
   /**
