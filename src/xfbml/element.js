@@ -65,7 +65,7 @@ FB.Class('XFBML.Element',
   _getBoolAttribute: function(name, defaultValue) {
     return this.getAttribute(name, defaultValue, function(s) {
       s = s.toLowerCase();
-      return s == 'true' || s == '1' || s == 'yes';
+      return s == 'true' || s == '1' || s == 'yes' || s == 'on';
     });
   },
 

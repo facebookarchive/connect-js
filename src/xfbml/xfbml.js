@@ -155,6 +155,22 @@ FB.provide('XFBML', {
     } else {
       var processor = function() {
         var fn = eval(tagInfo.className);
+
+        // TODO(naitik) cleanup after f8
+        //
+        // currently, tag initialization is done via a constructor function,
+        // there by preventing a tag implementation to vary between two types
+        // of objects. post f8, this should be changed to a factory function
+        // which would allow the login button to instantiate the Button based
+        // tag or Iframe based tag depending on the attribute value.
+        if (tagInfo.className === 'FB.XFBML.LoginButton') {
+          var attr = dom.getAttribute('show-faces');
+          if (attr && FB.Array.indexOf(
+                ['true', '1', 'yes', 'on'], attr.toLowerCase()) > -1) {
+            fn = FB.XFBML.Login;
+          }
+        }
+
         element = dom._element = new fn(dom);
         element.subscribe('render', cb);
         element.process();
