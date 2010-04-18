@@ -382,7 +382,7 @@ FB.provide('Auth', {
 
 FB.provide('UIServer.Methods', {
   'auth.login': {
-    size      : { width: 450, height: 415 },
+    size      : { width: 627, height: 326 },
     url       : 'login.php',
     transform : function(call) {
       //FIXME
