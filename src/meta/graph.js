@@ -16,6 +16,7 @@
  *   fb.xfbml.comments
  *   fb.xfbml.connectbar
  *   fb.xfbml.element
+ *   fb.xfbml.facepile
  *   fb.xfbml.fan
  *   fb.xfbml.like
  *   fb.xfbml.likebox

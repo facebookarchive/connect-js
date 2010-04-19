@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @provides fb.xfbml.login
+ * @provides fb.xfbml.facepile
  * @layer xfbml
  * @requires fb.type fb.xfbml.iframewidget fb.auth
  */
 
 /**
- * Implementation for fb:login tag.
+ * Implementation for fb:facepile tag.
  *
- * @class FB.XFBML.Login
+ * @class FB.XFBML.Facepile
  * @extends FB.XFBML.IframeWidget
  * @private
  */
-FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
+FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
   _visibleAfter: 'load',
 
   /**
@@ -41,20 +41,6 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
     return true;
   },
 
-  /**
-   * Setup event handlers.
-   */
-  oneTimeSetup: function() {
-    // this widget's internal state is tied to the "connected" status. it
-    // doesn't care about the difference between "unknown" and "notConnected".
-    var lastStatus = FB._userStatus;
-    FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
-      if (lastStatus == 'connected' || response.status == 'connected') {
-        this.process(true);
-      }
-      lastStatus = response.status;
-    }, this));
-  },
 
   /**
    * Get the initial size.
@@ -64,7 +50,7 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
    * @return {Object} the size
    */
   getSize: function() {
-    return { width: this._attr.width, height: 94 };
+    return { width: this._attr.width, height: 70 };
   },
 
   /**
@@ -73,6 +59,6 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
    * @return {Object} the iframe URL bits
    */
   getUrlBits: function() {
-    return { name: 'login', params: this._attr };
+    return { name: 'facepile', params: this._attr };
   }
 });
