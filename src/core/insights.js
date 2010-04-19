@@ -56,8 +56,8 @@ FB.provide('Insights', {
         i = new Image(1, 1),
         s = [];
 
-    if (!params.api_key && FB._apikey) {
-      params.api_key = FB._apikey;
+    if (!params.api_key && FB._apiKey) {
+      params.api_key = FB._apiKey;
     }
     for (var k in params) {
       s.push(encodeURIComponent(k) + '=' + encodeURIComponent(params[k]));
