@@ -20,6 +20,7 @@
 
 .fb_edge_widget_with_comment {
   position: relative;
+  z-index: 1000;
 }
 
 .fb_edge_widget_with_comment span.fb_edge_comment_widget {
