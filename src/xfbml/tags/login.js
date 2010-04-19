@@ -34,7 +34,7 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
   setupAndValidate: function() {
     this._attr = {
       channel: this.getChannelUrl(),
-      max_friends: this.getAttribute('max-friends', 6)
+      max_rows: this.getAttribute('max-rows')
     };
 
     return true;
@@ -63,7 +63,7 @@ FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
    * @return {Object} the size
    */
   getSize: function() {
-    return { width: 305, height: 97 };
+    return { width: 300, height: 94 };
   },
 
   /**
