@@ -15,14 +15,14 @@
  *
  * @provides fb.xfbml.facepile
  * @layer xfbml
- * @requires fb.type fb.xfbml.iframewidget fb.auth
+ * @requires fb.type fb.xfbml.facepile fb.auth
  */
 
 /**
  * Implementation for fb:facepile tag.
  *
  * @class FB.XFBML.Facepile
- * @extends FB.XFBML.IframeWidget
+ * @extends FB.XFBML.Facepile
  * @private
  */
 FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
@@ -41,6 +41,20 @@ FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
     return true;
   },
 
+  /**
+   * Setup event handlers.
+   */
+  oneTimeSetup: function() {
+    // this widget's internal state is tied to the "connected" status. it
+    // doesn't care about the difference between "unknown" and "notConnected".
+    var lastStatus = FB._userStatus;
+    FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
+      if (lastStatus == 'connected' || response.status == 'connected') {
+        this.process(true);
+      }
+      lastStatus = response.status;
+    }, this));
+  },
 
   /**
    * Get the initial size.

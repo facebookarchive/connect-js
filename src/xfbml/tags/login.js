@@ -25,36 +25,8 @@
  * @extends FB.XFBML.IframeWidget
  * @private
  */
-FB.subclass('XFBML.Login', 'XFBML.IframeWidget', null, {
+FB.subclass('XFBML.Login', 'XFBML.Facepile', null, {
   _visibleAfter: 'load',
-
-  /**
-   * Do initial attribute processing.
-   */
-  setupAndValidate: function() {
-    this._attr = {
-      channel: this.getChannelUrl(),
-      max_rows: this.getAttribute('max-rows'),
-      width: this._getPxAttribute('width', 200)
-    };
-
-    return true;
-  },
-
-  /**
-   * Setup event handlers.
-   */
-  oneTimeSetup: function() {
-    // this widget's internal state is tied to the "connected" status. it
-    // doesn't care about the difference between "unknown" and "notConnected".
-    var lastStatus = FB._userStatus;
-    FB.Event.subscribe('auth.statusChange', FB.bind(function(response) {
-      if (lastStatus == 'connected' || response.status == 'connected') {
-        this.process(true);
-      }
-      lastStatus = response.status;
-    }, this));
-  },
 
   /**
    * Get the initial size.
