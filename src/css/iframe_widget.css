@@ -26,6 +26,8 @@
   /* this is necessary for IE. without it, once hidden, it wont become visible
    * again */
   position: relative;
+  /* this is to remove the bottom margin appearing on the iframe widgets */
+  vertical-align: text-bottom;
 }
 
 .fb_iframe_widget span {
