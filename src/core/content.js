@@ -157,7 +157,13 @@ FB.provide('Content', {
       // because its the second load, we no longer suffer from cache sickness.
       // It must be javascript:false instead of about:blank, otherwise IE6 will
       // complain in https.
-      opts.root.innerHTML = '<iframe src="javascript:false"></iframe>';
+      // Since javascript:false actually result in an iframe containing the
+      // string 'false', we set the iframe height to 1px so that it gets loaded
+      // but stays invisible.
+      opts.root.innerHTML = '<iframe src="javascript:false"'+
+                            ' frameborder="0"'+
+                            ' scrolling="no"'+
+                            ' style="height:1px"></iframe>';
 
       // Now we'll be setting the real src.
       srcSet = true;
