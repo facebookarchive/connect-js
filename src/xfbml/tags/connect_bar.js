@@ -155,7 +155,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       }),
       FB.Intl.tx('connect-bar:learn-more'),
       info.profile_url,
-      '#' // TODO(alpjor) learn_more url
+      FB._domain.www + 'sitetour/connect.php'
     );
     var _this = this;
     FB.Array.forEach(bar.getElementsByTagName('a'), function(el) {
