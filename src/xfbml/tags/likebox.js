@@ -38,7 +38,7 @@ FB.subclass('XFBML.LikeBox', 'XFBML.IframeWidget', null, {
       css         : this.getAttribute('css'),
       height      : this.getAttribute('height'),
       id          : this.getAttribute('profile-id'),
-      header      : this._getBoolAttribute('header'),
+      header      : this._getBoolAttribute('header', true),
       name        : this.getAttribute('name'),
       stream      : this._getBoolAttribute('stream', true),
       width       : this._getPxAttribute('width', 300)
@@ -54,18 +54,23 @@ FB.subclass('XFBML.LikeBox', 'XFBML.IframeWidget', null, {
     if (!height) {
       if ((!this._attr.connections || this._attr.connections === '0') &&
           !this._attr.stream) {
-        height = 45;
-      } else if (!this._attr.connections || this._attr.connections === '0') {
-        height = 385;
-      } else if (!this._attr.stream) {
-        height = 260;
+        height = 62;
       } else {
-        height = 565;
+        height = 95;
+
+        if (this._attr.connections && this._attr.connections !== '0') {
+          height += 160;
+        }
+
+        if (this._attr.stream) {
+          height += 300;
+        }
+
+        // add space for header
+        if (this._attr.header && this._attr.header !== '0') {
+         height += 32;
+        }
       }
-    }
-    // add space for header
-    if (this._attr.header !== '0' && !this._attr.header) {
-      height += 30;
     }
 
     this._attr.height = height;
