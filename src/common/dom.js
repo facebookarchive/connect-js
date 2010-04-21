@@ -175,7 +175,16 @@ FB.provide('Dom', {
       style.textContent = styles;
       document.getElementsByTagName('HEAD')[0].appendChild(style);
     } else {
-      document.createStyleSheet().cssText = styles;
+      try {
+        document.createStyleSheet().cssText = styles;
+      } catch (exc) {
+        // major problem on IE : You can only create 31 stylesheet objects with
+        // this method. We will have to add the styles into an existing
+        // stylesheet.
+        if (document.styleSheets[0]) {
+          document.styleSheets[0].cssText += styles;
+        }
+      }
     }
   },
 
