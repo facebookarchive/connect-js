@@ -17,30 +17,15 @@
  * @requires fb.tests.qunit
  *           fb.api
  */
-// all the API functions share the signature, so we use the same test with all
-// of them. it also ensures we have parity between them.
-//
-// pad: is used to "fake" a large request (>2k) to trigger the automatic
-// failure of jsonp which is used by default
-var runAPI = function(impl, pad) {
-  var query = 'SELECT name FROM user WHERE uid=4';
-  if (pad) {
-    while (query.length < 2000) {
-      query += ' ';
-    }
-  }
 
-  impl(
-    {
-      method: 'fql.query',
-      query: query
-    },
-    function(r) {
-      ok(r[0].name == 'Mark Zuckerberg', 'should get zuck\'s name');
-      start();
-    }
-  );
-};
+
+function bigVal() {
+  var a = '';
+  while (a.length < 2000) {
+    a += ' ';
+  }
+  return a;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 module('API');
@@ -49,41 +34,36 @@ test(
   'check for zuck\'s name using api',
 
   function() {
-    runAPI(FB.api);
     expect(1);
     stop();
+
+    FB.api(
+      {
+        method: 'fql.query',
+        query: 'SELECT name FROM user WHERE uid=4'
+      },
+      function(r) {
+        ok(r[0].name == 'Mark Zuckerberg', 'should get zuck\'s name');
+        start();
+      }
+    );
   }
 );
 
-////////////////////////////////////////////////////////////////////////////////
-module('jsonp API');
-////////////////////////////////////////////////////////////////////////////////
 test(
-  'check for zuck\'s name using jsonp',
+  'check for id given a vanity name using graph',
 
   function() {
-    runAPI(FB.RestServer.jsonp);
     expect(1);
     stop();
+
+    FB.api('/naitik', function(response) {
+      equals(response.naitik.id, '5526183', 'should get expected id');
+      start();
+    });
   }
 );
 
-////////////////////////////////////////////////////////////////////////////////
-module('flash API');
-////////////////////////////////////////////////////////////////////////////////
-test(
-  'check for zuck\'s name using flash',
-
-  function() {
-    runAPI(FB.RestServer.flash);
-    expect(1);
-    stop();
-  }
-);
-
-////////////////////////////////////////////////////////////////////////////////
-module('automatically json encoded values');
-////////////////////////////////////////////////////////////////////////////////
 test(
   'automatic json encoding',
 
@@ -108,45 +88,69 @@ test(
   }
 );
 
-////////////////////////////////////////////////////////////////////////////////
-module('padded call to trigger >2k request flow');
-////////////////////////////////////////////////////////////////////////////////
 test(
-  'check for zuck\'s name using POST api call',
+  'check for id given a vanity name using graph with POST over flash',
 
   function() {
-    runAPI(FB.api, true);
     expect(1);
     stop();
+
+    FB.api('/naitik', { a: bigVal() }, function(response) {
+      equals(response.naitik.id, '5526183', 'should get expected id');
+      start();
+    });
   }
 );
 
-////////////////////////////////////////////////////////////////////////////////
-module('signature flow using pre-baked session');
-////////////////////////////////////////////////////////////////////////////////
 test(
-  'check for invalid session message',
+  'check for zuck\'s name using api and trigger POST over flash',
 
   function() {
-    // this is strange, in that we use an error to assert something is working
-    // correctly. basically, we expect a session invalid error as opposed to a
-    // signature invalid error.
-    var oldStatus = FB._userStatus;
-    var oldSession = FB._session;
-    FB.Auth.setSession(EXPIRED_SESSION, 'connected');
+    expect(1);
+    stop();
+
     FB.api(
       {
         method: 'fql.query',
-        query: 'SELECT name FROM user WHERE uid=4'
+        query: 'SELECT name FROM user WHERE uid=4',
+        a: bigVal()
       },
       function(r) {
-        ok(r.error_code == 102, 'should get a session invalid error');
+        ok(r[0].name == 'Mark Zuckerberg', 'should get zuck\'s name');
         start();
       }
     );
+  }
+);
 
+test(
+  'test method override using jsonp',
+
+  function() {
     expect(1);
     stop();
-    FB.Auth.setSession(oldSession, oldStatus);
+
+    // this is weird in that we rely on an error to test some functionality.
+    FB.api('/1234567890', 'delete', function(response) {
+      equals(response.error.message, 'Unsupported type: ProfileDelete',
+             'should get expected error message');
+      start();
+    });
+  }
+);
+
+test(
+  'test method override using flash',
+
+  function() {
+    expect(1);
+    stop();
+
+    // this is weird in that we rely on an error to test some functionality.
+    FB.api('/1234567890', { a: bigVal() }, 'delete', function(response) {
+      equals(response.error.message, 'Unsupported type: ProfileDelete',
+             'should get expected error message');
+      start();
+    });
   }
 );

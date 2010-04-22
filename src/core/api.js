@@ -16,13 +16,12 @@
  *
  *
  * Contains the public method ``FB.api`` and the internal implementation
- * ``FB.RestServer``.
+ * ``FB.ApiServer``.
  *
  * @provides fb.api
  * @requires fb.prelude
  *           fb.qs
  *           fb.flash
- *           fb.md5sum
  *           fb.json
  */
 
@@ -35,44 +34,195 @@
  */
 FB.provide('', {
   /**
-   * Server-side [[wiki:API]] calls are available via the JavaScript SDK that
-   * allow you to build rich applications that can make [[wiki:API]] calls
-   * against the Facebook servers directly from the user's browser. This can
-   * improve performance in many scenarios, as compared to making all calls
-   * from your server. It can also help reduce, or eliminate the need to proxy
-   * the requests thru your own servers, freeing them to do other things.
+   * Make a API call to the [Graph][Graph] server.
+   *
+   * Server-side calls are available via the JavaScript SDK that allow you to
+   * build rich applications that can make API calls against the Facebook
+   * servers directly from the user's browser. This can improve performance in
+   * many scenarios, as compared to making all calls from your server. It can
+   * also help reduce, or eliminate the need to proxy the requests thru your
+   * own servers, freeing them to do other things.
    *
    * The range of APIs available covers virtually all facets of Facebook.
-   * Public data such as names and profile pictures ([[wiki:User (FQL)]]) are
-   * available if you know the UID of the user. Various parts of the API are
-   * available depending on the [connect status and the permissions][FB.login]
-   * the user has granted your application.
+   * Public data such as [names][names] and [profile pictures][profilepic] are
+   * available if you know the id of the user or object. Various parts of the
+   * API are available depending on the [connect status and the
+   * permissions][FB.login] the user has granted your application.
    *
-   * Suppose we want to alert the current user's name (assuming they are
-   * already [connected][FB.login]):
+   * Except the path, all arguments to this function are optional.
+   *
+   * Get the **f8 Page Object**:
+   *
+   *     FB.api('/f8', function(response) {
+   *       alert(response.company_overview);
+   *     });
+   *
+   * If you have an [authenticated user][FB.login], get their **User Object**:
+   *
+   *     FB.api('/me', function(response) {
+   *       alert(response.name);
+   *     });
+   *
+   * Get the 3 most recent **Post Objects** *Connected* to (in other words,
+   * authored by) the *f8 Page Object*:
+   *
+   *     FB.api('/f8/posts', { limit: 3 }, function(response) {
+   *       for (var i=0, l=response.length; i<l; i++) {
+   *         var post = response[i];
+   *         if (post.message) {
+   *           alert('Message: ' + post.message);
+   *         } else if (post.attachment && post.attachment.name) {
+   *           alert('Attachment: ' + post.attachment.name);
+   *         }
+   *       }
+   *     });
+   *
+   * If you have an [authenticated user][FB.login] with the
+   * [publish_stream][Perms] permission, and want to publish a new story to
+   * their feed:
+   *
+   *     var body = 'Reading Connect JS documentation';
+   *     FB.api('/me/feed', 'post', { body: body }, function(response) {
+   *       if (!response || response.error) {
+   *         alert('Error occured');
+   *       } else {
+   *         alert('Post ID: ' + response);
+   *       }
+   *     });
+   *
+   * Or if you want a delete a previously published post:
+   *
+   *     var postId = '1234567890';
+   *     FB.api(postId, 'delete', function(response) {
+   *       if (!response || response.error) {
+   *         alert('Error occured');
+   *       } else {
+   *         alert('Post was deleted');
+   *       }
+   *     });
+   *
+   *
+   * ### Legacy API calls
+   *
+   * This method can also be used to invoke one of the Legacy API calls to
+   * restserver.php documented [here][API]. The function signature for invoking
+   * these Legacy API calls is:
+   *
+   *     FB.api(params, callback)
+   *
+   * For example, to invoke [[wiki:Links.getStats]]:
    *
    *     FB.api(
    *       {
-   *         method: 'fql.query',
-   *         query: 'SELECT name FROM profile WHERE id=' + FB.getSession().uid
+   *         method: 'links.getStats',
+   *         urls: 'facebook.com,developers.facebook.com'
    *       },
    *       function(response) {
-   *         alert(response[0].name);
+   *         alert(
+   *           'Total: ' + (response[0].total_count + response[1].total_count));
    *       }
    *     );
    *
-   * [[wiki:API]] Calls are documented on the wiki.
-   *
-   * [[wiki:FQL]] is the preferred way of reading data from Facebook
-   * (write/update/delete queries are done via simpler URL parameters).
-   * [[wiki:Fql.multiquery]] is also very crucial for good performance, as it
-   * allows efficiently collecting different types of data.
-   *
-   * [[wiki:FQL Tables]] are available for various types of data.
-   *
+   * [Graph]: https://graph.facebook.com/
    * [FB.login]: /docs/?u=facebook.joey.FB.login
+   * [Perms]: http://wiki.developers.facebook.com/index.php/Extended_permissions
+   * [API]: http://wiki.developers.facebook.com/index.php/API
+   * [names]: https://graph.facebook.com/naitik
+   * [profilepic]: https://graph.facebook.com/naitik/picture
    *
    * @access public
+   * @param path {String} the url path
+   * @param method {String} the http method (default `"GET"`)
+   * @param params {Object} the parameters for the query
+   * @param cb {Function} the callback function to handle the response
+   */
+  api: function() {
+    if (typeof arguments[0] === 'string') {
+      FB.ApiServer.graph.apply(FB.ApiServer, arguments);
+    } else {
+      FB.ApiServer.rest.apply(FB.ApiServer, arguments);
+    }
+  }
+});
+
+/**
+ * API call implementations.
+ *
+ * @class FB.ApiServer
+ * @access private
+ */
+FB.provide('ApiServer', {
+  METHODS: ['get', 'post', 'delete', 'put'],
+  _callbacks: {},
+
+  /**
+   * Make a API call to Graph server. This is the **real** RESTful API.
+   *
+   * Except the path, all arguments to this function are optional. So any of
+   * these are valid:
+   *
+   *   FB.api('/me') // throw away the response
+   *   FB.api('/me', function(r) { console.log(r) })
+   *   FB.api('/me', { fields: 'email' }); // throw away response
+   *   FB.api('/me', { fields: 'email' }, function(r) { console.log(r) });
+   *   FB.api('/12345678', 'delete', function(r) { console.log(r) });
+   *   FB.api(
+   *     '/me/feed',
+   *     'post',
+   *     { body: 'hi there' },
+   *     function(r) { console.log(r) }
+   *   );
+   *
+   * @access private
+   * @param path   {String}   the url path
+   * @param method {String}   the http method
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   */
+  graph: function() {
+    var
+      args = Array.prototype.slice.call(arguments),
+      path = args.shift(),
+      next = args.shift(),
+      method,
+      params,
+      cb;
+
+    while (next) {
+      var type = typeof next;
+      if (type === 'string' && !method) {
+        method = next.toLowerCase();
+      } else if (type === 'function' && !cb) {
+        cb = next;
+      } else if (type === 'object' && !params) {
+        params = next;
+      } else {
+        FB.log('Invalid argument passed to FB.api(): ' + next);
+        return;
+      }
+      next = args.shift();
+    }
+
+    method = method || 'get';
+    params = params || {};
+
+    // remove prefix slash if one is given, as it's already in the base url
+    if (path[0] === '/') {
+      path = path.substr(1);
+    }
+
+    if (FB.Array.indexOf(FB.ApiServer.METHODS, method) < 0) {
+      FB.log('Invalid method passed to FB.api(): ' + method);
+      return;
+    }
+
+    FB.ApiServer.oauthRequest('graph', path, method, params, cb);
+  },
+
+  /**
+   * Old school restserver.php calls.
+   *
+   * @access private
    * @param params {Object} The required arguments vary based on the method
    * being used, but specifying the method itself is mandatory:
    *
@@ -81,11 +231,11 @@ FB.provide('', {
    * method   | String  | The API method to invoke.        | **Required**
    * @param cb {Function} The callback function to handle the response.
    */
-  api: function(params, cb) {
+  rest: function(params, cb) {
     // this is an optional dependency on FB.Auth
     // Auth.revokeAuthorization affects the session
     if (FB.Auth &&
-        params.method.toLowerCase() == 'auth.revokeauthorization') {
+        params.method.toLowerCase() === 'auth.revokeauthorization') {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {
@@ -95,98 +245,71 @@ FB.provide('', {
       };
     }
 
-    var flat_params = FB.JSON.flatten(params);
+    params.format = 'json';
+    params.api_key = FB._apiKey;
+    FB.ApiServer.oauthRequest('api', 'restserver.php', 'get', params, cb);
+  },
+
+  /**
+   * Add the oauth parameter, and fire off a request.
+   *
+   * @access private
+   * @param domain {String}   the domain key, one of 'api' or 'graph'
+   * @param path   {String}   the request path
+   * @param method {String}   the http method
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   */
+  oauthRequest: function(domain, path, method, params, cb) {
+    // add oauth token if we have one
+    if (FB._session &&
+        FB._session.access_token &&
+        !params.access_token) {
+      params.access_token = FB._session.access_token;
+    }
+    params.sdk = 'joey';
 
     try {
-      FB.RestServer.jsonp(flat_params, cb);
+      FB.ApiServer.jsonp(domain, path, method, FB.JSON.flatten(params), cb);
     } catch (x) {
       if (FB.Flash.hasMinVersion()) {
-        FB.RestServer.flash(flat_params, cb);
+        FB.ApiServer.flash(domain, path, method, FB.JSON.flatten(params), cb);
       } else {
         throw new Error('Flash is required for this API call.');
       }
     }
-  }
-});
-
-/**
- * API call implementations.
- *
- * @class FB.RestServer
- * @access private
- */
-FB.provide('RestServer', {
-  _callbacks: {},
-
-  /**
-   * Sign the given params and prepare them for an API call using the current
-   * session if possible.
-   *
-   * @access private
-   * @param params {Object} the parameters to sign
-   * @return {Object} the *same* params object back
-   */
-  sign: function(params) {
-    // general api call parameters
-    FB.copy(params, {
-      api_key : FB._apiKey,
-      call_id : new Date().getTime(),
-      format  : 'json',
-      sdk     : 'joey',
-      v       : '1.0'
-    });
-
-    // indicate session signing if session is available
-    if (FB._session) {
-      FB.copy(params, {
-        session_key : FB._session.session_key,
-        ss          : 1
-      });
-    }
-
-    // optionally generate the signature. we do this for both the automatic and
-    // explicit case.
-    if (FB._session) {
-      // the signature is described at:
-      // http://wiki.developers.facebook.com/index.php/Verifying_The_Signature
-      params.sig = FB.md5sum(
-        FB.QS.encode(params, '', false) + FB._session.secret
-      );
-    }
-
-    return params;
   },
 
-
   /**
-   * Make a API call to restserver.php. This call will be automatically signed
-   * if a session is available. The call is made using JSONP, which is
-   * restricted to a GET with a maximum payload of 2k (including the signature
-   * and other params).
+   * Basic JSONP Support.
    *
    * @access private
+   * @param domain {String}   the domain key, one of 'api' or 'graph'
+   * @param path   {String}   the request path
+   * @param method {String}   the http method
    * @param params {Object}   the parameters for the query
    * @param cb     {Function} the callback function to handle the response
    */
-  jsonp: function(params, cb) {
+  jsonp: function(domain, path, method, params, cb) {
     var
       g      = FB.guid(),
-      script = document.createElement('script'),
-      url;
+      script = document.createElement('script');
 
-    // shallow clone of params, add callback and sign
-    params = FB.RestServer.sign(
-      FB.copy({ callback: 'FB.RestServer._callbacks.' + g }, params));
+    // jsonp needs method overrides as the request itself is always a GET
+    if (domain === 'graph' && method !== 'get') {
+      params.method = method;
+    }
+    params.callback = 'FB.ApiServer._callbacks.' + g;
 
-    url = FB._domain.api + 'restserver.php?' + FB.QS.encode(params);
+    var url = FB._domain[domain] + path + '?' + FB.QS.encode(params);
     if (url.length > 2000) {
       throw new Error('JSONP only support a maximum of 2000 bytes of input.');
     }
 
-    // this is the JSONP callback invoked by the response from restserver.php
-    FB.RestServer._callbacks[g] = function(response) {
-      if (cb) { cb(response); }
-      delete FB.RestServer._callbacks[g];
+    // this is the JSONP callback invoked by the response
+    FB.ApiServer._callbacks[g] = function(response) {
+      cb && cb(response);
+      delete FB.ApiServer._callbacks[g];
       script.parentNode.removeChild(script);
     };
 
@@ -195,46 +318,59 @@ FB.provide('RestServer', {
   },
 
   /**
-   * Make a API call to restserver.php using Flash.
+   * Flash based HTTP Client.
    *
    * @access private
+   * @param domain {String}   the domain key, one of 'api' or 'graph'
+   * @param path   {String}   the request path
+   * @param method {String}   the http method
    * @param params {Object}   the parameters for the query
    * @param cb     {Function} the callback function to handle the response
    */
-  flash: function(params, cb) {
-    // only need to do this once
-    if (!FB.RestServer.flash._init) {
+  flash: function(domain, path, method, params, cb) {
+    if (!window.FB_OnXdHttpResult) {
       // the SWF calls this global function when a HTTP response is available
       // FIXME: remove global
       window.FB_OnXdHttpResult = function(reqId, data) {
-        FB.RestServer._callbacks[reqId](decodeURIComponent(data));
+        FB.ApiServer._callbacks[reqId](decodeURIComponent(data));
       };
-      FB.RestServer.flash._init = true;
     }
 
     FB.Flash.onReady(function() {
-      var method, url, body, reqId;
+      var
+        url  = FB._domain[domain] + path,
+        body = FB.QS.encode(params);
 
-      // shallow clone of params, sign, and encode as query string
-      body = FB.QS.encode(FB.RestServer.sign(FB.copy({}, params)));
-      url = FB._domain.api + 'restserver.php';
-
-      // GET or POST
-      if (url.length + body.length > 2000) {
-        method = 'POST';
-      } else {
-        method = 'GET';
-        url += '?' + body;
-        body = '';
+      if (method === 'get') {
+        // convert GET to POST if needed based on URL length
+        if (url.length + body.length > 2000) {
+          if (domain === 'graph') {
+            params.method = 'get';
+          }
+          method = 'post';
+          body = FB.QS.encode(params);
+        } else {
+          url += '?' + body;
+          body = '';
+        }
+      } else if (method !== 'post') {
+        // we use method override and do a POST for PUT/DELETE as flash has
+        // trouble otherwise
+        if (domain === 'graph') {
+          params.method = method;
+        }
+        method = 'post';
+        body = FB.QS.encode(params);
       }
 
       // fire the request
-      reqId = document.XdComm.sendXdHttpRequest(method, url, body, null);
+      var reqId = document.XdComm.sendXdHttpRequest(
+        method.toUpperCase(), url, body, null);
 
       // callback
-      FB.RestServer._callbacks[reqId] = function(response) {
-        cb(FB.JSON.parse(response));
-        delete FB.RestServer._callbacks[reqId];
+      FB.ApiServer._callbacks[reqId] = function(response) {
+        cb && cb(FB.JSON.parse(response));
+        delete FB.ApiServer._callbacks[reqId];
       };
     });
   }
