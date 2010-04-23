@@ -58,7 +58,7 @@ FB.subclass('XFBML.LiveStream', 'XFBML.IframeWidget', null, {
    * @return {Object} the iframe URL bits
    */
   getUrlBits: function() {
-    var name = this._attr.redesigned ? 'live_feed' : 'livefeed';
+    var name = this._attr.redesigned ? 'live_stream_box' : 'livefeed';
     return { name: name, params: this._attr };
   }
 });
