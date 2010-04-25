@@ -320,7 +320,9 @@ FB.subclass('XFBML.IframeWidget', 'XFBML.Element', null, {
   _removeLoader: function() {
     if (this._loaderDiv) {
       FB.Dom.removeCss(this.dom, 'fb_iframe_widget_loader');
-      this.dom.removeChild(this._loaderDiv);
+      if (this._loaderDiv.parentNode) {
+        this._loaderDiv.parentNode.removeChild(this._loaderDiv);
+      }
       this._loaderDiv = null;
     }
   },
