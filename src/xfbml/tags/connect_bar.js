@@ -150,8 +150,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       info.first_name,
       FB.Intl.tx('connect-bar:sentence', {
         firstName: info.first_name,
-        siteName: info.site_name,
-        logoUrl: FB._domain.cdn + FB.XFBML.ConnectBar.imgs.logoUrl
+        siteName: info.site_name
       }),
       FB.Intl.tx('connect-bar:learn-more'),
       info.profile_url,
@@ -245,7 +244,6 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
 
 FB.provide('XFBML.ConnectBar', {
   imgs: {
-   logoUrl: 'images/facebook-widgets/fb_logo.png',
    buttonUrl: 'images/facebook-widgets/close_btn.png'
   }
 });
