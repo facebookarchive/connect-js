@@ -132,11 +132,11 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
         '<a href="#" class="fb_bar_close">' +
-          '<img src="{1}" alt="{2}" title="{2}" class="fb_bar_close"/>' +
+          '<img src="{1}" alt="{2}" title="{2}"/>' +
         '</a>' +
       '</div>' +
       '<a href="{7}" class="fb_profile" target="_blank">' +
-        '<img src="{3}" alt="{4}" title="{4}" />' +
+        '<img src="{3}" alt="{4}" title="{4}"/>' +
       '</a>' +
       '{5}' +
       ' <span>' +
@@ -187,6 +187,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   _clickHandler : function(e) {
     e = e || window.event;
     var el = e.target || e.srcElement;
+    while (!el.href) { el = el.parentNode; }
     switch (el.className) {
       case 'fb_bar_close':
         FB.api({ // mark seen
@@ -200,7 +201,8 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         break;
       case 'fb_learn_more':
       case 'fb_profile':
-        return true;
+        window.open(el.href);
+        break;
       case 'fb_no_thanks':
         FB.api({ // mark seen
           method: 'Connect.connectBarMarkAcknowledged'
