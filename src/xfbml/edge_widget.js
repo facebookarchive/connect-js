@@ -53,7 +53,8 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
       layout           : this._getLayout(),
       colorscheme      : this.getAttribute('color-scheme'),
       action           : this.getAttribute('action'),
-      show_faces       : this._shouldShowFaces()
+      show_faces       : this._shouldShowFaces(),
+      no_resize        : this._getBoolAttribute('no_resize')
     };
 
     return true;
