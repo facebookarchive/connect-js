@@ -128,7 +128,9 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     container.appendChild(bar);
     document.body.appendChild(container);
     this._container = container;
-    this._initialHeight = parseInt(FB.Dom.getStyle(container, 'height'), 10);
+    this._initialHeight = Math.round(
+              parseFloat(FB.Dom.getStyle(container, 'height')) +
+              parseFloat(FB.Dom.getStyle(container, 'border-bottom-width')));
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
         '<a href="#" class="fb_bar_close">' +
@@ -161,8 +163,14 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       el.onclick = FB.bind(_this._clickHandler, _this);
     });
     this._page = document.body;
-    var top_margin =
-      parseInt(FB.Dom.getStyle(this._page, 'marginTop'), 10);
+    var top_margin = 0;
+    if (this._page.parentNode) {
+      top_margin = Math.round(
+        (parseFloat(FB.Dom.getStyle(this._page.parentNode, 'height')) -
+        parseFloat(FB.Dom.getStyle(this._page, 'height'))) / 2);
+    } else {
+      top_margin = parseInt(FB.Dom.getStyle(this._page, 'marginTop'), 10);
+    }
     top_margin = isNaN(top_margin) ? 0 : top_margin;
     this._initTopMargin = top_margin;
     if (!window.XMLHttpRequest) { // ie6
