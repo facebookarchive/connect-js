@@ -43,6 +43,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   _displayed: false, // is the bar currently displayed
   _notDisplayed: false, // is the bar currently not displayed
   _container: null,
+  _animationSpeed: 0, // default to no (zero time, instant) animation
 
   /**
    * Processes this tag.
@@ -57,7 +58,8 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
           FB.api({ // check if marked seen / current seen count
             method: 'Connect.shouldShowConnectBar'
           }, this.bind(function(showBar) {
-            if (showBar == true) {
+            if (showBar != 2) {
+              this._animationSpeed = (showBar == 0) ? 750 : 0;
               this._showBar();
             } else {
               this._noRender();
@@ -130,7 +132,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     this._container = container;
     this._initialHeight = Math.round(
               parseFloat(FB.Dom.getStyle(container, 'height')) +
-              parseFloat(FB.Dom.getStyle(container, 'border-bottom-width')));
+              parseFloat(FB.Dom.getStyle(container, 'borderBottomWidth')));
     bar.innerHTML = FB.String.format(
       '<div class="fb_buttons">' +
         '<a href="#" class="fb_bar_close">' +
@@ -177,7 +179,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
       container.className += " fb_connect_bar_container_ie6";
     } else {
       container.style.top = (-1*this._initialHeight) + 'px';
-      FB.Anim.ate(container, { top: '0px' });
+      FB.Anim.ate(container, { top: '0px' }, this._animationSpeed);
     }
     var move = { marginTop: this._initTopMargin + this._initialHeight + 'px' }
     if (FB.Dom.getBrowserType() == 'ie') { // for ie
@@ -185,7 +187,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     } else { // for others
       move.backgroundPosition = '? ' + this._initialHeight + 'px'
     }
-    FB.Anim.ate(this._page, move);
+    FB.Anim.ate(this._page, move, this._animationSpeed);
   },
 
   /**
@@ -195,7 +197,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
   _clickHandler : function(e) {
     e = e || window.event;
     var el = e.target || e.srcElement;
-    while (!el.href) { el = el.parentNode; }
+    while (el.nodeName != 'A') { el = el.parentNode; }
     switch (el.className) {
       case 'fb_bar_close':
         FB.api({ // mark seen
@@ -212,6 +214,7 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
         window.open(el.href);
         break;
       case 'fb_no_thanks':
+        this._closeConnectBar();
         FB.api({ // mark seen
           method: 'Connect.connectBarMarkAcknowledged'
         });
@@ -240,10 +243,11 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
     } else { // for others
       move.backgroundPosition = '? 0px'
     }
-    FB.Anim.ate(this._page, move, 300);
+    var speed = (this._animationSpeed == 0) ? 0 : 300;
+    FB.Anim.ate(this._page, move, speed);
     FB.Anim.ate(this._container, {
       top: (-1 * this._initialHeight) + 'px'
-    }, 300, function(el) {
+    }, speed, function(el) {
       el.parentNode.removeChild(el);
     });
     this.fire('connectbar.onclose');

@@ -85,12 +85,12 @@ FB.provide('Dom', {
       return 0; // TODO(alpjor) fix default opacity
     } else {
       if (dom.currentStyle) { // camelCase (e.g. 'marginTop')
-        FB.Array.forEach(/\-([a-z])/.exec(styleProp), function(match) {
-          styleProp = styleProp.replace('-' + match, match.toUpperCase());
+        FB.Array.forEach(styleProp.match(/\-([a-z])/g), function(match) {
+          styleProp = styleProp.replace(match, match.substr(1,1).toUpperCase());
         });
         y = dom.currentStyle[styleProp];
       } else { // dashes (e.g. 'margin-top')
-        FB.Array.forEach(/([A-Z])/.exec(styleProp), function(match) {
+        FB.Array.forEach(styleProp.match(/[A-Z]/g), function(match) {
           styleProp = styleProp.replace(match, '-'+ match.toLowerCase());
         });
         if (window.getComputedStyle) {

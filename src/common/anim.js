@@ -40,7 +40,7 @@ FB.provide('Anim', {
    *                            animation is complete
    */
   ate: function(dom, props, duration, callback) {
-    duration = duration ? duration : 750;
+    duration = !isNaN(parseFloat(duration)) && duration >= 0 ? duration : 750;
     var
       frame_speed = 40,
       from        = {},
@@ -50,7 +50,10 @@ FB.provide('Anim', {
       timer       = setInterval(FB.bind(function() {
         if (!begin) { begin = new Date().getTime(); }
         // percent done
-        var pd = Math.min((new Date().getTime() - begin) / duration, 1);
+        var pd = 1;
+        if (duration != 0) {
+          pd = Math.min((new Date().getTime() - begin) / duration, 1);
+        }
         FB.Array.forEach(props, FB.bind(function(value, prop) {
           if (!from[prop]) { // parse from CSS
             var style = FB.Dom.getStyle(dom, prop);
