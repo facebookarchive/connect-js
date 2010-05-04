@@ -154,6 +154,14 @@ FB.provide('', {
 FB.provide('ApiServer', {
   METHODS: ['get', 'post', 'delete', 'put'],
   _callbacks: {},
+  _readOnlyCalls: {
+    fql_query: true,
+    fql_multiquery: true,
+    friends_get: true,
+    notifications_get: true,
+    stream_get: true,
+    users_getinfo: true
+  },
 
   /**
    * Make a API call to Graph server. This is the **real** RESTful API.
@@ -232,10 +240,10 @@ FB.provide('ApiServer', {
    * @param cb {Function} The callback function to handle the response.
    */
   rest: function(params, cb) {
+    var method = params.method.toLowerCase().replace('.', '_');
     // this is an optional dependency on FB.Auth
     // Auth.revokeAuthorization affects the session
-    if (FB.Auth &&
-        params.method.toLowerCase() === 'auth.revokeauthorization') {
+    if (FB.Auth && method === 'auth_revokeauthorization') {
       var old_cb = cb;
       cb = function(response) {
         if (response === true) {
@@ -247,14 +255,16 @@ FB.provide('ApiServer', {
 
     params.format = 'json';
     params.api_key = FB._apiKey;
-    FB.ApiServer.oauthRequest('api', 'restserver.php', 'get', params, cb);
+    var domain = FB.ApiServer._readOnlyCalls[method] ? 'api_read' : 'api';
+    FB.ApiServer.oauthRequest(domain, 'restserver.php', 'get', params, cb);
   },
 
   /**
    * Add the oauth parameter, and fire off a request.
    *
    * @access private
-   * @param domain {String}   the domain key, one of 'api' or 'graph'
+   * @param domain {String}   the domain key, one of 'api', 'api_read',
+   *                          or 'graph'
    * @param path   {String}   the request path
    * @param method {String}   the http method
    * @param params {Object}   the parameters for the query
@@ -284,7 +294,8 @@ FB.provide('ApiServer', {
    * Basic JSONP Support.
    *
    * @access private
-   * @param domain {String}   the domain key, one of 'api' or 'graph'
+   * @param domain {String}   the domain key, one of 'api', 'api_read',
+   *                          or 'graph'
    * @param path   {String}   the request path
    * @param method {String}   the http method
    * @param params {Object}   the parameters for the query

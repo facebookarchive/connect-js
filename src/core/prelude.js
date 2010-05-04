@@ -75,12 +75,13 @@ if (!window.FB) {
     //
     // the various domains needed for using Connect
     _domain: {
-      api   : 'https://api.facebook.com/',
-      cdn   : (window.location.protocol == 'https:'
-                ? 'https://s-static.ak.fbcdn.net/'
-                : 'http://static.ak.fbcdn.net/'),
-      graph : 'https://graph.facebook.com/',
-      www   : window.location.protocol + '//www.facebook.com/'
+      api      : 'https://api.facebook.com/',
+      api_read : 'https://api-read.facebook.com/',
+      cdn      : (window.location.protocol == 'https:'
+                   ? 'https://s-static.ak.fbcdn.net/'
+                   : 'http://static.ak.fbcdn.net/'),
+      graph    : 'https://graph.facebook.com/',
+      www      : window.location.protocol + '//www.facebook.com/'
     },
     _locale: null,
     _localeIsRtl: false,

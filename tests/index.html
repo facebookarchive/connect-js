@@ -131,6 +131,7 @@
         if (host.substr(-13) === '.facebook.com') {
           FB._domain.www = FB._domain.cdn = 'http://' + host + '/';
           FB._domain.api = FB._domain.www.replace('www', 'api');
+          FB._domain.api_read = FB._domain.www.replace('www', 'api-read');
           FB._domain.graph = FB._domain.www.replace('www', 'graph');
         }
 
