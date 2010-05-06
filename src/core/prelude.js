@@ -68,6 +68,9 @@ if (!window.FB) {
     // logging is enabled by default. this is the logging shown to the
     // developer and not at all noisy.
     _logging: true,
+    _inCanvas: (
+      (window.location.search.indexOf('fb_sig_in_iframe=1') > -1) ||
+      (window.location.search.indexOf('session=') > -1)),
 
 
     //

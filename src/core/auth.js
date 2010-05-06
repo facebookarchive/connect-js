@@ -422,7 +422,7 @@ FB.provide('UIServer.Methods', {
         cancel_url              : cancel,
         channel_url             : window.location.toString(),
         next                    : next,
-        fbconnect               : 1,
+        fbconnect               : FB._inCanvas ? 0 : 1,
         req_perms               : call.params.perms,
         enable_profile_selector : call.params.enable_profile_selector,
         profile_selector_ids    : call.params.profile_selector_ids,
@@ -465,7 +465,8 @@ FB.provide('UIServer.Methods', {
         no_session : xdHandler(cb, id, 'parent', false, 'notConnected'),
         no_user    : xdHandler(cb, id, 'parent', false, 'unknown'),
         ok_session : xdHandler(cb, id, 'parent', false, 'connected'),
-        session_version : 3
+        session_version : 3,
+        extern: FB._inCanvas ? 0 : 2
       });
       return call;
     }
