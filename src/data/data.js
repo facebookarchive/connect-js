@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * TODO: add back fb.api to requires
- *
  * @provides fb.data
  * @layer data
  * @requires fb.prelude
  *           fb.type
+ *           fb.api
  *           fb.array
  *           fb.string
  *           fb.obj

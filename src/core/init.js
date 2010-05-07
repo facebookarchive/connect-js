@@ -17,11 +17,10 @@
  *
  * JavaScript library providing Facebook Connect integration.
  *
- * TODO: add back fb.api to requires
- *
  * @provides fb.init
  * @requires fb.prelude
  *           fb.auth
+ *           fb.api
  *           fb.cookie
  *           fb.ui
  *           fb.xd
@@ -139,6 +138,8 @@ FB.provide('', {
         window.location.toString().indexOf('fb_debug=1') < 0) {
       FB._logging = false;
     }
+
+    FB.XD.init(opts.channelUrl);
 
     if (FB._apiKey) {
       // enable cookie support if told to do so

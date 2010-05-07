@@ -82,7 +82,9 @@ test(
     }
 
     var oldTransport = FB.XD._transport;
+    var oldChannel = FB.XD._channelUrl;
     FB.XD._transport = 'fragment';
+    FB.XD.Fragment._channelUrl = window.location.toString();
 
     var url = FB.XD.handler(function(response) {
       ok(response.answer == 42, 'expect the answer');
@@ -91,6 +93,41 @@ test(
     }, 'parent') + '&answer=42';
 
     FB.XD._transport = oldTransport;
+    FB.XD._channelUrl = oldChannel;
+
+    FB.UIServer.hidden({
+      id: 'a',
+      size: {},
+      url: url
+    });
+
+    expect(1);
+    stop();
+  }
+);
+
+test(
+  'test fragment message flow with custom channel URL',
+
+  function() {
+    var oldTransport = FB.XD._transport;
+    var oldChannel = FB.XD._channelUrl;
+    FB.XD._transport = 'fragment';
+    // this is pretty hacky. but this is a test
+    FB.XD.Fragment._channelUrl = window
+      .location
+      .toString()
+      .replace('index.html', 'channel.html')
+      .replace(/(\?|#)(.*)/, '');
+
+    var url = FB.XD.handler(function(response) {
+      ok(response.answer == 42, 'expect the answer');
+      FB.UIServer._xdRecv({frame: 'a'}, function() {});
+      start();
+    }, 'parent') + '&answer=42';
+
+    FB.XD._transport = oldTransport;
+    FB.XD._channelUrl = oldChannel;
 
     FB.UIServer.hidden({
       id: 'a',
