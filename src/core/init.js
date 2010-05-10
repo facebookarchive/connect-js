@@ -139,7 +139,7 @@ FB.provide('', {
       FB._logging = false;
     }
 
-    FB.XD.init(opts.channelUrl);
+    FB.XD.init(options.channelUrl);
 
     if (FB._apiKey) {
       // enable cookie support if told to do so
