@@ -10,6 +10,7 @@
  *   fb.ui.methods
  *   fb.compat.ui
  *   fb.compat.xfbml
+ *   fb.canvas
  *   fb.xfbml.activity
  *   fb.xfbml.addprofiletab
  *   fb.xfbml.bookmark

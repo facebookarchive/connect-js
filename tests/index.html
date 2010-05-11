@@ -65,35 +65,41 @@
     <link href="../src/css/share_button.css" rel="stylesheet" type="text/css">
 
     <script src="../src/third-party/json2.js"></script>
+
     <script src="../src/core/prelude.js"></script>
     <script src="../src/core/json.js"></script>
     <script src="../src/core/intl.js"></script>
+    <script src="../src/common/type.js"></script>
+
+    <script src="../src/common/anim.js"></script>
+    <script src="../src/common/array.js"></script>
+    <script src="../src/common/dom.js"></script>
+    <script src="../src/common/loader.js"></script>
+    <script src="../src/common/obj.js"></script>
+    <script src="../src/common/string.js"></script>
+
+    <script src="../src/compat/ui.js"></script>
+    <script src="../src/compat/xfbml.js"></script>
+
     <script src="../src/core/api.js"></script>
     <script src="../src/core/auth.js"></script>
+    <script src="../src/core/canvas.js"></script>
+    <script src="../src/core/component.js"></script>
     <script src="../src/core/content.js"></script>
     <script src="../src/core/cookie.js"></script>
-    <script src="../src/core/init.js"></script>
+    <script src="../src/core/dialog.js"></script>
     <script src="../src/core/event.js"></script>
     <script src="../src/core/flash.js"></script>
+    <script src="../src/core/init.js"></script>
     <script src="../src/core/insights.js"></script>
     <script src="../src/core/qs.js"></script>
     <script src="../src/core/ui.js"></script>
     <script src="../src/core/ui_methods.js"></script>
     <script src="../src/core/xd.js"></script>
-    <script src="../src/compat/ui.js"></script>
-    <script src="../src/compat/xfbml.js"></script>
 
-    <script src="../src/common/array.js"></script>
-    <script src="../src/common/string.js"></script>
-    <script src="../src/common/type.js"></script>
-    <script src="../src/common/dom.js"></script>
-    <script src="../src/common/obj.js"></script>
-    <script src="../src/common/anim.js"></script>
-    <script src="../src/core/dialog.js"></script>
-
-    <script src="../src/data/waitable.js"></script>
-    <script src="../src/data/query.js"></script>
     <script src="../src/data/data.js"></script>
+    <script src="../src/data/query.js"></script>
+    <script src="../src/data/waitable.js"></script>
 
     <script src="../src/xfbml/element.js"></script>
     <script src="../src/xfbml/xfbml.js"></script>
@@ -131,6 +137,7 @@
           FB._domain.api = FB._domain.www.replace('www', 'api');
           FB._domain.api_read = FB._domain.www.replace('www', 'api-read');
           FB._domain.graph = FB._domain.www.replace('www', 'graph');
+          FB._domain.staticfb = FB._domain.www.replace('www', 'static');
         }
 
 
@@ -150,6 +157,7 @@
     -->
     <!-- tests that don't require interaction -->
     <script src="js/prelude.js"></script>
+    <script src="js/canvas.js"></script>
     <script src="js/content.js"></script>
     <script src="js/qs.js"></script>
     <script src="js/json.js"></script>

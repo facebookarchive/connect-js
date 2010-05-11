@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 //
 // Copyright Facebook Inc.
@@ -19,9 +18,12 @@ $JS_FILES = array(
   'src/third-party/json2.js',
 
   'src/core/prelude.js',
+  'src/common/type.js',
 
   'src/core/api.js',
   'src/core/auth.js',
+
+  'src/core/canvas.js',
   'src/core/content.js',
   'src/core/cookie.js',
   'src/core/dialog.js',
@@ -40,7 +42,6 @@ $JS_FILES = array(
 
   'src/common/array.js',
   'src/common/dom.js',
-  'src/common/type.js',
   'src/common/obj.js',
   'src/common/string.js',
 

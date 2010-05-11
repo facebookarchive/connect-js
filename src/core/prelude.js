@@ -81,6 +81,9 @@ if (!window.FB) {
                    ? 'https://s-static.ak.fbcdn.net/'
                    : 'http://static.ak.fbcdn.net/'),
       graph    : 'https://graph.facebook.com/',
+      staticfb : (window.location.protocol == 'https:'
+                   ? 'https://s-static.ak.facbook.com/'
+                   : 'http://static.ak.facbook.com/'),
       www      : window.location.protocol + '//www.facebook.com/'
     },
     _locale: null,
