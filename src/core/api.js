@@ -253,7 +253,7 @@ FB.provide('ApiServer', {
       };
     }
 
-    params.format = 'json';
+    params.format = 'json-strings';
     params.api_key = FB._apiKey;
     var domain = FB.ApiServer._readOnlyCalls[method] ? 'api_read' : 'api';
     FB.ApiServer.oauthRequest(domain, 'restserver.php', 'get', params, cb);
