@@ -154,3 +154,33 @@ test(
     });
   }
 );
+
+test(
+  'test existing query string in JSONP',
+
+  function() {
+    expect(1);
+    stop();
+
+    // this is weird in that we rely on an error to test some functionality.
+    FB.api('/naitik?metadata=1', function(response) {
+      ok(response.metadata, 'expected some metadata');
+      start();
+    });
+  }
+);
+
+test(
+  'test existing query string in Flash',
+
+  function() {
+    expect(1);
+    stop();
+
+    // this is weird in that we rely on an error to test some functionality.
+    FB.api('/naitik?metadata=1', { a: bigVal() }, function(response) {
+      ok(response.metadata, 'expected some metadata');
+      start();
+    });
+  }
+);

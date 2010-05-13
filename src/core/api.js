@@ -312,7 +312,11 @@ FB.provide('ApiServer', {
     }
     params.callback = 'FB.ApiServer._callbacks.' + g;
 
-    var url = FB._domain[domain] + path + '?' + FB.QS.encode(params);
+    var url = (
+      FB._domain[domain] + path +
+      (path.indexOf('?') > -1 ? '&' : '?') +
+      FB.QS.encode(params)
+    );
     if (url.length > 2000) {
       throw new Error('JSONP only support a maximum of 2000 bytes of input.');
     }
@@ -361,7 +365,7 @@ FB.provide('ApiServer', {
           method = 'post';
           body = FB.QS.encode(params);
         } else {
-          url += '?' + body;
+          url += (url.indexOf('?') > -1 ? '&' : '?') + body;
           body = '';
         }
       } else if (method !== 'post') {
