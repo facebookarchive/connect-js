@@ -132,7 +132,7 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
   _getCounterMarkup: function() {
     if (!this._count) {
       this._count = FB.Data._selectByIndex(
-        ['share_count'],
+        ['total_count'],
         'link_stat',
         'url',
         this._href
@@ -141,7 +141,7 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
 
     if (this._count.value !== undefined) {
       if (this._count.value.length > 0) {
-        var c = this._count.value[0].share_count;
+        var c = this._count.value[0].total_count;
         if (c > 3) {
           var prettyCount = c >= 10000000 ? Math.round(c/1000000) + 'M' :
                             (c >= 10000 ? Math.round(c/1000) + 'K' : c);
