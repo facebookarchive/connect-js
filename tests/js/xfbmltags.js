@@ -27,19 +27,19 @@ test(
 
   function() {
     XTest.expect(6);
-    XTest.regex('<fb:profile-pic uid="676075965"></fb:profile-pic>',
-      'href="' + FB._domain.www + 'profile.php.id=676075965"'
+    XTest.regex('<fb:profile-pic uid="499348309"></fb:profile-pic>',
+      'href="' + FB._domain.www + 'profile.php.id=499348309"'
       +'.*<img.*src="http://profile.ak.fbcdn.net/.*.jpg".*>');
 
-    XTest.regex('<fb:profile-pic uid="676075965"></fb:profile-pic>',
-      'href="' + FB._domain.www + 'profile.php.id=676075965"'
-      +'.*<img.*alt="luke t shepard".*>');
+    XTest.regex('<fb:profile-pic uid="499348309"></fb:profile-pic>',
+      'href="' + FB._domain.www + 'profile.php.id=499348309"'
+      +'.*<img.*alt="Dorothy Diicdhcji Okelolasky"');
 
     // note that we pass in 64 x 100, but the longer one is cropped since the
     // image is square
     XTest.regex(
       (
-        '<fb:profile-pic uid="676075965" width="64" height="100">' +
+        '<fb:profile-pic uid="499348309" width="64" height="100">' +
         '</fb:profile-pic>'
       ),
       'style=.*width: ?64px;.*height: ?64px'
@@ -47,7 +47,7 @@ test(
 
     // add the logo
     XTest.regex(
-      '<fb:profile-pic uid="676075965" facebook-logo="true"></fb:profile-pic>',
+      '<fb:profile-pic uid="499348309" facebook-logo="true"></fb:profile-pic>',
       '<img.*safe_image.php'
     );
 
@@ -68,23 +68,23 @@ test(
   function() {
     XTest.expect(5);
 
-    XTest.regex('<fb:name uid="676075965"></fb:name>',
-        'href="' + FB._domain.www + 'profile.php.id=676075965"'
-        +'.*Luke T Shepard');
+    XTest.regex('<fb:name uid="499348309"></fb:name>',
+        'href="' + FB._domain.www + 'profile.php.id=499348309"'
+        +'.*Dorothy Diicdhcji Okelolasky');
 
-    XTest.regex('<fb:name uid="676075965" firstnameonly="true"></fb:name>',
-        '>Luke<');
+    XTest.regex('<fb:name uid="499348309" firstnameonly="true"></fb:name>',
+        '>Dorothy<');
 
-    XTest.regex('<fb:name uid="676075965" lastnameonly="true"></fb:name>',
-        '>Shepard<');
+    XTest.regex('<fb:name uid="499348309" lastnameonly="true"></fb:name>',
+        '>Okelolasky<');
 
-    XTest.regex('<fb:name uid="676075965" linked="false"></fb:name>',
-                '^Luke T Shepard$');
+    XTest.regex('<fb:name uid="499348309" linked="false"></fb:name>',
+                '^Dorothy Diicdhcji Okelolasky');
 
     // need a better test for capitalization, is there any test acct without it
     // capped?
-    XTest.regex('<fb:name uid="676075965" capitalize="true"></fb:name>',
-                'Luke', true);
+    XTest.regex('<fb:name uid="499348309" capitalize="true"></fb:name>',
+                'Dorothy', true);
 
     // TODO: the whole pronoun rendering bit
   }
