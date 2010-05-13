@@ -22,7 +22,6 @@ $JS_FILES = array(
 
   'src/core/api.js',
   'src/core/auth.js',
-  'src/core/component.js',
   'src/core/content.js',
   'src/core/cookie.js',
   'src/core/dialog.js',
@@ -44,7 +43,6 @@ $JS_FILES = array(
   'src/common/type.js',
   'src/common/obj.js',
   'src/common/string.js',
-  'src/common/loader.js',
 
   'src/data/waitable.js',
   'src/data/query.js',

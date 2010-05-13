@@ -15,7 +15,8 @@
  *
  * @provides fb.xfbml
  * @layer xfbml
- * @requires fb.prelude fb.loader fb.array
+ * @requires fb.prelude
+ *           fb.array
  */
 
 /**
@@ -179,9 +180,7 @@ FB.provide('XFBML', {
       if (FB.CLASSES[tagInfo.className.substr(3)]) {
         processor();
       } else {
-        // Load on-demand if necessary. Component name is lower case className.
-        var component = tagInfo.className.toLowerCase();
-        FB.Loader.use(component, processor);
+        FB.log('Tag ' + tagInfo.className + ' was not found.');
       }
     }
   },
