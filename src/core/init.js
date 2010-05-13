@@ -125,7 +125,7 @@ FB.provide('', {
   init: function(options) {
     // only need to list values here that do not already have a falsy default.
     // this is why cookie/session/status are not listed here.
-    FB.copy(options, {
+    options = FB.copy(options || {}, {
       logging: true
     });
 
