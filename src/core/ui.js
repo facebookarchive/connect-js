@@ -164,7 +164,7 @@ FB.provide('UIServer', {
       id     = FB.guid();
 
     if (!method) {
-      FB.log('"' + params.method + '" is an unknown method.');
+      FB.log('"' + params.method.toLowerCase() + '" is an unknown method.');
       return;
     }
 

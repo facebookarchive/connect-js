@@ -20,7 +20,7 @@
 
 /**
  * Base class for all XFBML elements. To create your own XFBML element, make a
- * class that derives from this, and then call [[joey:FB.XFBML.registerTag]].
+ * class that derives from this, and then call [FB.XFBML.registerTag](FB.XFBML.registerTag).
  *
  * @access private
  * @class FB.XFBML.Element

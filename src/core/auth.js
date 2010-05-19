@@ -104,11 +104,11 @@ FB.provide('', {
    * : The comma separated permissions string. This is specific to a
    *   permissions call. It is not persistent.
    *
-   * [subscribe]: /docs/?u=facebook.joey.FB.Event.subscribe
-   * [unsubscribe]: /docs/?u=facebook.joey.FB.Event.unsubscribe
-   * [getLoginStatus]: /docs/?u=facebook.joey.FB.getLoginStatus
-   * [login]: /docs/?u=facebook.joey.FB.login
-   * [logout]: /docs/?u=facebook.joey.FB.logout
+   * [subscribe]: /docs/reference/javascript/FB.Event.subscribe
+   * [unsubscribe]: /docs/reference/javascript/FB.Event.unsubscribe
+   * [getLoginStatus]: /docs/reference/javascript/FB.getLoginStatus
+   * [login]: /docs/reference/javascript/FB.login
+   * [logout]: /docs/reference/javascript/FB.logout
    *
    * @access public
    * @param cb {Function} The callback function.
@@ -164,7 +164,7 @@ FB.provide('', {
    * is safer to use [FB.getLoginStatus()][FB.getLoginStatus] if you are
    * unsure.
    *
-   * [FB.getLoginStatus]: /docs/?u=facebook.joey.FB.getLoginStatus
+   * [FB.getLoginStatus]: /docs/reference/javascript/FB.getLoginStatus
    *
    * @access public
    * @return {Object} the current Session if available, `null` otherwise

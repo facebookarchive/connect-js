@@ -12,7 +12,7 @@ social. With it you gain access to:
 [Connect]: http://developers.facebook.com/connect "Facebook | Connect"
 [FQL_User]: http://wiki.developers.facebook.com/index.php/User_(FQL) "FQL User Table"
 [FQL_Connection]: http://wiki.developers.facebook.com/index.php/Connection_(FQL) "FQL Connection Table"
-[UI Dialogs]: http://developers.facebook.com/docs/?u=facebook.joey.FB.ui "UI Dialogs (to render dialogs like publish and share)"
+[UI Dialogs]: http://developers.facebook.com/docs/reference/javascript/FB.ui "UI Dialogs (to render dialogs like publish and share)"
 
 This repository contains the open source JavaScript SDK that allows you to
 utilize the above on your website. Except as otherwise noted, the Facebook
@@ -53,7 +53,7 @@ initializing ([FB.init()][FB.init]) the library with all the options turned on:
     </script>
 
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
-[FB.init]: http://developers.facebook.com/docs/?u=facebook.joey.FB.init
+[FB.init]: http://developers.facebook.com/docs/reference/javascript/FB.init
 
 ### Asynchronous Loading
 
@@ -142,11 +142,11 @@ In addition, there many events that you can subscribe to using
 - auth.login
 - auth.logout
 
-[FB.login]: http://developers.facebook.com/docs/?u=facebook.joey.FB.login
-[FB.logout]: http://developers.facebook.com/docs/?u=facebook.joey.FB.logout
-[FB.getLoginStatus]: http://developers.facebook.com/docs/?u=facebook.joey.FB.getLoginStatus
-[FB.getSession]: http://developers.facebook.com/docs/?u=facebook.joey.FB.getSession
-[FB.Event.subscribe]: http://developers.facebook.com/docs/?u=facebook.joey.FB.Event.subscribe
+[FB.login]: http://developers.facebook.com/docs/reference/javascript/FB.login
+[FB.logout]: http://developers.facebook.com/docs/reference/javascript/FB.logout
+[FB.getLoginStatus]: http://developers.facebook.com/docs/reference/javascript/FB.getLoginStatus
+[FB.getSession]: http://developers.facebook.com/docs/reference/javascript/FB.getSession
+[FB.Event.subscribe]: http://developers.facebook.com/docs/reference/javascript/FB.Event.subscribe
 
 
 API Calls
@@ -157,7 +157,7 @@ from Facebook into your site, as well as allowing you to submit data into
 Facebook. The JavaScript SDK makes all this available to you via
 [FB.api()][FB.api]:
 
-[FB.api]: http://developers.facebook.com/docs/?u=facebook.joey.FB.api "Server-Side API Calls"
+[FB.api]: http://developers.facebook.com/docs/reference/javascript/FB.api "Server-Side API Calls"
 
     FB.api(
       {
@@ -180,7 +180,7 @@ into your application. The most common example of this is the
 **stream.publish** dialog. [FB.ui()][FB.ui] is the method that allows you to
 trigger this and other dialogs. For example:
 
-[FB.ui]: http://developers.facebook.com/docs/?u=facebook.joey.FB.ui "UI Dialogs (to render dialogs like publish and share)"
+[FB.ui]: http://developers.facebook.com/docs/reference/javascript/FB.ui "UI Dialogs (to render dialogs like publish and share)"
 
     FB.ui(
       {
@@ -254,7 +254,7 @@ SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [MooTools][MooTools], [Prototype][Prototype] and [YUI][YUI].
 
 
-[docs]: http://developers.facebook.com/docs/?u=facebook.joey.FB "Public API Documentation"
+[docs]: http://developers.facebook.com/docs/reference/javascript/ "Public API Documentation"
 [Dojo]: http://www.dojotoolkit.org/
 [jQuery]: http://jquery.com/
 [MooTools]: http://mootools.net/

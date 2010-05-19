@@ -51,7 +51,7 @@
  */
 FB.provide('Data', {
   /**
-   * Performs a parameterized FQL query and returns a [[joey:FB.Data.Query]]
+   * Performs a parameterized FQL query and returns a [FB.Data.query](FB.Data.query)
    * object which can be waited on for the asynchronously fetched data.
    *
    * Examples
@@ -117,8 +117,8 @@ FB.provide('Data', {
    * @param {String} template FQL query string template. It can contains
    * optional formatted parameters in the format of '{<argument-index>}'.
    * @param {Object} data optional 0-n arguments of data. The arguments can be
-   * either real data (String or Integer) or an [[joey:FB.Data.Query]] object
-   * from a previous [[joey:FB.Data.query]]().
+   * either real data (String or Integer) or an [FB.Data.query](FB.Data.query)
+   * object from a previos [FB.Data.query](FB.Data.query).
    * @return {FB.Data.Query}
    * An async query object that contains query result.
    */
@@ -131,7 +131,7 @@ FB.provide('Data', {
 
   /**
    * Wait until the results of all queries are ready. See also
-   * [[joey:FB.Data.query]] for more examples of usage.
+   * [FB.Data.query](FB.Data.query) for more examples of usage.
    *
    * Examples
    * --------

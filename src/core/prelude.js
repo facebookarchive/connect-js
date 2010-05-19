@@ -94,7 +94,7 @@ if (!window.FB) {
     /**
      * Copies things from source into target.
      *
-     * @access protected
+     * @access private
      * @param target    {Object}  the target object where things will be copied
      *                            into
      * @param source    {Object}  the source object where things will be copied

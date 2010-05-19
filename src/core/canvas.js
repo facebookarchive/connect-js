@@ -32,7 +32,7 @@
  *
  * CLICK YOUR APP, CLICK EDIT SETTINGS, CLICK MIGRATIONS AND ENABLE
  *
- * Using the New SDKs
+ * New SDKs
  * ---------------------------------------------------------------------
  *
  * @class FB.Canvas
@@ -46,11 +46,35 @@ FB.provide('Canvas', {
   _timer: null,
 
   /**
-   * Sets the size of the frame to the desired size.
+   * Tells Facebook to resize your iframe.
    *
-   * You probably want to call this without any parameters because
-   * if width or height isn't specified, then they default
-   * to the current size of the content.
+   * ## Migration Requirement
+   *
+   * To use this function, you MUST have enabled the *New SDKs*
+   * [migration](http://developers.facebook.com/blog/post/363).
+   *
+   * ## Examples
+   *
+   * Call this whenever you need a resize. This usually means, once after
+   * pageload, and whenever your content size changes.
+   *
+   *     window.fbAsyncInit = function() {
+   *       FB.Canvas.setSize();
+   *     }
+   *
+   *     // Do things that will sometimes call sizeChangeCallback()
+   *
+   *     function sizeChangeCallback() {
+   *       FB.Canvas.setSize();
+   *     }
+   *
+   * It will default to the current size of the frame, but if you have a need
+   * to pick your own size, you can use the params array.
+   *
+   *     FB.Canvas.setSize({ width: 640, height: 480 }); // Live in the past
+   *
+   * The max width is whatever you picked in your app settings, and there is no
+   * max height.
    *
    * @param {Object} optional
    *
@@ -84,11 +108,42 @@ FB.provide('Canvas', {
   },
 
   /**
-   * Turns on or off continual adjustment of the iframe's size
-   * Used to be known as: startTimerToSizeToContent
+   * Starts or stops a timer which resizes your iframe every few milliseconds.
    *
-   * @param {Boolean} optional Whether to turn the timer on or off - default on
-   * @param {Integer} optional How often to resize (in ms) - default 100ms
+   * Used to be known as:
+   * [startTimerToSizeToContent](http://wiki.developers.facebook.com/index.php/Resizable_IFrame)
+   *
+   * ## Migration Requirement
+   *
+   * To use this function, you MUST have enabled the *New SDKs*
+   * [migration](http://developers.facebook.com/blog/post/363).
+   *
+   * ## Examples
+   *
+   * This function is useful if you know your content will change size, but you
+   * don't know when. There will be a slight delay, so if you know when your
+   * content changes size, you should call [setSize](FB.Canvas.setSize)
+   * yourself (and save your user's CPU cycles).
+   *
+   *     window.fbAsyncInit = function() {
+   *       FB.Canvas.setAutoResize();
+   *     }
+   *
+   * If you ever need to stop the timer, just pass false.
+   *
+   *     FB.Canvas.setAutoResize(false);
+   *
+   * If you want the timer to run at a different interval, you can do that too.
+   *
+   *     FB.Canvas.setAutoResize(91); // Paul's favourite number
+   *
+   * Note: If there is only 1 parameter and it is a number, it is assumed to be
+   * the interval.
+   *
+   * @param {Boolean} optional Whether to turn the timer on or off. truthy ==
+   * on, falsy == off. **default** is true
+   * @param {Integer} optional How often to resize (in ms). **default** is
+   * 100ms
    *
    * @author ptarjan
    */

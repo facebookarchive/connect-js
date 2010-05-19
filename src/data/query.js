@@ -20,11 +20,11 @@
 
 /**
  * Object that represents the results of an asynchronous FQL query, typically
- * constructed by a call [[joey:FB.Data.query]]().
+ * constructed by a call [FB.Data.query](FB.Data.query)().
  *
  * These objects can be used in one of two ways:
  *
- * * Call [wait][[joey:FB.Waitable.wait]]() to handle the value when it's ready:
+ * * Call [wait](FB.Waitable.wait)() to handle the value when it's ready:
  *
  *         var query = FB.Data.query(
  *           'select name from page where username = 'barackobama');
@@ -47,7 +47,7 @@
  *           document.getElementById('page').innerHTML = result[0].name
  *         });
  *
- * * Wait for multiple waitables at once with [[joey:FB.Data.waitOn]].
+ * * Wait for multiple waitables at once with [FB.Data.waitOn](FB.Data.waitOn).
  *
  * Check out the [tests][tests] for more usage examples.
  * [tests]: http://github.com/facebook/connect-js/blob/master/tests/js/data.js

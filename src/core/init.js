@@ -108,7 +108,7 @@ FB.provide('', {
    * this method. If you are using an appId, all methods **must** be called
    * after this method.
    *
-   * [FB.ui]: /docs/?u=facebook.joey.FB.ui
+   * [FB.ui]: /docs/reference/javascript/FB.ui
    *
    * @access public
    * @param options {Object}
