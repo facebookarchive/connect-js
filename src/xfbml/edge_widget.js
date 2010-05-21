@@ -131,17 +131,23 @@ FB.subclass('XFBML.EdgeWidget', 'XFBML.IframeWidget', null, {
   _getWidgetWidth : function() {
     var layout = this._getLayout();
     var should_show_faces = this._shouldShowFaces() ? 'show' : 'hide';
+    var button_count_default_width =
+      this.getAttribute('action') === 'recommend' ? 130 : 90;
     var layoutToDefaultWidthMap =
-      { 'standard': {'show': 450, 'hide': 450},
-        'bar': {'show': 700, 'hide': 450},
-        'button_count': {'show': 90, 'hide': 90}};
+      { 'standard': {'show': 450,
+                     'hide': 450},
+        'bar': {'show': 700,
+                'hide': 450},
+        'button_count': {'show': button_count_default_width,
+                         'hide': button_count_default_width}};
     var defaultWidth = layoutToDefaultWidthMap[layout][should_show_faces];
     var width = this._getPxAttribute('width', defaultWidth)
 
     var allowedWidths =
       { 'bar' : {'min' : 600, 'max' : 900 },
         'standard' : {'min' : 225, 'max' : 900},
-        'button_count' : {'min' : 90, 'max' : 900}};
+        'button_count' : {'min' : button_count_default_width,
+                          'max' : 900}};
     if (width < allowedWidths[layout].min) {
       width = allowedWidths[layout].min;
     } else if (width > allowedWidths[layout].max) {
