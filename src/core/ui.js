@@ -53,7 +53,7 @@ FB.provide('', {
    *          action_links: [
    *            { text: 'Code', href: 'http://github.com/facebook/connect-js' }
    *          ],
-   *          user_prompt_message: 'Share your thoughts about Connect'
+   *          user_message_prompt: 'Share your thoughts about Connect'
    *        },
    *        function(response) {
    *          if (response && response.post_id) {
