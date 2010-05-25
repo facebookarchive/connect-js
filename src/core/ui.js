@@ -252,10 +252,10 @@ FB.provide('UIServer', {
         : window.screenTop,
       outerWidth = typeof window.outerWidth   != 'undefined'
         ? window.outerWidth
-        : document.body.clientWidth,
+        : document.documentElement.clientWidth,
       outerHeight = typeof window.outerHeight != 'undefined'
         ? window.outerHeight
-        : (document.body.clientHeight - 22),
+        : (document.documentElement.clientHeight - 22), // 22= IE toolbar height
       width    = call.size.width,
       height   = call.size.height,
       left     = parseInt(screenX + ((outerWidth - width) / 2), 10),
