@@ -221,9 +221,11 @@ FB.provide('', {
    * @param cb {Function} The callback function.
    * @param opts {Object} (_optional_) Options to modify login behavior.
    *
-   * Name   | Type   | Description
-   * ------ | ------ | ------------------------------------------------------
-   * perms  | String | Comma separated list of [[wiki:Extended permissions]].
+   * Name                     | Type    | Description
+   * ------------------------ | ------- | --------------------------------------------------------------------------------
+   * perms                    | String  | Comma separated list of [Extended permissions](/docs/authentication/permissions)
+   * enable_profile_selector  | Boolean | When true, prompt the user to grant permission for one or more Pages.
+   * profile_selector_ids     | String  | Comma separated list of IDs to display in the profile selector.
    */
   login: function(cb, opts) {
     opts = FB.copy({ method: 'auth.login', display: 'popup' }, opts || {});
