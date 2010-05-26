@@ -258,6 +258,6 @@ FB.subclass('XFBML.ConnectBar', 'XFBML.Element', null, {
 
 FB.provide('XFBML.ConnectBar', {
   imgs: {
-   buttonUrl: 'images/facebook-widgets/close_btn.png'
+   buttonUrl: 'images/badges/close_btn.png'
   }
 });
