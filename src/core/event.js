@@ -81,12 +81,12 @@ FB.provide('EventProvider', {
   },
 
   /**
-   * Removes subscribers, inverse of [FB.Event.subscribe][subscribe].
+   * Removes subscribers, inverse of [FB.Event.subscribe](FB.Event.subscribe).
    *
    * Removing a subscriber is basically the same as adding one. You need to
    * pass the same event name and function to unsubscribe that you passed into
-   * subscribe. If we use a similar example to [FB.Event.subscribe][subscribe],
-   * we get:
+   * subscribe. If we use a similar example to
+   * [FB.Event.subscribe](FB.event.subscribe), we get:
    *
    *     var onSessionChange = function(response) {
    *       // do something with response.session
@@ -95,8 +95,6 @@ FB.provide('EventProvider', {
    *
    *     // sometime later in your code you dont want to get notified anymore
    *     FB.Event.unsubscribe('auth.sessionChange', onSessionChange);
-   *
-   * [subscribe]: /docs/?u=facebook.jslib-alpha.FB.Event.subscribe
    *
    * @access public
    * @param name {String} Name of the event.
