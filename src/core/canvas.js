@@ -76,7 +76,7 @@ FB.provide('Canvas', {
    * The max width is whatever you picked in your app settings, and there is no
    * max height.
    *
-   * @param {Object} optional
+   * @param {Object} params
    *
    * Property | Type    | Description                      | Argument   | Default
    * -------- | ------- | -------------------------------- | ---------- | -------
@@ -140,9 +140,9 @@ FB.provide('Canvas', {
    * Note: If there is only 1 parameter and it is a number, it is assumed to be
    * the interval.
    *
-   * @param {Boolean} optional Whether to turn the timer on or off. truthy ==
+   * @param {Boolean} onOrOff Whether to turn the timer on or off. truthy ==
    * on, falsy == off. **default** is true
-   * @param {Integer} optional How often to resize (in ms). **default** is
+   * @param {Integer} interval How often to resize (in ms). **default** is
    * 100ms
    *
    * @author ptarjan
