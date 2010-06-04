@@ -333,6 +333,22 @@ FB.provide('Auth', {
       FB.Event.fire('auth.sessionChange', response);
     }
 
+    // re-setup a timer to refresh the session if needed. we only do this if
+    // FB.Auth._loadState exists, indicating that the application relies on the
+    // JS to get and refresh session information (vs managing it themselves).
+    if (FB.Auth._refreshTimer) {
+      window.clearTimeout(FB.Auth._refreshTimer);
+      delete FB.Auth._refreshTimer;
+    }
+    if (FB.Auth._loadState && session && session.expires) {
+      // refresh every 20 minutes. we don't rely on the expires time because
+      // then we would also need to rely on the local time available in JS
+      // which is often incorrect.
+      FB.Auth._refreshTimer = window.setTimeout(function() {
+        FB.getLoginStatus(null, true); // force refresh
+      }, 1200000); // 20 minutes
+    }
+
     return response;
   },
 
