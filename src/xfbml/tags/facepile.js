@@ -27,6 +27,7 @@
  */
 FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
   _visibleAfter: 'load',
+  _showFaces: true,
 
   /**
    * Do initial attribute processing.
@@ -35,10 +36,19 @@ FB.subclass('XFBML.Facepile', 'XFBML.IframeWidget', null, {
     this._attr = {
       channel: this.getChannelUrl(),
       max_rows: this.getAttribute('max-rows'),
-      width: this._getPxAttribute('width', 200)
+      width: this._getPxAttribute('width', 200),
+      show_faces: this._showFaces
     };
 
     return true;
+  },
+
+  /**
+   * Set the value of one of the parameters that will be passed
+   * to the url widget's url.
+   */
+  setShowFaces: function(val) {
+    this._showFaces = val;
   },
 
   /**

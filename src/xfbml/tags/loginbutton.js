@@ -44,6 +44,7 @@ FB.subclass('XFBML.LoginButton', 'XFBML.ButtonElement', null, {
       'short',          // defaultValue
       ['long', 'short'] // allowed
     );
+    this.iframe = this._getBoolAttribute('iframe');
 
     if (this.autologoutlink) {
       FB.Event.subscribe('auth.statusChange', FB.bind(this.process, this));

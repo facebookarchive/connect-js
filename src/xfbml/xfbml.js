@@ -164,17 +164,33 @@ FB.provide('XFBML', {
         // of objects. post f8, this should be changed to a factory function
         // which would allow the login button to instantiate the Button based
         // tag or Iframe based tag depending on the attribute value.
+        var getBoolAttr = function(attr) {
+            var attr = dom.getAttribute(attr);
+            return (attr && FB.Array.indexOf(
+                      ['true', '1', 'yes', 'on'],
+                      attr.toLowerCase()) > -1);
+        }
+
+        var isLogin = false;
+        var showFaces = true;
+        var renderInIframe = false;
         if (tagInfo.className === 'FB.XFBML.LoginButton') {
-          var attr = dom.getAttribute('show-faces');
-          if (attr && FB.Array.indexOf(
-                ['true', '1', 'yes', 'on'], attr.toLowerCase()) > -1) {
+          renderInIframe = getBoolAttr('render-in-iframe');
+          showFaces = getBoolAttr('show-faces');
+          isLogin = renderInIframe || showFaces;
+          if (isLogin) {
             fn = FB.XFBML.Login;
           }
         }
 
         element = dom._element = new fn(dom);
+        if (isLogin) {
+          element.setShowFaces(showFaces);
+        }
+
         element.subscribe('render', cb);
         element.process();
+
       };
 
       if (FB.CLASSES[tagInfo.className.substr(3)]) {
