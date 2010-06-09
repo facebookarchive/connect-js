@@ -185,7 +185,12 @@ FB.provide('XFBML', {
 
         element = dom._element = new fn(dom);
         if (isLogin) {
-          element.setShowFaces(showFaces);
+          var extraParams = {show_faces: showFaces};
+          var perms = dom.getAttribute('perms');
+          if (perms) {
+            extraParams['perms'] = perms;
+          }
+          element.setExtraParams(extraParams);
         }
 
         element.subscribe('render', cb);
