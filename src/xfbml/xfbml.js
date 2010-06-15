@@ -272,6 +272,7 @@ FB.provide('XFBML', {
     { localName: 'login',           className: 'FB.XFBML.Login'           },
     { localName: 'login-button',    className: 'FB.XFBML.LoginButton'     },
     { localName: 'facepile',        className: 'FB.XFBML.Facepile'        },
+    { localName: 'friendpile',      className: 'FB.XFBML.Friendpile'      },
     { localName: 'name',            className: 'FB.XFBML.Name'            },
     { localName: 'profile-pic',     className: 'FB.XFBML.ProfilePic'      },
     { localName: 'recommendations', className: 'FB.XFBML.Recommendations' },

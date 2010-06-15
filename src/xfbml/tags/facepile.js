@@ -15,7 +15,7 @@
  *
  * @provides fb.xfbml.facepile
  * @layer xfbml
- * @requires fb.type fb.xfbml.facepile fb.auth
+ * @requires fb.type fb.auth
  */
 
 /**

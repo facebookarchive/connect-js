@@ -19,6 +19,7 @@
  *   fb.xfbml.element
  *   fb.xfbml.facepile
  *   fb.xfbml.fan
+ *   fb.xfbml.friendpile
  *   fb.xfbml.like
  *   fb.xfbml.likebox
  *   fb.xfbml.livestream
