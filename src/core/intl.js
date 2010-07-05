@@ -146,6 +146,6 @@ FB.provide('Intl', {
     if (!FB.Intl._stringTable) {
       return null;
     }
-    return FBIntern.Intl._tx(FB.Intl._stringTable[str], args);
+    return FB.Intl._tx(FB.Intl._stringTable[str], args);
   }
 });
