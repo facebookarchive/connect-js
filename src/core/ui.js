@@ -188,7 +188,7 @@ FB.provide('UIServer', {
     var call = {
       cb     : cb,
       id     : id,
-      size   : method.size || {},
+      size   : params.size || method.size || {},
       url    : FB._domain.www + method.url,
       params : params
     };
