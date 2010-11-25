@@ -52,10 +52,9 @@ commitment to quality, but also with the hopes that you will contribute back to
 help keep it stable. The easiest way to do so is to file bugs and include a
 test case.
 
-Feedback
+Reporting Issues
 --------
 
-We are relying on the [GitHub issues tracker][issues] linked from above for
-feedback. File bugs or other issues [here][issues].
+If you have bugs or other issues, file them [here][issues].
 
-[issues]: http://github.com/facebook/connect-js/issues
+[issues]: http://bugs.developers.facebook.net/enter_bug.cgi?product=SDKs
