@@ -71,7 +71,7 @@ FB.provide('Flash', {
 
     // create the swf
     var
-      IE   = !!document.attachEvent,
+      IE   = !!(document.attachEvent&&!window.opera),
       swf  = FB._domain.cdn + FB.Flash._swfPath,
       html = (
         '<object ' +
