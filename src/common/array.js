@@ -138,13 +138,17 @@ FB.provide('Array', {
         item.forEach(fn);
       } else {
         for (var i=0, l=item.length; i<l; i++) {
-          fn(item[i], i, item);
+          if (fn(item[i], i, item) === false) {
+            break;
+          }
         }
       }
     } else {
       for (var key in item) {
         if (proto || item.hasOwnProperty(key)) {
-          fn(item[key], key, item);
+          if (fn(item[key], key, item) === false) {
+            break;
+          }
         }
       }
     }
