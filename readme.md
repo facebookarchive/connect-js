@@ -57,4 +57,4 @@ Reporting Issues
 
 If you have bugs or other issues, file them [here][issues].
 
-[issues]: http://bugs.developers.facebook.net/enter_bug.cgi?product=SDKs
+[issues]: https://github.com/facebook/connect-js/issues

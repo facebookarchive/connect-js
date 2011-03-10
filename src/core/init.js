@@ -113,14 +113,14 @@ FB.provide('', {
    * @access public
    * @param options {Object}
    *
-   * Property | Type    | Description                          | Argument   | Default
-   * -------- | ------- | ------------------------------------ | ---------- | -------
-   * appId    | String  | Your application ID.                 | *Optional* | `null`
-   * cookie   | Boolean | `true` to enable cookie support.     | *Optional* | `false`
-   * logging  | Boolean | `false` to disable logging.          | *Optional* | `true`
-   * session  | Object  | Use specified session object.        | *Optional* | `null`
-   * status   | Boolean | `true` to fetch fresh status.        | *Optional* | `false`
-   * xfbml    | Boolean | `true` to parse [[wiki:XFBML]] tags. | *Optional* | `false`
+   * Property | Type    | Description                                                                          | Argument   | Default
+   * -------- | ------- | ------------------------------------------------------------------------------------ | ---------- | -------
+   * appId    | String  | Your application ID.                                                                 | *Optional* | `null`
+   * cookie   | Boolean | `true` to enable cookie support or `secure` to restrict cookie to secure connection. | *Optional* | `false`
+   * logging  | Boolean | `false` to disable logging.                                                          | *Optional* | `true`
+   * session  | Object  | Use specified session object.                                                        | *Optional* | `null`
+   * status   | Boolean | `true` to fetch fresh status.                                                        | *Optional* | `false`
+   * xfbml    | Boolean | `true` to parse [[wiki:XFBML]] tags.                                                 | *Optional* | `false`
    */
   init: function(options) {
     // only need to list values here that do not already have a falsy default.

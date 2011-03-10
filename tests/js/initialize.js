@@ -17,7 +17,7 @@
  * @requires fb.tests.qunit
  *           fb.init
  */
-var API_KEY = '48f06bc570aaf9ed454699ec4fe416df';
+var API_KEY = document.getElementById('API_KEY').value || '48f06bc570aaf9ed454699ec4fe416df';
 var EXPIRED_SESSION = {
   session_key : "5070653ddbe6a2efbfb23388-499433185",
   uid         : 499433185,

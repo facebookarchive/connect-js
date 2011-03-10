@@ -62,7 +62,17 @@ FB.provide('Cookie', {
    * @returns {Boolean} true if Cookie support is enabled
    */
   getEnabled: function() {
-    return FB.Cookie._enabled;
+    return (!!FB.Cookie._enabled);
+  },
+  
+  /**
+   * Return the security flag applied for the cooke.
+   * 
+   * @access private
+   * @returns {Boolean} true if the cookie is to be restricted to secure connections
+   */
+  getSecure: function() {
+	  return ('secure' == FB.Cookie._enabled);
   },
 
   /**
@@ -97,13 +107,15 @@ FB.provide('Cookie', {
    * @param val    {String} the string value (should already be encoded)
    * @param ts     {Number} a unix timestamp denoting expiry
    * @param domain {String} optional domain for cookie
+   * @param secure {Boolean} optionally specify whether the cookie is to be restricted to secure connections
    */
-  setRaw: function(val, ts, domain) {
+  setRaw: function(val, ts, domain, secure) {
     document.cookie =
       'fbs_' + FB._apiKey + '="' + val + '"' +
       (val && ts == 0 ? '' : '; expires=' + new Date(ts * 1000).toGMTString()) +
       '; path=/' +
-      (domain ? '; domain=.' + domain : '');
+      (domain ? '; domain=.' + domain : '') +
+      (secure ? '; Secure' : '');
 
     // capture domain for use when we need to clear
     FB.Cookie._domain = domain;
@@ -120,7 +132,8 @@ FB.provide('Cookie', {
       ? FB.Cookie.setRaw(
           FB.QS.encode(session),
           session.expires,
-          session.base_domain)
+          session.base_domain,
+          (session.secure === undefined) ? FB.Cookie.getSecure() : session.secure)
       : FB.Cookie.clear();
   },
 

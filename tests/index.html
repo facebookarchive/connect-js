@@ -28,6 +28,7 @@
     QUnit Requirements
     **************************************************************************
     -->
+	<input type='text' id='API_KEY' title='API_KEY'/>
     <h1 id="qunit-header">
       <input style="float: right; margin: 1em;"
              type="button"
@@ -128,6 +129,9 @@
     -->
     <script>
       (function() {
+        // Set the variable below if you are testing against a Facebook account that
+        // has not installed the App used by the original developers
+        var testApiKey = "";
         // if we are running on a facebook.com domain, munge the FB._domain map
         // to point to the current domain. this is useful for facebook
         // developers working on the unit tests in their sandboxes.
@@ -140,7 +144,8 @@
           FB._domain.staticfb = FB._domain.www.replace('www', 'static');
         }
 
-
+        // Make the APIKey visible
+        document.getElementById('API_KEY').value = testApiKey;
         // scroll to the bottom of the page as the tests run. this ensures the
         // latest test is always in view.
         QUnit.testDone = function(name, failures, total) {

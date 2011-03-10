@@ -91,3 +91,28 @@ test(
     FB._apiKey = origApiKey;
   }
 );
+//TODO: Expand this test when there are unit tests running/mocking secure connections
+//This test is a bit weak, but since the prior tests demonstrate that Cookie.set adds
+//non-secure cookies, it at least demonstrates that the code runs and specify the
+//secure option changes the behavior.
+test(
+  'set a secure cookie and verify not present on non-secure page',
+
+  function() {
+	var origApiKey = FB._apiKey;
+	var docCookie;
+	expect(2);
+	FB._apiKey = cookieApiKey;
+
+	FB.Cookie.set({
+	  expires: (1000000 + (+new Date())) / 1000,
+	  base_domain: document.domain,
+	  secure: true
+	});
+	docCookie = document.cookie.match('fbs_' + cookieApiKey);
+	ok(!(document.location.protocol == 'https:'), "test running on non-secure page");
+	ok(!(docCookie), 'secure cookie not applied to non-secure document');
+	FB.Cookie.clear();
+	FB._apiKey = origApiKey;
+  }
+);
