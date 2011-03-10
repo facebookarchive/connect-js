@@ -20,9 +20,6 @@ We have made API documentation available for the public APIs [here][docs]. In
 addition, the code itself contains full documentation for the private APIs if
 you want to study the internals.
 
-We have a list of [FAQs][FAQs] that detail some of the changes and provide
-information about the new SDK.
-
 We are maintaining a [changelog][changelog] as we update the SDK. Since this is
 an Beta SDK, we might need to break compatibility between releases if the need
 arises.
@@ -37,7 +34,6 @@ SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [MooTools]: http://mootools.net/
 [Prototype]: http://prototypejs.org/
 [YUI]: http://developer.yahoo.com/yui/
-[FAQs]: http://wiki.github.com/facebook/connect-js/faq
 [changelog]: http://github.com/facebook/connect-js/tree/master/changelog.md
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
 
