@@ -61,14 +61,14 @@ FB.provide('QS', {
     var
       decode = decodeURIComponent,
       params = {},
-      parts  = str.split('&'),
+      parts  = str.split(/&(?!amp;)/gi),
       i,
       pair;
 
     for (i=0; i<parts.length; i++) {
-      pair = parts[i].split('=', 2);
+      pair = parts[i].split('=');
       if (pair && pair[0]) {
-        params[decode(pair[0])] = decode(pair[1]);
+        params[decode(pair.shift())] = decode(pair.join('='));
       }
     }
 

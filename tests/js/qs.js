@@ -92,3 +92,27 @@ test(
     ok(!('' in empty), 'should not find empty value');
   }
 );
+
+test(
+  'query string ampersand html entity bug',
+
+  function() {
+    var params = FB.QS.decode('a=1&b=loren&amp;hardy&c=3');
+
+    ok(params.a == 1, 'expect a==1 in params');
+    ok(params.b == 'loren&amp;hardy', 'expect b=="loren&amp;hardy" in params');
+    ok(params.c == 3, 'expect c==3 in params');
+  }
+);
+
+test(
+  'query string multiple equal sign bug',
+
+  function() {
+    var params = FB.QS.decode('a=1&b==2&c===3==4');
+
+    ok(params.a == 1, 'expect a==1 in params');
+    ok(params.b == '=2', 'expect b=="=2" in params');
+    ok(params.c == '==3==4', 'expect c=="==3==4" in params'); 
+  }
+);
