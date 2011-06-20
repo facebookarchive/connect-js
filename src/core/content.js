@@ -78,7 +78,7 @@ FB.provide('Content', {
         hiddenRoot = document.createElement('div'),
         style      = hiddenRoot.style;
       style.position = 'absolute';
-      style.top      = '-10000px';
+      style.top      = style.left = '-10000px';
       style.width    = style.height = 0;
       FB.Content._hiddenRoot = FB.Content.append(hiddenRoot);
     }
