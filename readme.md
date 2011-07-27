@@ -8,9 +8,11 @@ Connect JavaScript SDK is licensed under the Apache Licence, Version 2.0
 
 Status
 ------
-We have updated the JavaScript SDK to [support OAuth 2.0][https://developers.facebook.com/blog/post/525/] on July 22, 2011.
+We have updated the JavaScript SDK to [support OAuth 2.0][post] on July 22, 2011.
 
 We have no plans to update this repository until December 2011. 
+
+[post]: https://developers.facebook.com/blog/post/525/
 
 Documentation
 -------------
