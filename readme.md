@@ -6,7 +6,7 @@ utilize Facebook on your website. Except as otherwise noted, the Facebook
 Connect JavaScript SDK is licensed under the Apache Licence, Version 2.0
 (http://www.apache.org/licenses/LICENSE-2.0.html)
 
-Status
+Status (UPDATED)
 ------
 We have updated the JavaScript SDK to [support OAuth 2.0][post] on July 22, 2011.
 
