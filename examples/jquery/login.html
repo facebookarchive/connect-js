@@ -70,7 +70,7 @@
         FB.api(
           {
             method: 'fql.query',
-            query: 'SELECT name, pic FROM profile WHERE id=' + FB.getSession().uid
+            query: 'SELECT name, pic FROM profile WHERE id=' + FB.getAuthResponse().userID
           },
           function(response) {
             var user = response[0];
