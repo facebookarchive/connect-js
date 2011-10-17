@@ -271,9 +271,6 @@ FB.provide('XD', {
         // loaded before or after
         FB.init = FB.getLoginStatus = FB.api = function() {};
 
-        // display none helps prevent loading of some stuff
-        document.documentElement.style.display = 'none';
-
         FB.XD.resolveRelation(
           FB.QS.decode(fragment).relation).FB.XD.recv(fragment);
       }
