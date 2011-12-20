@@ -32,9 +32,8 @@ SDK with popular JavaScript libraries such as [Dojo][Dojo], [jQuery][jQuery],
 [changelog]: http://github.com/facebook/connect-js/tree/master/changelog.md
 [examples]: http://github.com/facebook/connect-js/tree/master/examples/
 
-Reporting Issues
---------
+Report Issues/Bugs
+===============
+[Bugs](https://developers.facebook.com/bugs)
 
-If you have bugs or other issues, file them [here][issues].
-
-[issues]: http://bugs.developers.facebook.net/enter_bug.cgi?product=SDKs
+[Questions](http://facebook.stackoverflow.com/questions/tagged/facebook-javascript-sdk)
