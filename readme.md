@@ -1,3 +1,7 @@
+We have created a new repository for this project: https://github.com/facebook/facebook-js-sdk.
+
+Please update anything you have pointing at this repostory to the above location before April 1, 2012.
+
 Facebook JavaScript SDK
 ===============================
 
