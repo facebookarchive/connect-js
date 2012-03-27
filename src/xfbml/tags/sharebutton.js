@@ -111,18 +111,26 @@ FB.subclass('XFBML.ShareButton', 'XFBML.Element', null, {
       classStr = 'fb_button fb_button_small';
       wrapperClass = 'fb_share_count_wrapper';
     }
+
+    var a_id = FB.guid();
+
     this.dom.innerHTML = FB.String.format(
-      '<span class="{0}">{4}<a href="{1}" class="{2}" ' +
-      'onclick=\'FB.ui({6});return false;\'' +
+      '<span class="{0}">{4}<a id="{1}" class="{2}" ' +
       'target="_blank">{3}</a>{5}</span>',
       wrapperClass,
-      this._href,
+      a_id,
       classStr,
       contentStr,
       pre,
-      post,
-      FB.JSON.stringify({ method: 'stream.share', u: this._href })
+      post
     );
+
+    var a = document.getElementById(a_id);
+    a.href = this._href;
+    a.onclick = function() {
+      FB.ui({ method: 'stream.share', u: this._href });
+      return false;
+    };
 
     if (!skipRenderEvent) {
       this.fire('render');
