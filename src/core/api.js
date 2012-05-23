@@ -275,11 +275,26 @@ FB.provide('ApiServer', {
     }
     params.sdk = 'joey';
 
+    FB.ApiServer.xdr(domain, path, method, FB.JSON.flatten(params), cb);
+  },
+
+  /**
+   * XDR decision point.
+   *
+   * @access private
+   * @param domain {String}   the domain key, one of 'api', 'api_read',
+   *                          or 'graph'
+   * @param path   {String}   the request path
+   * @param method {String}   the http method
+   * @param params {Object}   the parameters for the query
+   * @param cb     {Function} the callback function to handle the response
+   */
+  xdr: function(domain, path, method, params, cb) {
     try {
-      FB.ApiServer.jsonp(domain, path, method, FB.JSON.flatten(params), cb);
+      FB.ApiServer.jsonp(domain, path, method, params, cb);
     } catch (x) {
       if (FB.Flash.hasMinVersion()) {
-        FB.ApiServer.flash(domain, path, method, FB.JSON.flatten(params), cb);
+        FB.ApiServer.flash(domain, path, method, params, cb);
       } else {
         throw new Error('Flash is required for this API call.');
       }

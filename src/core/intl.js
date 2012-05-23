@@ -140,17 +140,12 @@ FB.provide('Intl', {
    * @param args {Object} the replacement tokens
    */
   tx: function (str, args) {
-    // this is replaced by the i18n machinery when the resources are localized
-    function tx(str, args) {
-      void(0);
-    }
-
     // Fail silently if the string table isn't defined. This behaviour is used
     // when a developer chooses the host the library themselves, rather than
     // using the one served from facebook.
     if (!FB.Intl._stringTable) {
       return null;
     }
-    return FBIntern.Intl._tx(FB.Intl._stringTable[str], args);
+    return FB.Intl._tx(FB.Intl._stringTable[str], args);
   }
 });

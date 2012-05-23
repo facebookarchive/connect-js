@@ -31,7 +31,7 @@
  * @static
  * @access public
  */
-FB.provide('FB.Intl', {
+FB.provide('Intl', {
   _stringTable: {
     'sh:loading': 'Loading...',
     'sh:share-button': 'Share',
