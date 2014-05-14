@@ -1,5 +1,7 @@
---------
---------
+Archived Repo
+=============
+**This is an archived project and is no longer supported or updated by Facebook. Please do not file issues or pull-requests against this repo.**
+
 Due to changes in the build process the individual components making up the Javascript SDK
 will no longer be available in source form. 
 
@@ -9,8 +11,6 @@ representing http://connect.facebook.net/en_US/all.js, but will for now remain i
 Please submit any issues using the Bug reporting tool at https://developers.facebook.com/bugs.
 
 To see the repository in its previously published state, please see the [deprecated](https://github.com/facebook/facebook-js-sdk/tree/deprecated) branch.
---------
---------
 
 Facebook JavaScript SDK
 ===============================
